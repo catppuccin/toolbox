@@ -25,7 +25,10 @@
 
 ### 🪴 Index
 
-+ [License](#-license)
++ [Palette Builder](#-palette-builder)
++ [Circular Thumbnails Generator](#-circular-thumbnails-generator)
++ [Meow](#-meow)
++ [InkCat](#-inkcat)
 
 &nbsp;
 
