@@ -111,9 +111,11 @@ Testing:
 
 ```bash
 $ npm install	# fetch dependencies
-$ make link		# to link the binary locally. Use sudo if neede
-$ make unlink	# to unlink the binary. Use sudo if needed
+$ make link		# to link the binary locally
+$ make unlink	# to unlink the binary
 ```
+
+> Note: use `sudo` if needed
 
 &nbsp;
 
