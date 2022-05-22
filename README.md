@@ -82,6 +82,8 @@ $ npm install -g @catppuccin/inkcat && inkcat --help	# Install command
 $ npm uninstall -g @catppuccin/inkcat		# Uninstall command
 ```
 
+> Note: use `sudo` if needed
+
 Help info:
 
 ```
