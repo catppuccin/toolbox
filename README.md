@@ -27,8 +27,8 @@
 
 + [Palette Builder](#-palette-builder)
 + [Circular Thumbnails Generator](#-circular-thumbnails-generator)
-+ [Meow](#-meow)
 + [InkCat](#-inkcat)
++ [Meow](#-meow)
 
 &nbsp;
 
@@ -70,6 +70,51 @@ Where:
 
 &nbsp;
 
+#### 🖌️ InkCat
+
+InkCat is a minimal and versatile solution for displaying colors from each one of Catppuccin's
+flavours in your terminal. This program also allows you to copy them to your clipboard.
+
+Usage:
+
+```bash
+$ npm install -g @catppuccin/inkcat && inkcat --help	# Install command
+$ npm uninstall -g @catppuccin/inkcat		# Uninstall command
+```
+
+Help info:
+
+```
+Usage:
+	#1: inkcat <palette(s)> <color(s)>
+	#2: inkcat <flags>
+
+Args:
+	<palette(s)>            Palettes separated by commas (e.g. frappe,latte)
+	<color(s)>              Colors separated by commas (e.g. peach,rosewater,lavender)
+
+Flags:
+	-h,--help               See this help message
+	-n,--no-copy            Don't copy the colors to the clipboard
+	-f,--format             Specify format (hex, hsl, rgb)
+
+Exmaples:
+	#1: inkcat frappe,latte peach,rosewater,lavender
+	#2: inkcat macchiato base,yellow --no-copy
+	#3: inkcat mocha
+	#4: inkcat mocha maroon --format rgb
+```
+
+Testing:
+
+```bash
+$ npm install	# fetch dependencies
+$ make link		# to link the binary locally. Use sudo if neede
+$ make unlink	# to unlink the binary. Use sudo if needed
+```
+
+&nbsp;
+
 #### 🌈 Contrast Test
 
 Test Catppuccin's flavours compliance with modern web contrast standards
@@ -80,10 +125,6 @@ Usage:
 $ npm insatll	# fetch dependencies
 $ npm start
 ```
-
-#### 🖌️ InkCat
-
-Display catppuccin flavours in your terminal and paste them in your clipboard!
 
 &nbsp;
 
