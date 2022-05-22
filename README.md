@@ -79,7 +79,7 @@ Usage:
 
 ```bash
 $ npm install -g @catppuccin/inkcat && inkcat --help	# Install command
-$ npm uninstall -g @catppuccin/inkcat		# Uninstall command
+$ npm uninstall -g @catppuccin/inkcat	# Uninstall command
 ```
 
 > Note: use `sudo` if needed
@@ -111,7 +111,7 @@ Testing:
 
 ```bash
 $ npm install	# fetch dependencies
-$ make link		# to link the binary locally
+$ make link	# to link the binary locally
 $ make unlink	# to unlink the binary
 ```
 
