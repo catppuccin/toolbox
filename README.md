@@ -81,13 +81,15 @@ $ npm insatll	# fetch dependencies
 $ npm start
 ```
 
-#### 😽 Meow
+#### 🖌️ InkCat
 
-"Waouh Waouh", said the French Poodle
+Display catppuccin flavours in your terminal and paste them in your clipboard!
 
 &nbsp;
 
-#### 🖌️ InkCat
+#### 😽 Meow
+
+"Waouh Waouh", said the French Poodle
 
 &nbsp;
 
