@@ -37,6 +37,17 @@ Export the colors of the palette in various formats. Currently it supports:
 + CSS
 + Json
 
+##### Usage
+
+```bash
+$ npm install	# installs dependencies
+$ npm start <format> <out_file>
+```
+
+Where:
++ `<format>`: can be `json` or `css`
++`<out_file>`: is an optional parameter. In its absence the new format is printed to the console
+
 &nbsp;
 
 #### 🟠 Circular Thumbnails Generator

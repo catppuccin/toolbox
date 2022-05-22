@@ -1,0 +1,18 @@
+{
+  "name": "palette_builder",
+  "version": "0.1.0",
+  "description": "Export Catppuccin flavours in various formats",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "catppuccin"
+  ],
+  "author": "Catppuccin Org",
+  "license": "MIT",
+  "devDependencies": {
+    "@catppuccin/palette": "^0.1.2"
+  }
+}
