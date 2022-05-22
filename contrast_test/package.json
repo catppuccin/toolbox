@@ -1,0 +1,25 @@
+{
+	"name": "contrast_test",
+	"version": "0.1.0",
+	"description": "Test Catppuccin's flavours compliance with modern web contrast standards",
+	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"start": "node index.js"
+	},
+	"keywords": [
+		"wcag-compliance",
+		"catppuccin",
+		"test"
+	],
+	"author": "Catppuccin Org",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/catppuccin/catppuccin/issues"
+	},
+	"devDependencies": {
+		"@catppuccin/palette": "^0.1.2",
+		"chalk": "^5.0.1",
+		"color-contrast-checker": "^2.1.0"
+	}
+}

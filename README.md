@@ -36,14 +36,14 @@
 
 #### 👷 Palette Builder
 
-Export the colors of the palette in various formats. Currently it supports:
+Export the colors of every Catppuccin flavour into various formats. Currently it supports:
 + CSS
 + Json
 
-##### Usage
+Usage:
 
 ```bash
-$ npm install	# installs dependencies
+$ npm install	# fetch dependencies
 $ npm start <format> <out_file>
 ```
 
@@ -57,7 +57,29 @@ Where:
 
 Generate circular thumbnails of the palettes
 
+Usage:
+
+```bash
+$ python3 -m pip install --upgrade pip
+$ python3 -m pip install --upgrade Pillow
+$ python3 __init__.py <--show>
+```
+
+Where:
++ `--show`: is an optional parameter that displays the PNGs in your device's image previewing software instead saving them into an `out/` directory
+
 &nbsp;
+
+#### 🌈 Contrast Test
+
+Test Catppuccin's flavours compliance with modern web contrast standards
+
+Usage:
+
+```bash
+$ npm insatll	# fetch dependencies
+$ npm start
+```
 
 #### 😽 Meow
 
