@@ -1,0 +1,34 @@
+{
+	"name": "@catppuccin/docpuccin",
+	"version": "0.1.0",
+	"description": "Fetch health files needed per project type",
+	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"start": "node index.js"
+	},
+	"bin": {
+		"docpuccin": "index.js"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/catppuccin/toolbox.git"
+	},
+	"keywords": [
+		"catppuccin",
+		"health"
+	],
+	"author": "Catppuccin Org",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/catppuccin/toolbox/issues"
+	},
+	"homepage": "https://github.com/catppuccin/toolbox/tree/main/docpuccin",
+	"dependencies": {
+		"@catppuccin/palette": "^0.1.2",
+		"chalk": "^5.0.1"
+	}
+}
