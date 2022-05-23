@@ -28,6 +28,8 @@
 + [Palette Builder](#-palette-builder)
 + [Circular Thumbnails Generator](#-circular-thumbnails-generator)
 + [InkCat](#-inkcat)
++ [DocPuccin](#-docpuccin)
++ [Contrast Test](#-contrast-test)
 + [Meow](#-meow)
 
 &nbsp;
@@ -119,19 +121,6 @@ $ make unlink	# to unlink the binary
 
 &nbsp;
 
-#### 🌈 Contrast Test
-
-Test Catppuccin's flavours compliance with modern web contrast standards
-
-Usage:
-
-```bash
-$ npm insatll	# fetch dependencies
-$ npm start
-```
-
-&nbsp;
-
 #### 🇨🇭 DocPuccin
 
 Docpuccin is a small program that fetches health files needed per project type
@@ -176,6 +165,19 @@ $ make unlink	# to unlink the binary
 ```
 
 > Note: use `sudo` if needed
+
+&nbsp;
+
+#### 🌈 Contrast Test
+
+Test Catppuccin's flavours compliance with modern web contrast standards
+
+Usage:
+
+```bash
+$ npm install	# fetch dependencies
+$ npm start
+```
 
 &nbsp;
 
