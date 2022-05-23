@@ -39,8 +39,6 @@ Args:
 
 Flags:
 	-h,--help\t\tSee this help message
-	-n,--no-copy\t\tDon't copy the colors to the clipboard
-	-f,--format\t\tSpecify format (hex, hsl, rgb)
 
 Available health files:
 

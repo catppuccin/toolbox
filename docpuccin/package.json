@@ -1,6 +1,6 @@
 {
 	"name": "@catppuccin/docpuccin",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Fetch health files needed per project type",
 	"main": "index.js",
 	"type": "module",

@@ -134,7 +134,48 @@ $ npm start
 
 #### 🇨🇭 DocPuccin
 
-Fetch health files needed per project type
+Docpuccin is a small program that fetches health files needed per project type
+
+Usage:
+
+```bash
+$ npm install -g @catppuccin/docpuccin && docpuccin --help	# Install command
+$ npm uninstall -g @catppuccin/docpuccin	# Uninstall command
+```
+
+> Note: use `sudo` if needed
+
+Help info:
+
+```
+Usage:
+	#1: docpuccin <health_file_type> <file(s)>
+	#2: docpuccin <flags>
+
+Args:
+	<health_file_type>	Check the "Available health files" section
+	<file(s)>		Health files to be downloaded. They can be comma separated (e.g. npmrc,npmignore)
+
+Flags:
+	-h,--help		See this help message
+
+Exmaples:
+	#1: docpuccin npm npmignore
+	#2: docpuccin repo license
+	#3: docpuccin any makefile,editorconfig`
+```
+
+To see the available health files please download the tool and run it with the `--help` flag.
+
+Testing:
+
+```bash
+$ npm install	# fetch dependencies
+$ make link	# to link the binary locally
+$ make unlink	# to unlink the binary
+```
+
+> Note: use `sudo` if needed
 
 &nbsp;
 
