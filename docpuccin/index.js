@@ -49,7 +49,6 @@ Exmaples:
 	#2: docpuccin repo license
 	#3: docpuccin any makefile,editorconfig`
 
-
 function write(msg) {
     process.stdout.write(msg)
 }
@@ -104,16 +103,14 @@ if (!(argv[0] in HEALTH_FILES)) {
 if (argv[1] == undefined) {
 	for (let file in HEALTH_FILES[argv[0]]) {
 		fetch_file(truncate_filename(HEALTH_FILES[argv[0]][file]), HEALTH_FILES[argv[0]][file])
-		process.exit(0)
 	}
 } else {
 	let files = parse_args(argv[1])
 	for (let file in files) {
 		if (HEALTH_FILES[argv[0]][file] != undefined) {
 			fetch_file(truncate_filename(HEALTH_FILES[argv[0]][file]), HEALTH_FILES[argv[0]][file])
-			process.exit(0)
+		} else {
+			console.error(chalk.hex(variants["macchiato"]["red"]["hex"])("The health file '" + argv[1] + "' is not in the group '" + argv[0] + "'"))
 		}
 	}
-
 }
-abort("The health file '" + argv[1] + "' is not in the group '" + argv[0] + "'")
