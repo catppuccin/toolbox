@@ -97,7 +97,7 @@ if (argv[0] == undefined) {
 }
 
 if (!(argv[0] in HEALTH_FILES)) {
-	abort("The command '" + argv[0] + "' was not recognized!\nTry '--help'")
+	abort("'" + argv[0] + "' is not a valid group of health files!\nTry '--help'")
 }
 
 if (argv[1] == undefined) {
@@ -107,10 +107,10 @@ if (argv[1] == undefined) {
 } else {
 	let files = parse_args(argv[1])
 	for (let file in files) {
-		if (HEALTH_FILES[argv[0]][file] != undefined) {
-			fetch_file(truncate_filename(HEALTH_FILES[argv[0]][file]), HEALTH_FILES[argv[0]][file])
+		if (HEALTH_FILES[argv[0]][files[file]] != undefined) {
+			fetch_file(truncate_filename(HEALTH_FILES[argv[0]][files[file]]), HEALTH_FILES[argv[0]][files[file]])
 		} else {
-			console.error(chalk.hex(variants["macchiato"]["red"]["hex"])("The health file '" + argv[1] + "' is not in the group '" + argv[0] + "'"))
+			console.error(chalk.hex(variants["macchiato"]["red"]["hex"])("The health file '" + files[file] + "' is not in the group '" + argv[0] + "'"))
 		}
 	}
 }
