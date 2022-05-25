@@ -1,14 +1,14 @@
 {
-	"name": "@catppuccin/catppuccinifier",
+	"name": "@catppuccin/puccinier",
 	"version": "0.1.0",
-	"description": "Genearte the rest of the Catppuccin palettes off of a template file written in one of them",
+	"description": "Generate the rest of the Catppuccin palettes off of a template file written in one of them",
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
 		"start": "node index.js"
 	},
 	"bin": {
-		"catppuccinifier": "index.js"
+		"puccinier": "index.js"
 	},
 	"publishConfig": {
 		"access": "public"
@@ -26,5 +26,10 @@
 	"bugs": {
 		"url": "https://github.com/catppuccin/toolbox/issues"
 	},
-	"homepage": "https://github.com/catppuccin/toolbox#-catppuccinifier"
+	"homepage": "https://github.com/catppuccin/toolbox#-puccinier",
+	"dependencies": {
+		"@catppuccin/palette": "^0.1.2",
+		"chalk": "^5.0.1",
+		"replace": "^1.2.1"
+	}
 }
