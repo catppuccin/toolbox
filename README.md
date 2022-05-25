@@ -25,12 +25,13 @@
 
 ### 🪴 Index
 
-+ [Palette Builder](#-palette-builder)
-+ [Circular Thumbnails Generator](#-circular-thumbnails-generator)
-+ [InkCat](#-inkcat)
-+ [DocPuccin](#-docpuccin)
-+ [Contrast Test](#-contrast-test)
-+ [Meow](#-meow)
++ [👷 Palette Builder](#-palette-builder)
++ [🟠 Circular Thumbnails Generator](#-circular-thumbnails-generator)
++ [🖌️ InkCat](#-inkcat)
++ [🇨 DocPuccin](#-docpuccin)
++ [🖼️ Puccinier](#-puccinier)
++ [🌈 Contrast Test](#-contrast-test)
++ [😽 Meow](#-meow)
 
 &nbsp;
 
@@ -45,6 +46,7 @@ Export the colors of every Catppuccin flavour into various formats. Currently it
 Usage:
 
 ```bash
+$ git clone https://github.com/catppuccin/toolbox.git && cd toolbox
 $ npm install	# fetch dependencies
 $ npm start <format> <out_file>
 ```
@@ -159,9 +161,57 @@ To see the available health files please download the tool and run it with the `
 Testing:
 
 ```bash
+$ git clone https://github.com/catppuccin/toolbox.git && cd toolbox/docpuccin/
 $ npm install	# fetch dependencies
 $ make link	# to link the binary locally
 $ make unlink	# to unlink the binary
+```
+
+> Note: use `sudo` if needed
+
+&nbsp;
+
+#### 🖼️ Puccinier
+
+This is a small program that helps you generate the rest of the Catppuccin palettes off of a template file written in one of them.
+
+Help info:
+
+```
+Usage:
+	#1: ${PROGRAM}  <file(s)> <flags>
+
+Args:
+	<file(s)>\tFiles to be converted to other palettes. They can be comma separated (e.g. hello.txt,something.json)
+
+Flags:
+	-o,--out\tPalettes to export. One may specify many, just separete them with commas (e.g. --out frappe,latte)
+	-s,--source\tSpecify the source palette of the files (if none is given, it will be detected)
+	-v,--verbose\tEnables verbosity
+	-h,--help\tSee this help message
+
+Exmaples:
+	#1: ${PROGRAM} project.json --out frappe
+	#2: ${PROGRAM} --out latte,macchiato project.json,hello.txt,some_file
+	#3: ${PROGRAM} --source frappe --out mocha --verbose my_file.md`
+```
+
+Usage:
+
+```bash
+$ npm install -g @catppuccin/puccinier && puccinier --help	# Install command
+$ npm uninstall -g @catppuccin/puccinier	# Uninstall command
+```
+
+> Note: use `sudo` if needed
+
+Testing:
+
+```bash
+$ git clone https://github.com/catppuccin/toolbox.git && cd toolbox/puccinier/
+$ npm install	# fetch dependencies
+$ make link	# link the binary locally
+$ make unlink	# unlink the binary
 ```
 
 > Note: use `sudo` if needed
@@ -175,6 +225,7 @@ Test Catppuccin's flavours compliance with modern web contrast standards
 Usage:
 
 ```bash
+$ git clone https://github.com/catppuccin/toolbox.git && cd toolbox/contrast_test/
 $ npm install	# fetch dependencies
 $ npm start
 ```
