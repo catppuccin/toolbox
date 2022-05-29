@@ -53,14 +53,41 @@ switch (format) {
 			append("|                                                                         | Labels     | Hex       | RGB             | HSL             |\n")
 			append("| ----------------------------------------------------------------------- | ---------- | --------- | --------------- | --------------- |\n")
 			for (let label in labels) {
-				append(`| <img src="assets/palette/circles/.png" height="23" width="23"/> |`)
+				append(`| <img src="assets/palette/circles/${palette}_${label}.png" height="23" width="23"/> |`)
 				append(`${capitalize_first_letter(label)}` + "| ")
-				append(`\`${labels[label][palette]["hex"]} \`` + "| ")
-				append(`\`${labels[label][palette]["rgb"]} \`` + "| ")
-				append(`\`${labels[label][palette]["hsl"]} \`` + "| ")
+				append(`\`${labels[label][palette]["hex"]}\`` + "| ")
+				append(`\`${labels[label][palette]["rgb"]}\`` + "| ")
+				append(`\`${labels[label][palette]["hsl"]}\`` + "| ")
 				append("\n")
 			}
 			append("\n")
+		}
+		write_result()
+		break
+	case 'html':
+		for (let palette in variants) {
+			append(`<details>
+<summary>${capitalize_first_letter(palette)}</summary>
+<table>\n`)
+			append(`\t<tr>
+\t\t<th></th>
+\t\t<th>Labels</th>
+\t\t<th>Hex</th>
+\t\t<th>RGG</th>
+\t\t<th>HSL</th>
+\t</tr>\n`)
+
+			for (let label in labels) {
+				append(`\t<tr>
+\t\t<td><img src="assets/palette/circles/${palette}_${label}.png" height="23" width="23"/></td>
+\t\t<td>${capitalize_first_letter(label)}</td>
+\t\t<td><code>${labels[label][palette]["hex"]}</code></td>
+\t\t<td><code>${labels[label][palette]["rgb"]}</code></td>
+\t\t<td><code>${labels[label][palette]["hsl"]}</code></td>
+\t</tr>\n`)
+
+			}
+			append(`</table>\n</details>\n\n`)
 		}
 		write_result()
 		break

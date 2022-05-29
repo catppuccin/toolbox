@@ -3,7 +3,7 @@ import sys
 import json
 
 MASK = "circular_mask.png"
-OUT_DIR = "out/"
+OUT_DIR = "/home/pocco81/dev/catppuccin/catppuccin/assets/palette/circles/"
 show = False
 
 if len(sys.argv) > 1:
