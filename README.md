@@ -46,7 +46,8 @@ Export the colors of every Catppuccin flavour into various formats. Currently it
 Usage:
 
 ```bash
-$ git clone https://github.com/catppuccin/toolbox.git && cd toolbox
+$ git clone https://github.com/catppuccin/toolbox.git
+$ cd toolbox/palette_builder
 $ npm install	# fetch dependencies
 $ npm start <format> <out_file>
 ```
