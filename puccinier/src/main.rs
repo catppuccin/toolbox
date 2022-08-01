@@ -117,7 +117,8 @@ fn main() {
         let mut copy = line.clone();
 
         for item in &matches {
-            let lookup = match VARIANT_FROM_COLOR.get(&item.as_str().to_lowercase()) {
+            let mut replacement = item.as_str();
+            let lookup = match VARIANT_FROM_COLOR.get(&replacement.to_lowercase()) {
                 Some(keys) => keys.to_owned(),
                 None => {
                     continue;
@@ -129,16 +130,17 @@ fn main() {
                 let color_format = label.get(lookup[1]).unwrap();
                 let color_value = color_format.get(lookup[2]).unwrap();
 
-                copy = copy.replace(item.as_str(), color_value);
+                copy = copy.replace(replacement, color_value);
+                replacement = color_value;
             }
+        }
 
-            for writer in writers.iter_mut() {
-                if let Err(e) = writeln!(writer, "{}", copy) {
-                    cmd.clone()
-                        .error(ErrorKind::Io, format!("Failed to write line: {e}"))
-                        .print()
-                        .unwrap();
-                }
+        for writer in writers.iter_mut() {
+            if let Err(e) = writeln!(writer, "{}", copy) {
+                cmd.clone()
+                    .error(ErrorKind::Io, format!("Failed to write line: {e}"))
+                    .print()
+                    .unwrap();
             }
         }
     }
