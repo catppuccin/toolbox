@@ -15,7 +15,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         rust:
-          - stable
+          - nightly
 
     runs-on: ${{ matrix.os }}
 
@@ -74,7 +74,7 @@ jobs:
       matrix:
         os: [macos-latest]
         rust:
-          - stable
+          - nightly
 
     runs-on: ${{ matrix.os }}
 
@@ -126,7 +126,7 @@ jobs:
       matrix:
         os: [windows-latest]
         rust:
-          - stable
+          - nightly
 
     runs-on: ${{ matrix.os }}
 
