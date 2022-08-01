@@ -174,48 +174,34 @@ $ make unlink	# to unlink the binary
 
 #### 🖼️ Puccinier
 
-This is a small program that helps you generate the rest of the Catppuccin palettes off of a template file written in one of them.
+If you wrote a v1 or v2 Catppuccin theme, you may use Puccinier to automatically create the the rest of the v2 themes. Puccinier supports the conversion of properly formatted hex, rgb, and hsl colors (case insensitive).
 
-Help info:
-
+## Help info
 ```
-Usage:
-	#1: ${PROGRAM}  <file(s)> <flags>
+puccinier 0.1.0
+Catppuccin Org
+Generate the rest of the Catppuccin palettes off of a template file written in one of them
 
-Args:
-	<file(s)>\tFiles to be converted to other palettes. They can be comma separated (e.g. hello.txt,something.json)
+USAGE:
+    puccinier --source <FILE> --output <TYPES>...
 
-Flags:
-	-o,--out\tPalettes to export. One may specify many, just separete them with commas (e.g. --out frappe,latte)
-	-s,--source\tSpecify the source palette of the files (if none is given, it will be detected)
-	-v,--verbose\tEnables verbosity
-	-h,--help\tSee this help message
-
-Exmaples:
-	#1: ${PROGRAM} project.json --out frappe
-	#2: ${PROGRAM} --out latte,macchiato project.json,hello.txt,some_file
-	#3: ${PROGRAM} --source frappe --out mocha --verbose my_file.md`
+OPTIONS:
+    -h, --help                 Print help information
+    -o, --output <TYPES>...    Set the themes (space-separated) to generate from the source file
+                               [possible values: latte, frappe, macchiato, mocha]
+    -s, --source <FILE>        Set the source file to convert
+    -V, --version              Print version information
 ```
 
-Usage:
+## Usage
 
-```bash
-$ npm install -g @catppuccin/puccinier && puccinier --help	# Install command
-$ npm uninstall -g @catppuccin/puccinier	# Uninstall command
+You can find binaries built for `x86_64-unknown-linux-gnu`, `x86_64-apple-darwin`, and `x86_64-pc-windows-msvc` in the releases tab.
+
+To build from source, you must use [cargo](https://github.com/rust-lang/cargo/).
 ```
-
-> Note: use `sudo` if needed
-
-Testing:
-
-```bash
-$ git clone https://github.com/catppuccin/toolbox.git && cd toolbox/puccinier/
-$ npm install	# fetch dependencies
-$ make link	# link the binary locally
-$ make unlink	# unlink the binary
+git clone repository_url && cd puccinier
+cargo install --path .
 ```
-
-> Note: use `sudo` if needed
 
 &nbsp;
 
@@ -271,3 +257,4 @@ $ npm start
 <p align="center"><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/footers/gray0_ctp_on_line.svg?sanitize=true" /></p>
 <p align="center">Copyright &copy; 2021-present <a href="https://github.com/catppuccin" target="_blank">Catppuccin Org</a>
 <p align="center"><a href="https://github.com/catppuccin/catppuccin/blob/main/LICENSE"><img src="https://img.shields.io/static/v1.svg?style=for-the-badge&label=License&message=MIT&logoColor=d9e0ee&colorA=302d41&colorB=b7bdf8"/></a></p>
+

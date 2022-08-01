@@ -1,0 +1,229 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  ACTIONS_STEP_DEBUG: true
+  PROJECT_NAME: puccinier
+
+jobs:
+  linux:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        rust:
+          - stable
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust }}
+          override: true
+          profile: minimal
+
+      - name: Set up cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Set version output
+        id: version
+        run: echo "::set-output name=version::$(grep -m 1 -oP 'version = \K.*' Cargo.toml | xargs)"
+
+      - name: Build sources
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release
+
+      - name: Strip artifact
+        run: strip target/release/${{ env.PROJECT_NAME }}
+
+      - name: Run UPX
+        run: echo "Not supported on linux platform"
+
+      - name: Rename file
+        run: cp target/release/${{ env.PROJECT_NAME }} x86_64-unknown-linux-gnu
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: x86_64-unknown-linux-gnu
+          path: x86_64-unknown-linux-gnu
+
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
+  macos:
+    strategy:
+      matrix:
+        os: [macos-latest]
+        rust:
+          - stable
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust }}
+          override: true
+          profile: minimal
+
+      - name: Set up cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Build sources
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release
+
+      - name: Strip artifact
+        run: strip target/release/${{ env.PROJECT_NAME }}
+
+      - name: Run UPX
+        run: echo "Not supported on darwin platform"
+
+      - name: Rename file
+        run: cp target/release/${{ env.PROJECT_NAME }} x86_64-apple-darwin
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: x86_64-apple-darwin
+          path: x86_64-apple-darwin
+
+  windows:
+    strategy:
+      matrix:
+        os: [windows-latest]
+        rust:
+          - stable
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust }}
+          override: true
+          profile: minimal
+
+      - name: Set up cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Build sources
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release
+
+      - name: Strip artifact
+        run: strip target/release/${{ env.PROJECT_NAME }}.exe
+
+      - name: Run UPX
+        uses: crazy-max/ghaction-upx@v1
+        with:
+          version: latest
+          files: target/release/${{ env.PROJECT_NAME }}.exe
+          args: --brute
+
+      - name: Rename file
+        run: cp target/release/${{ env.PROJECT_NAME }}.exe x86_64-pc-windows-msvc.exe
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: x86_64-pc-windows-msvc
+          path: x86_64-pc-windows-msvc.exe
+
+  release:
+    needs: [linux, macos, windows]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Linux artifact
+        uses: actions/download-artifact@v2
+        id: linux
+        with:
+          name: x86_64-unknown-linux-gnu
+          path: artifacts
+
+      - name: Download macOS artifact
+        uses: actions/download-artifact@v2
+        id: macos
+        with:
+          name: x86_64-apple-darwin
+          path: artifacts
+
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v2
+        id: windows
+        with:
+          name: x86_64-pc-windows-msvc
+          path: artifacts
+
+      - name: Display downloaded artifacts
+        run: ls -R -l
+        working-directory: artifacts
+
+      - name: Generate checksum
+        uses: jmgilman/actions-generate-checksum@v1
+        with:
+          output: checksum.txt
+          patterns: artifacts/*
+
+      - name: Release with artifacts
+        uses: ncipollo/release-action@v1
+        with:
+          name: ${{ needs.linux.outputs.version }}
+          body: See `checksum.txt` for SHA 256 checksums.
+          tag: ${{ needs.linux.outputs.version}}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit: ${{ github.sha }}
+          artifacts: >-
+            checksum.txt,
+            ${{ steps.linux.outputs.download-path }}/x86_64-unknown-linux-gnu,
+            ${{ steps.macos.outputs.download-path }}/x86_64-apple-darwin,
+            ${{ steps.windows.outputs.download-path }}/x86_64-pc-windows-msvc.exe

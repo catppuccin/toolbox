@@ -1,0 +1,17 @@
+[package]
+name = "puccinier"
+version = "0.1.0"
+edition = "2021"
+readme = "README.md"
+authors = ["Catppuccin Org"]
+license = "MIT OR Apache-2.0"
+description = "Generate the rest of the Catppuccin palettes off of a template file written in one of them"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = { version = "3.2.15", features = ["cargo"] }
+serde = { version = "1.0.140", features = ["serde_derive"] }
+serde_json = "1.0.82"
+lazy_static = "1.4.0"
+regex = "1.6.0"
