@@ -114,21 +114,26 @@ fn main() {
             continue;
         }
 
-        for hex in &matches {
-            let lookup = match VARIANT_FROM_COLOR.get(&hex.as_str().to_lowercase()) {
+        let mut copy = line.clone();
+
+        for item in &matches {
+            let lookup = match VARIANT_FROM_COLOR.get(&item.as_str().to_lowercase()) {
                 Some(keys) => keys.to_owned(),
                 None => {
                     continue;
                 }
             };
 
-            for (i, theme) in output_themes.clone().enumerate() {
+            for theme in output_themes.clone() {
                 let label = COLOR_FROM_VARIANT.get(theme).unwrap();
                 let color_format = label.get(lookup[1]).unwrap();
                 let color_value = color_format.get(lookup[2]).unwrap();
 
-                if let Err(e) = writeln!(writers[i], "{}", line.replace(&hex.as_str(), color_value))
-                {
+                copy = copy.replace(item.as_str(), color_value);
+            }
+
+            for writer in writers.iter_mut() {
+                if let Err(e) = writeln!(writer, "{}", copy) {
                     cmd.clone()
                         .error(ErrorKind::Io, format!("Failed to write line: {e}"))
                         .print()
