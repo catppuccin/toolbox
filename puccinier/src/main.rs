@@ -93,29 +93,27 @@ fn main() {
             }
         };
 
-        let mut items = HEX
-            .find_iter(&line)
-            .chain(RGB.find_iter(&line))
-            .chain(HSL.find_iter(&line))
-            .filter_map(|item: Match| -> Option<([&String; 3], &str)> {
-                let replacement = item.as_str();
-
-                VARIANT_FROM_COLOR
-                    .get(&replacement.to_lowercase())
-                    .cloned()
-                    .zip(Some(replacement))
-            });
-
         for (i, theme) in output_themes.clone().enumerate() {
             let mut copy: String = line.clone();
 
-            for (lookup, replacement) in items.by_ref() {
-                let label: &Palette = COLOR_FROM_VARIANT.get(theme).unwrap();
-                let color_format: &Color = label.get(lookup[1]).unwrap();
-                let color_value: &String = color_format.get(lookup[2]).unwrap();
+            HEX.find_iter(&line)
+                .chain(RGB.find_iter(&line))
+                .chain(HSL.find_iter(&line))
+                .filter_map(|item: Match| -> Option<([&String; 3], &str)> {
+                    let replacement: &str = item.as_str();
 
-                copy = copy.replace(replacement, color_value);
-            }
+                    VARIANT_FROM_COLOR
+                        .get(&replacement.to_lowercase())
+                        .cloned()
+                        .zip(Some(replacement))
+                })
+                .for_each(|(lookup, replacement)| {
+                    let label: &Palette = COLOR_FROM_VARIANT.get(theme).unwrap();
+                    let color_format: &Color = label.get(lookup[1]).unwrap();
+                    let color_value: &String = color_format.get(lookup[2]).unwrap();
+
+                    copy = copy.replace(replacement, color_value);
+                });
 
             if let Err(e) = writeln!(writers[i], "{}", copy) {
                 cmd.clone()
