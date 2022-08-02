@@ -1,19 +1,17 @@
-#![feature(iter_collect_into)]
-
 mod palette;
 
 use clap::{
     arg, builder::PossibleValuesParser, command, parser::ValuesRef, value_parser, App, ArgMatches,
     ErrorKind,
 };
-use regex::Regex;
+use regex::{Match, Regex};
 use std::{
     fs::File,
     io::{BufRead, BufReader, BufWriter, Write},
     path::PathBuf,
 };
 
-use palette::{COLOR_FROM_VARIANT, VARIANT_FROM_COLOR};
+use palette::{Color, Palette, COLOR_FROM_VARIANT, VARIANT_FROM_COLOR};
 
 fn main() {
     let mut cmd: App = command!()
@@ -95,48 +93,31 @@ fn main() {
             }
         };
 
-        let mut matches = Vec::new();
+        let mut items = HEX
+            .find_iter(&line)
+            .chain(RGB.find_iter(&line))
+            .chain(HSL.find_iter(&line))
+            .filter_map(|item: Match| -> Option<([&String; 3], &str)> {
+                let replacement = item.as_str();
 
-        HEX.find_iter(&line).collect_into(&mut matches);
-        RGB.find_iter(&line).collect_into(&mut matches);
-        HSL.find_iter(&line).collect_into(&mut matches);
+                VARIANT_FROM_COLOR
+                    .get(&replacement.to_lowercase())
+                    .cloned()
+                    .zip(Some(replacement))
+            });
 
-        if matches.is_empty() {
-            for writer in writers.iter_mut() {
-                if let Err(e) = writeln!(writer, "{}", line) {
-                    cmd.clone()
-                        .error(ErrorKind::Io, format!("Failed to write line: {e}"))
-                        .print()
-                        .unwrap();
-                }
-            }
+        for (i, theme) in output_themes.clone().enumerate() {
+            let mut copy: String = line.clone();
 
-            continue;
-        }
-
-        let mut copy = line.clone();
-
-        for item in &matches {
-            let mut replacement = item.as_str();
-            let lookup = match VARIANT_FROM_COLOR.get(&replacement.to_lowercase()) {
-                Some(keys) => keys.to_owned(),
-                None => {
-                    continue;
-                }
-            };
-
-            for theme in output_themes.clone() {
-                let label = COLOR_FROM_VARIANT.get(theme).unwrap();
-                let color_format = label.get(lookup[1]).unwrap();
-                let color_value = color_format.get(lookup[2]).unwrap();
+            for (lookup, replacement) in items.by_ref() {
+                let label: &Palette = COLOR_FROM_VARIANT.get(theme).unwrap();
+                let color_format: &Color = label.get(lookup[1]).unwrap();
+                let color_value: &String = color_format.get(lookup[2]).unwrap();
 
                 copy = copy.replace(replacement, color_value);
-                replacement = color_value;
             }
-        }
 
-        for writer in writers.iter_mut() {
-            if let Err(e) = writeln!(writer, "{}", copy) {
+            if let Err(e) = writeln!(writers[i], "{}", copy) {
                 cmd.clone()
                     .error(ErrorKind::Io, format!("Failed to write line: {e}"))
                     .print()
