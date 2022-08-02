@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-type Color = HashMap<String, String>;
-type Palette = HashMap<String, Color>;
+pub type Color = HashMap<String, String>;
+pub type Palette = HashMap<String, Color>;
 
 lazy_static::lazy_static! {
     pub static ref COLOR_FROM_VARIANT: HashMap<String, Palette> = {
