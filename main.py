@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
+# vim:ft=python:fenc=utf-8:fdm=marker
 
 from PIL import Image, ImageOps, ImageDraw
 import argparse
 import os
 
+# argparse {{{
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "-p",
@@ -18,7 +20,7 @@ parser.add_argument(
     type=str,
 )
 parser.add_argument("-m", "--margin", help="Margin", type=int, default=40)
-parser.add_argument("-r", "--radius", help="Margin", type=int, default=50)
+parser.add_argument("-r", "--radius", help="Radius", type=int, default=50)
 parser.add_argument(
     "-o", "--output", help="Output file", type=str, default="out/res.png"
 )
@@ -27,30 +29,12 @@ parser.add_argument("frappe", help="Frappe screenshot")
 parser.add_argument("macchiato", help="Macchiato screenshot")
 parser.add_argument("mocha", help="Mocha screenshot")
 args = parser.parse_args()
-
-# parse the 4 screenshots into an array
-imgs = [args.latte, args.frappe, args.macchiato, args.mocha]
-
-w, h = Image.open(args.latte).size  # Get size
+# }}}
 
 # parse hex code into [r, g, b], stripping # if present
 def parse_hex(hex):
     hex = hex.lstrip("#")
     return int(hex[0:2], 16), int(hex[2:4], 16), int(hex[4:6], 16)
-
-
-masks = []
-slices = [
-    [0, 0, 0, h, w / 3, 0],
-    [0, h, w / 3, 0, (w / 3) * 2, 0, w / 3, h],
-    [w / 3, h, (w / 3) * 2, 0, w, 0, (w / 3) * 2, h],
-    [(w / 3) * 2, h, w, 0, w, h],
-]
-for slice in slices:
-    img = Image.new("L", (w, h), 0)
-    draw = ImageDraw.Draw(img)
-    draw.polygon(slice, fill=255)
-    masks.append(img)
 
 
 def gen_masked(source, mask):
@@ -70,27 +54,48 @@ def round_mask(image, radius=40):
     return image
 
 
-final = Image.new("RGBA", (w, h), (0, 0, 0))
-for i, arg in enumerate(imgs):
-    masked = gen_masked(arg, masks[i])
-    final.paste(masked, (0, 0), masked)
+if __name__ == "__main__":
+    # parse the 4 screenshots into an array
+    imgs = [args.latte, args.frappe, args.macchiato, args.mocha]
+    # input size shorthands
+    w, h = Image.open(args.latte).size
 
+    # create the diagonal masks
+    masks = []
+    slices = [
+        [0, 0, 0, h, w / 3, 0],
+        [0, h, w / 3, 0, (w / 3) * 2, 0, w / 3, h],
+        [w / 3, h, (w / 3) * 2, 0, w, 0, (w / 3) * 2, h],
+        [(w / 3) * 2, h, w, 0, w, h],
+    ]
+    for slice in slices:
+        img = Image.new("L", (w, h), 0)
+        draw = ImageDraw.Draw(img)
+        draw.polygon(slice, fill=255)
+        masks.append(img)
 
-if args.background:
-    m = args.margin
+    # make the composite image
+    final = Image.new("RGBA", (w, h), (0, 0, 0))
+    for i, arg in enumerate(imgs):
+        masked = gen_masked(arg, masks[i])
+        final.paste(masked, (0, 0), masked)
 
-    final = round_mask(final, args.radius)
+    # put it on a coloured background, if `--background` is passed
+    if args.background:
+        m = args.margin
 
-    bg = Image.new("RGB", (w + m, h + m), parse_hex(args.background))
-    bg.paste(final, (int(m / 2), int(m / 2)), final)
-    bg = round_mask(bg, args.radius)
+        final = round_mask(final, args.radius)
 
-    final = bg
+        bg = Image.new("RGB", (w + m, h + m), parse_hex(args.background))
+        bg.paste(final, (int(m / 2), int(m / 2)), final)
+        bg = round_mask(bg, args.radius)
 
-if args.preview:
-    final.show()
-else:
-    basedir = os.path.dirname(os.path.abspath(args.output))
-    if not os.path.exists(basedir):
-        os.makedirs(basedir)
-    final.save(args.output)
+        final = bg
+
+    if args.preview:
+        final.show()
+    else:
+        basedir = os.path.dirname(os.path.abspath(args.output))
+        if not os.path.exists(basedir):
+            os.makedirs(basedir)
+        final.save(args.output)
