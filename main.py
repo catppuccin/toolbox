@@ -18,6 +18,7 @@ parser.add_argument(
     type=str,
 )
 parser.add_argument("-m", "--margin", help="Margin", type=int, default=40)
+parser.add_argument("-r", "--radius", help="Margin", type=int, default=50)
 parser.add_argument(
     "-o", "--output", help="Output file", type=str, default="out/res.png"
 )
@@ -46,14 +47,13 @@ slices = [
     [(w / 3) * 2, h, w, 0, w, h],
 ]
 for slice in slices:
-    img = Image.new("RGB", (w, h), (0, 0, 0))
+    img = Image.new("L", (w, h), 0)
     draw = ImageDraw.Draw(img)
-    draw.polygon(slice, fill=(255, 255, 255))
+    draw.polygon(slice, fill=255)
     masks.append(img)
 
 
 def gen_masked(source, mask):
-    mask = mask.convert("L")
     img = Image.open(source)
 
     output = ImageOps.fit(img, mask.size, centering=(0.5, 0.5))
@@ -62,18 +62,12 @@ def gen_masked(source, mask):
     return output
 
 
-def round_corners(im, rad=15):
-    circle = Image.new("L", (rad * 2, rad * 2), 0)
-    draw = ImageDraw.Draw(circle)
-    draw.ellipse((0, 0, rad * 2, rad * 2), fill=255)
-    alpha = Image.new("L", im.size, "white")
-    w, h = im.size
-    alpha.paste(circle.crop((0, 0, rad, rad)), (0, 0))
-    alpha.paste(circle.crop((0, rad, rad, rad * 2)), (0, h - rad))
-    alpha.paste(circle.crop((rad, 0, rad * 2, rad)), (w - rad, 0))
-    alpha.paste(circle.crop((rad, rad, rad * 2, rad * 2)), (w - rad, h - rad))
-    im.putalpha(alpha)
-    return im
+def round_mask(image, radius=40):
+    rounded = Image.new("L", image.size, 0)
+    draw = ImageDraw.Draw(rounded)
+    draw.rounded_rectangle([(0, 0), image.size], radius, fill=255)
+    image.putalpha(rounded)
+    return image
 
 
 final = Image.new("RGBA", (w, h), (0, 0, 0))
@@ -84,8 +78,13 @@ for i, arg in enumerate(imgs):
 
 if args.background:
     m = args.margin
-    bg = Image.new("RGBA", (w + m, h + m), parse_hex(args.background))
-    bg.paste(round_corners(final), (int(m / 2), int(m / 2)), round_corners(final))
+
+    final = round_mask(final, args.radius)
+
+    bg = Image.new("RGB", (w + m, h + m), parse_hex(args.background))
+    bg.paste(final, (int(m / 2), int(m / 2)), final)
+    bg = round_mask(bg, args.radius)
+
     final = bg
 
 if args.preview:
