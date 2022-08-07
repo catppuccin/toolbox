@@ -27,10 +27,10 @@
 
 + [👷 Palette Builder](#-palette-builder)
 + [🟠 Circular Thumbnails Generator](#-circular-thumbnails-generator)
-+ [🖌️ InkCat](#-inkcat)
++ [🖌️ InkCat](#%EF%B8%8F-inkcat)
 + [🇨 DocPuccin](#-docpuccin)
-+ [🖼️ Puccinier](#-puccinier)
-+ [🎨Catwalk](#-catwalk)
++ [🖼️ Puccinier](#%EF%B8%8F-puccinier)
++ [🎨Catwalk](#catwalk)
 + [🌈 Contrast Test](#-contrast-test)
 + [😽 Meow](#-meow)
 
