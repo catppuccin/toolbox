@@ -37,6 +37,31 @@ def parse_hex(hex):
     return int(hex[0:2], 16), int(hex[2:4], 16), int(hex[4:6], 16)
 
 
+# generate anti-aliased slice masks
+def gen_masks(w, h):
+    # make note of the original size
+    output_size = (w, h)
+
+    # calculate the slices, 4x the original size for anti-aliasing
+    w = w * 4
+    h = h * 4
+    slices = [
+        [0, 0, 0, h, w / 3, 0],
+        [0, h, w / 3, 0, (w / 3) * 2, 0, w / 3, h],
+        [w / 3, h, (w / 3) * 2, 0, w, 0, (w / 3) * 2, h],
+        [(w / 3) * 2, h, w, 0, w, h],
+    ]
+    masks = []
+    for slice in slices:
+        img = Image.new("L", (w, h), 0)
+        draw = ImageDraw.Draw(img)
+        draw.polygon(slice, fill=255)
+        # scale down for the output, cheap anti-aliasing
+        img = img.resize(output_size, Image.Resampling.LANCZOS)
+        masks.append(img)
+    return masks
+
+
 def gen_masked(source, mask):
     img = Image.open(source)
 
@@ -47,9 +72,13 @@ def gen_masked(source, mask):
 
 
 def round_mask(image, radius=40):
-    rounded = Image.new("L", image.size, 0)
+    size = (w * 4, h * 4)
+    rounded = Image.new("L", size, 0)
     draw = ImageDraw.Draw(rounded)
-    draw.rounded_rectangle([(0, 0), image.size], radius, fill=255)
+    draw.rounded_rectangle([(0, 0), size], radius, fill=255)
+
+    # scale down for the output, cheap anti-aliasing
+    rounded = rounded.resize(image.size, Image.Resampling.LANCZOS)
     image.putalpha(rounded)
     return image
 
@@ -61,18 +90,7 @@ if __name__ == "__main__":
     w, h = Image.open(args.latte).size
 
     # create the diagonal masks
-    masks = []
-    slices = [
-        [0, 0, 0, h, w / 3, 0],
-        [0, h, w / 3, 0, (w / 3) * 2, 0, w / 3, h],
-        [w / 3, h, (w / 3) * 2, 0, w, 0, (w / 3) * 2, h],
-        [(w / 3) * 2, h, w, 0, w, h],
-    ]
-    for slice in slices:
-        img = Image.new("L", (w, h), 0)
-        draw = ImageDraw.Draw(img)
-        draw.polygon(slice, fill=255)
-        masks.append(img)
+    masks = gen_masks(w, h)
 
     # make the composite image
     final = Image.new("RGBA", (w, h), (0, 0, 0))
@@ -86,7 +104,7 @@ if __name__ == "__main__":
 
         final = round_mask(final, args.radius)
 
-        bg = Image.new("RGB", (w + m, h + m), parse_hex(args.background))
+        bg = Image.new("RGBA", (w + m, h + m), parse_hex(args.background))
         bg.paste(final, (int(m / 2), int(m / 2)), final)
         bg = round_mask(bg, args.radius)
 
