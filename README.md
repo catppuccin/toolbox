@@ -228,13 +228,15 @@ Usage:
 ```bash
 $ python3 -m pip install --upgrade pip
 $ python3 -m pip install --upgrade Pillow
-$ python3 main.py <images> <--show>
+$ python3 main.py <images> <--preview>
 ```
 
 Where:
 + `images`: 4 images to merge into one. REQUIRED.
-+ `--bg`: Takes in three RGB values and the margin(padding). Example: `180 190 254 300`, which uses lavender for the background with a margin of 300px.
-+ `--show`: is an optional parameter that displays the PNGs in your device's image previewing software instead saving them into an `out/` directory
++ `--background`: Places the composite image on a background colour of your choosing. Example: `--background "#89dceb"`
++ `--margin`: Defines the margin for the `--background` operation, defaults to 40px.
++ `--preview`: is an optional parameter, that previews the output with your image viewer, instead of saving them.
++ `--help`: A summary of the available parameters.
 
 &nbsp;
 
