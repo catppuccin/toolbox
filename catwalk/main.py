@@ -1,3 +1,5 @@
+#!/usr/bin/env ptython3
+
 from PIL import Image, ImageOps, ImageDraw
 import argparse
 import os
