@@ -3,12 +3,27 @@ import sys
 
 OUT_DIR = "out/"
 show = False
+backg = False
+bg = None
+m = 0
 
-if len(sys.argv) > 5:
-    show = True
-    sys.argv.pop(5)
+
 
 w, h = Image.open(sys.argv[1]).size # Get size
+
+while len(sys.argv) > 5:
+    if (sys.argv[5] == "--show"):
+        show = True
+        sys.argv.pop(5)
+    else:
+        backg = True
+        m = int(sys.argv.pop(9))
+        bg = Image.new('RGB', (w+m, h+m), (int(sys.argv[6]), int(sys.argv[7]), int(sys.argv[8])))
+        sys.argv.pop(8)
+        sys.argv.pop(7)
+        sys.argv.pop(6)
+        sys.argv.pop(5)
+
 m1b = Image.new('RGB', (w, h), (0, 0, 0))
 m2b = Image.new('RGB', (w, h), (0, 0, 0))
 m3b = Image.new('RGB', (w, h), (0, 0, 0))
@@ -50,5 +65,8 @@ final = res[0]
 for result in res[1:]:
     final.paste(result, (0,0), result)
 
+if backg:
+    bg.paste(final, (int(m/2), int(m/2)), final)
+    final = bg
 if show: final.show()
 else: final.save(OUT_DIR + 'res.png')

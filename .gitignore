@@ -103,5 +103,6 @@ dist
 # TernJS port file
 .tern-port
 
-# Test images
+# Catwalk 
 catwalk/test*.png
+catwalk/out/*.png
