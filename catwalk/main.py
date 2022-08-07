@@ -1,4 +1,5 @@
 from PIL import Image, ImageOps, ImageDraw
+import os
 import sys
 
 OUT_DIR = "out/"
@@ -24,24 +25,18 @@ while len(sys.argv) > 5:
         sys.argv.pop(6)
         sys.argv.pop(5)
 
-m1b = Image.new('RGB', (w, h), (0, 0, 0))
-m2b = Image.new('RGB', (w, h), (0, 0, 0))
-m3b = Image.new('RGB', (w, h), (0, 0, 0))
-m4b = Image.new('RGB', (w, h), (0, 0, 0))
-m1p = [0, 0, 0, h, w/3, 0]
-m2p = [0, h, w/3, 0, (w/3)*2, 0, w/3, h]
-m3p = [w/3, h, (w/3)*2, 0, w, 0, (w/3)*2, h]
-m4p = [(w/3)*2, h, w, 0, w, h]
-m1f = ImageDraw.Draw(m1b)
-m2f = ImageDraw.Draw(m2b)
-m3f = ImageDraw.Draw(m3b)
-m4f = ImageDraw.Draw(m4b)
-m1f.polygon(m1p, fill = (255, 255, 255))
-m2f.polygon(m2p, fill = (255, 255, 255))
-m3f.polygon(m3p, fill = (255, 255, 255))
-m4f.polygon(m4p, fill = (255, 255, 255))
-
-
+masks = []
+slices = [
+	[0, 0, 0, h, w/3, 0],
+	[0, h, w/3, 0, (w/3)*2, 0, w/3, h],
+	[w/3, h, (w/3)*2, 0, w, 0, (w/3)*2, h],
+	[(w/3)*2, h, w, 0, w, h]
+]
+for slice in slices:
+	img = Image.new('RGB', (w, h), (0, 0, 0))
+	draw = ImageDraw.Draw(img)
+	draw.polygon(slice, fill = (255, 255, 255))
+	masks.append(img)
 
 
 def gen_masked(source, mask):
@@ -53,6 +48,8 @@ def gen_masked(source, mask):
     output.putalpha(mask)
 
     return output
+
+
 def round_corners(im, rad=15):
     circle = Image.new('L', (rad * 2, rad * 2), 0)
     draw = ImageDraw.Draw(circle)
@@ -66,19 +63,19 @@ def round_corners(im, rad=15):
     im.putalpha(alpha)
     return im
 
-res = [
-    gen_masked(sys.argv[1], m1b),
-    gen_masked(sys.argv[2], m2b),
-    gen_masked(sys.argv[3], m3b), 
-    gen_masked(sys.argv[4], m4b), 
-]
 
-final = res[0]
-for result in res[1:]:
-    final.paste(result, (0,0), result)
+final = Image.new('RGB', (w, h), (0, 0, 0))
+for i, arg in enumerate(sys.argv[1:5]):
+	masked = gen_masked(arg, masks[i])
+	final.paste(masked, (0, 0), masked)
+
 
 if backg:
     bg.paste(round_corners(final), (int(m/2), int(m/2)), round_corners(final))
     final = bg
-if show: final.show()
-else: final.save(OUT_DIR + 'res.png')
+if show:
+	final.show()
+else:
+	if not os.path.exists(OUT_DIR):
+		os.makedirs(OUT_DIR)
+	final.save(OUT_DIR + 'res.png')
