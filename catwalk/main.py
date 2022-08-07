@@ -1,32 +1,40 @@
 from PIL import Image, ImageOps, ImageDraw
+import argparse
 import os
-import sys
 
-OUT_DIR = "out/"
-show = False
-backg = False
-bg = None
-m = 0
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "-p",
+    "--preview",
+    help="Preview the image (saves only as a temporary file)",
+    action="store_true",
+)
+parser.add_argument(
+    "-b",
+    "--background",
+    help="Draw on a solid background colour, specify the hex code",
+    type=str,
+)
+parser.add_argument("-m", "--margin", help="Margin", type=int, default=40)
+parser.add_argument(
+    "-o", "--output", help="Output file", type=str, default="out/res.png"
+)
+parser.add_argument("latte", help="Latte screenshot")
+parser.add_argument("frappe", help="Frappe screenshot")
+parser.add_argument("macchiato", help="Macchiato screenshot")
+parser.add_argument("mocha", help="Mocha screenshot")
+args = parser.parse_args()
 
+# parse the 4 screenshots into an array
+imgs = [args.latte, args.frappe, args.macchiato, args.mocha]
 
-w, h = Image.open(sys.argv[1]).size  # Get size
+w, h = Image.open(args.latte).size  # Get size
 
-while len(sys.argv) > 5:
-    if sys.argv[5] == "--show":
-        show = True
-        sys.argv.pop(5)
-    else:
-        backg = True
-        m = int(sys.argv.pop(9))
-        bg = Image.new(
-            "RGB",
-            (w + m, h + m),
-            (int(sys.argv[6]), int(sys.argv[7]), int(sys.argv[8])),
-        )
-        sys.argv.pop(8)
-        sys.argv.pop(7)
-        sys.argv.pop(6)
-        sys.argv.pop(5)
+# parse hex code into [r, g, b], stripping # if present
+def parse_hex(hex):
+    hex = hex.lstrip("#")
+    return int(hex[0:2], 16), int(hex[2:4], 16), int(hex[4:6], 16)
+
 
 masks = []
 slices = [
@@ -45,7 +53,6 @@ for slice in slices:
 def gen_masked(source, mask):
     mask = mask.convert("L")
     img = Image.open(source)
-    # im = Image.open('image.png')
 
     output = ImageOps.fit(img, mask.size, centering=(0.5, 0.5))
     output.putalpha(mask)
@@ -67,18 +74,22 @@ def round_corners(im, rad=15):
     return im
 
 
-final = Image.new("RGB", (w, h), (0, 0, 0))
-for i, arg in enumerate(sys.argv[1:5]):
+final = Image.new("RGBA", (w, h), (0, 0, 0))
+for i, arg in enumerate(imgs):
     masked = gen_masked(arg, masks[i])
     final.paste(masked, (0, 0), masked)
 
 
-if backg:
+if args.background:
+    m = args.margin
+    bg = Image.new("RGBA", (w + m, h + m), parse_hex(args.background))
     bg.paste(round_corners(final), (int(m / 2), int(m / 2)), round_corners(final))
     final = bg
-if show:
+
+if args.preview:
     final.show()
 else:
-    if not os.path.exists(OUT_DIR):
-        os.makedirs(OUT_DIR)
-    final.save(OUT_DIR + "res.png")
+    basedir = os.path.dirname(os.path.abspath(args.output))
+    if not os.path.exists(basedir):
+        os.makedirs(basedir)
+    final.save(args.output)
