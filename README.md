@@ -30,6 +30,7 @@
 + [🖌️ InkCat](#-inkcat)
 + [🇨 DocPuccin](#-docpuccin)
 + [🖼️ Puccinier](#-puccinier)
++ [🎨Catwalk](#-catwalk)
 + [🌈 Contrast Test](#-contrast-test)
 + [😽 Meow](#-meow)
 
@@ -229,6 +230,26 @@ $ git clone https://github.com/catppuccin/toolbox.git && cd toolbox/contrast_tes
 $ npm install	# fetch dependencies
 $ npm start
 ```
+
+&nbsp;
+
+#### 🎨Catwalk
+
+A little program that takes in four showcase images and displays them all at once.
+
+Usage:
+
+```bash
+$ python3 -m pip install --upgrade pip
+$ python3 -m pip install --upgrade Pillow
+$ python3 main.py <image files> <--show>
+```
+
+Where:
++ `<image files>` would be the paths to your image files, in the desired order(e.g. `mocha.png macchiato.png frappe.png latte.png`)
++ `<--show>` is an optional argument that displays the image instead of writing it to an `out/` directory
+
+An `out/` directory will need to be created, else the program may crash.
 
 &nbsp;
 
