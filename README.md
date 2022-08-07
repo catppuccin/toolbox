@@ -219,6 +219,25 @@ $ make unlink	# unlink the binary
 
 &nbsp;
 
+#### 🎨Catwalk
+
+Generate circular thumbnails of the palettes
+
+Usage:
+
+```bash
+$ python3 -m pip install --upgrade pip
+$ python3 -m pip install --upgrade Pillow
+$ python3 main.py <images> <--show>
+```
+
+Where:
++ `images`: 4 images to merge into one. REQUIRED.
++ `--bg`: Takes in three RGB values and the margin(padding). Example: `180 190 254 300`, which uses lavender for the background with a margin of 300px.
++ `--show`: is an optional parameter that displays the PNGs in your device's image previewing software instead saving them into an `out/` directory
+
+&nbsp;
+
 #### 🌈 Contrast Test
 
 Test Catppuccin's flavours compliance with modern web contrast standards
