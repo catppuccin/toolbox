@@ -21,6 +21,7 @@ parser.add_argument(
 )
 parser.add_argument("-m", "--margin", help="Margin", type=int, default=40)
 parser.add_argument("-r", "--radius", help="Radius", type=int, default=50)
+parser.add_argument("-u", "--outer", help="Outer Radius", type=int, default=None)
 parser.add_argument(
     "-o", "--output", help="Output file", type=str, default="out/res.png"
 )
@@ -29,6 +30,8 @@ parser.add_argument("frappe", help="Frappe screenshot")
 parser.add_argument("macchiato", help="Macchiato screenshot")
 parser.add_argument("mocha", help="Mocha screenshot")
 args = parser.parse_args()
+if args.outer is None:
+    args.outer = args.radius
 # }}}
 
 # parse hex code into [r, g, b], stripping # if present
@@ -43,10 +46,10 @@ def gen_masks(w, h):
     w = w * 4
     h = h * 4
     slices_aa = [
-        [0, 0, 0, h, w / 3, 0],
-        [0, h, w / 3, 0, (w / 3) * 2, 0, w / 3, h],
-        [w / 3, h, (w / 3) * 2, 0, w, 0, (w / 3) * 2, h],
-        [(w / 3) * 2, h, w, 0, w, h],
+        [0, 0, 0, h, w/8, h, (w/8)*3, 0],
+        [w/8, h, (w/8)*3, 0, (w/8)*5, 0, (w/8)*3, h],
+        [(w/8)*3, h, (w/8)*5, 0, (w/8)*7, 0, (w/8)*5, h],
+        [(w/8)*5, h, (w/8)*7, 0, w, 0, w, h],
     ]
     masks = []
     for slice in slices_aa:
@@ -118,7 +121,7 @@ if __name__ == "__main__":
 
         bg = Image.new("RGBA", (w + m, h + m), parse_hex(args.background))
         bg.paste(final, (int(m / 2), int(m / 2)), final)
-        bg = round_mask(bg, args.radius)
+        bg = round_mask(bg, args.outer)
 
         final = bg
 
