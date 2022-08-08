@@ -117,16 +117,15 @@ if __name__ == "__main__":
         final.paste(masked, (0, 0), masked)
 
     # put it on a coloured background, if `--background` is passed
-    if args.background:
-        m = args.margin
+    m = args.margin
 
-        final = round_mask(final, args.radius)
+    final = round_mask(final, args.radius)
 
-        bg = Image.new("RGBA", (w + m, h + m), parse_hex(args.background))
-        bg.paste(final, (int(m / 2), int(m / 2)), final)
-        bg = round_mask(bg, args.outer)
+    bg = Image.new("RGBA", (w + m, h + m), parse_hex(args.background))
+    bg.paste(final, (int(m / 2), int(m / 2)), final)
+    bg = round_mask(bg, args.outer)
 
-        final = bg
+    final = bg
 
     if args.preview:
         final.show()
