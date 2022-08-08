@@ -39,9 +39,6 @@ def parse_hex(hex):
 
 # generate anti-aliased slice masks
 def gen_masks(w, h):
-    # make note of the original size
-    output_size = (w, h)
-
     # calculate the slices, 4x the original size for anti-aliasing
     w = w * 4
     h = h * 4
