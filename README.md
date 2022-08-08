@@ -221,7 +221,7 @@ $ make unlink	# unlink the binary
 
 #### 🎨Catwalk
 
-A little program that takes in four showcase images and displays them all at once.
+A sweet program that takes in four showcase images and displays them all at once.
 
 Usage:
 
@@ -238,6 +238,7 @@ Where:
 + `--preview`: is an optional parameter, that previews the output with your image viewer, instead of saving them.
 + `--radius` can be used to set the corner radius for the window(and background).
 + `--outer` can be used to set the outer(background) radius. Defaults to the value of `--radius`.
++ `--rainbow` can be used to add a nice little rainbow background. Will override the `--background` setting.
 + `--help`: A summary of the available parameters.
 
 &nbsp;
