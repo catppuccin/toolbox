@@ -22,6 +22,7 @@ parser.add_argument(
 parser.add_argument("-m", "--margin", help="Margin", type=int, default=40)
 parser.add_argument("-r", "--radius", help="Radius", type=int, default=50)
 parser.add_argument("-u", "--outer", help="Outer Radius", type=int, default=None)
+parser.add_argument("-a", "--rainbow", help="Rainbow BG", type=bool, default=False)
 parser.add_argument(
     "-o", "--output", help="Output file", type=str, default="out/res.png"
 )
@@ -32,7 +33,7 @@ parser.add_argument("mocha", help="Mocha screenshot")
 args = parser.parse_args()
 if args.outer is None:
     args.outer = args.radius
-if not args.background:
+if not args.background and not args.rainbow:
     args.background = "#b4befe"
     args.margin = 0
 # }}}
@@ -66,6 +67,16 @@ def gen_masks(w, h):
     for index in range(1, 4):
         fmasks.append(gen_fmask(masks[0:(index)], w, h))
     return fmasks
+
+
+def gen_rainbow(w, h):
+    colors = ["#f38ba8", "#f9e2af", "#a6e3a1", "#89b4fa"]
+    final = Image.new("RGBA", (w, h), 0)
+    masks = gen_masks(w, h)
+    for i, color in enumerate(colors):
+        newimg = Image.new("RGBA", (w, h), parse_hex(color))
+        final.paste(newimg, (0, 0), masks[i])
+    return final
 
 
 def gen_masked(source, mask):
@@ -121,7 +132,10 @@ if __name__ == "__main__":
 
     final = round_mask(final, args.radius)
 
-    bg = Image.new("RGBA", (w + m, h + m), parse_hex(args.background))
+    if args.rainbow:
+        bg = gen_rainbow((w + m), (h + m))
+    else: 
+        bg = Image.new("RGBA", (w + m, h + m), parse_hex(args.background))
     bg = round_mask(bg, args.outer)
     bg.paste(final, (int(m / 2), int(m / 2)), final)
 
