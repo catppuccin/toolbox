@@ -49,10 +49,10 @@ def gen_masks(w, h):
     w = w * 4
     h = h * 4
     slices_aa = [
-        [0, 0, 0, h, w/8, h, (w/8)*3, 0],
-        [w/8, h, (w/8)*3, 0, (w/8)*5, 0, (w/8)*3, h],
-        [(w/8)*3, h, (w/8)*5, 0, (w/8)*7, 0, (w/8)*5, h],
-        [(w/8)*5, h, (w/8)*7, 0, w, 0, w, h],
+        [0, 0, 0, h, w / 8, h, (w / 8) * 3, 0],
+        [w / 8, h, (w / 8) * 3, 0, (w / 8) * 5, 0, (w / 8) * 3, h],
+        [(w / 8) * 3, h, (w / 8) * 5, 0, (w / 8) * 7, 0, (w / 8) * 5, h],
+        [(w / 8) * 5, h, (w / 8) * 7, 0, w, 0, w, h],
     ]
     masks = []
     for slice in slices_aa:
@@ -78,15 +78,15 @@ def gen_masked(source, mask):
 
 
 def anti_alias(img, output_size):
-    """ Cheap anti-aliasing. """
+    """Cheap anti-aliasing."""
     return img.resize(output_size, Image.Resampling.LANCZOS)
 
-def gen_fmask(masks, w, h):
-    img = Image.new("L", (w*4, h*4), 0)
-    for mask in masks:
-        img.paste(mask, (0,0), mask)
-    return anti_alias(ImageOps.invert(img), (w, h))
 
+def gen_fmask(masks, w, h):
+    img = Image.new("L", (w * 4, h * 4), 0)
+    for mask in masks:
+        img.paste(mask, (0, 0), mask)
+    return anti_alias(ImageOps.invert(img), (w, h))
 
 
 def round_mask(image, radius=40):
