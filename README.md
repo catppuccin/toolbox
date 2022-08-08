@@ -239,6 +239,7 @@ Where:
 + `--radius` can be used to set the corner radius for the window(and background).
 + `--outer` can be used to set the outer(background) radius. Defaults to the value of `--radius`.
 + `--rainbow` can be used to add a nice little rainbow background. Will override the `--background` setting.
++ `--shadow` takes in the number of iterations for a shadow. 200 will give a decent result, and 500 iterations will give you a very soft shadow. This will greatly increase processing time.
 + `--help`: A summary of the available parameters.
 
 &nbsp;
