@@ -122,8 +122,8 @@ if __name__ == "__main__":
     final = round_mask(final, args.radius)
 
     bg = Image.new("RGBA", (w + m, h + m), parse_hex(args.background))
-    bg.paste(final, (int(m / 2), int(m / 2)), final)
     bg = round_mask(bg, args.outer)
+    bg.paste(final, (int(m / 2), int(m / 2)), final)
 
     final = bg
 
