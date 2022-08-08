@@ -32,6 +32,9 @@ parser.add_argument("mocha", help="Mocha screenshot")
 args = parser.parse_args()
 if args.outer is None:
     args.outer = args.radius
+if not args.background:
+    args.background = "#b4befe"
+    args.margin = 0
 # }}}
 
 # parse hex code into [r, g, b], stripping # if present
