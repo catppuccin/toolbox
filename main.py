@@ -45,21 +45,24 @@ def gen_masks(w, h):
     # calculate the slices, 4x the original size for anti-aliasing
     w = w * 4
     h = h * 4
-    slices = [
+    slices_aa = [
         [0, 0, 0, h, w / 3, 0],
         [0, h, w / 3, 0, (w / 3) * 2, 0, w / 3, h],
         [w / 3, h, (w / 3) * 2, 0, w, 0, (w / 3) * 2, h],
         [(w / 3) * 2, h, w, 0, w, h],
     ]
     masks = []
-    for slice in slices:
+    for slice in slices_aa:
         img = Image.new("L", (w, h), 0)
         draw = ImageDraw.Draw(img)
         draw.polygon(slice, fill=255)
-        # scale down for the output, cheap anti-aliasing
-        img = img.resize(output_size, Image.Resampling.LANCZOS)
         masks.append(img)
-    return masks
+    w = int(w / 4)
+    h = int(h / 4)
+    fmasks = [Image.new("L", (w, h), 255)]
+    for index in range(1, 4):
+        fmasks.append(gen_fmask(masks[0:(index)], w, h))
+    return fmasks
 
 
 def gen_masked(source, mask):
@@ -69,6 +72,18 @@ def gen_masked(source, mask):
     output.putalpha(mask)
 
     return output
+
+
+def anti_alias(img, output_size):
+    """ Cheap anti-aliasing. """
+    return img.resize(output_size, Image.Resampling.LANCZOS)
+
+def gen_fmask(masks, w, h):
+    img = Image.new("L", (w*4, h*4), 0)
+    for mask in masks:
+        img.paste(mask, (0,0), mask)
+    return anti_alias(ImageOps.invert(img), (w, h))
+
 
 
 def round_mask(image, radius=40):
