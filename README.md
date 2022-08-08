@@ -30,7 +30,7 @@
 + [🖌️ InkCat](#%EF%B8%8F-inkcat)
 + [🇨 DocPuccin](#-docpuccin)
 + [🖼️ Puccinier](#%EF%B8%8F-puccinier)
-+ [🎨Catwalk](#catwalk)
++ [🎨 Catwalk](#catwalk)
 + [🌈 Contrast Test](#-contrast-test)
 + [😽 Meow](#-meow)
 
@@ -221,7 +221,7 @@ $ make unlink	# unlink the binary
 
 #### 🎨Catwalk
 
-Generate circular thumbnails of the palettes
+A little program that takes in four showcase images and displays them all at once.
 
 Usage:
 
@@ -253,26 +253,6 @@ $ git clone https://github.com/catppuccin/toolbox.git && cd toolbox/contrast_tes
 $ npm install	# fetch dependencies
 $ npm start
 ```
-
-&nbsp;
-
-#### 🎨Catwalk
-
-A little program that takes in four showcase images and displays them all at once.
-
-Usage:
-
-```bash
-$ python3 -m pip install --upgrade pip
-$ python3 -m pip install --upgrade Pillow
-$ python3 main.py <image files> <--show>
-```
-
-Where:
-+ `<image files>` would be the paths to your image files, in the desired order(e.g. `mocha.png macchiato.png frappe.png latte.png`)
-+ `<--show>` is an optional argument that displays the image instead of writing it to an `out/` directory
-
-An `out/` directory will need to be created, else the program may crash.
 
 &nbsp;
 
