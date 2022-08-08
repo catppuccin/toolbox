@@ -27,9 +27,10 @@
 
 + [👷 Palette Builder](#-palette-builder)
 + [🟠 Circular Thumbnails Generator](#-circular-thumbnails-generator)
-+ [🖌️ InkCat](#-inkcat)
++ [🖌️ InkCat](#%EF%B8%8F-inkcat)
 + [🇨 DocPuccin](#-docpuccin)
-+ [🖼️ Puccinier](#-puccinier)
++ [🖼️ Puccinier](#%EF%B8%8F-puccinier)
++ [🎨Catwalk](#catwalk)
 + [🌈 Contrast Test](#-contrast-test)
 + [😽 Meow](#-meow)
 
@@ -218,6 +219,29 @@ $ make unlink	# unlink the binary
 
 &nbsp;
 
+#### 🎨Catwalk
+
+Generate circular thumbnails of the palettes
+
+Usage:
+
+```bash
+$ python3 -m pip install --upgrade pip
+$ python3 -m pip install --upgrade Pillow
+$ python3 main.py <images> <--preview>
+```
+
+Where:
++ `images`: 4 images to merge into one. REQUIRED.
++ `--background`: Places the composite image on a background colour of your choosing. Example: `--background "#89dceb"`
++ `--margin`: Defines the margin for the `--background` operation, defaults to 40px.
++ `--preview`: is an optional parameter, that previews the output with your image viewer, instead of saving them.
++ `--radius` can be used to set the corner radius for the window(and background).
++ `--outer` can be used to set the outer(background) radius. Defaults to the value of `--radius`.
++ `--help`: A summary of the available parameters.
+
+&nbsp;
+
 #### 🌈 Contrast Test
 
 Test Catppuccin's flavours compliance with modern web contrast standards
@@ -229,6 +253,26 @@ $ git clone https://github.com/catppuccin/toolbox.git && cd toolbox/contrast_tes
 $ npm install	# fetch dependencies
 $ npm start
 ```
+
+&nbsp;
+
+#### 🎨Catwalk
+
+A little program that takes in four showcase images and displays them all at once.
+
+Usage:
+
+```bash
+$ python3 -m pip install --upgrade pip
+$ python3 -m pip install --upgrade Pillow
+$ python3 main.py <image files> <--show>
+```
+
+Where:
++ `<image files>` would be the paths to your image files, in the desired order(e.g. `mocha.png macchiato.png frappe.png latte.png`)
++ `<--show>` is an optional argument that displays the image instead of writing it to an `out/` directory
+
+An `out/` directory will need to be created, else the program may crash.
 
 &nbsp;
 
