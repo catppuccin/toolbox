@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # vim:ft=python:fenc=utf-8:fdm=marker
 
-from PIL import Image, ImageOps, ImageDraw
+from collections.abc import Iterable
+from PIL import Image, ImageOps, ImageDraw, ImageFilter
 import argparse
 import os
 
@@ -22,7 +23,8 @@ parser.add_argument(
 parser.add_argument("-m", "--margin", help="Margin", type=int, default=40)
 parser.add_argument("-r", "--radius", help="Radius", type=int, default=50)
 parser.add_argument("-u", "--outer", help="Outer Radius", type=int, default=None)
-parser.add_argument("-a", "--rainbow", help="Rainbow BG", type=bool, default=False)
+parser.add_argument("-a", "--rainbow", help="Rainbow BG", action="store_true")
+parser.add_argument("-s", "--shadow", help="Shadow", type=int)
 parser.add_argument(
     "-o", "--output", help="Output file", type=str, default="out/res.png"
 )
@@ -100,6 +102,18 @@ def gen_fmask(masks, w, h):
     return anti_alias(ImageOps.invert(img), (w, h))
 
 
+def shadow(w, h, offset=100, iterations=20):
+    bg = Image.new("RGBA", (w+offset, h+offset), (0, 0, 0, 0))
+    shade = Image.new("L", (w, h), 0) # Black shadow
+    bg.paste(shade, (int(offset/2), int(offset/2)))
+    n = 0
+    while n < iterations:
+        bg = bg.filter(ImageFilter.BLUR)
+        n += 1
+    return bg
+    
+
+
 def round_mask(image, radius=40):
     size = (w * 4, h * 4)
     rounded = Image.new("L", size, 0)
@@ -131,6 +145,10 @@ if __name__ == "__main__":
     m = args.margin
 
     final = round_mask(final, args.radius)
+    if args.shadow:
+        shade = shadow(w, h, iterations=args.shadow)
+        shade.paste(final, (25, 25), final)
+        final = shade
 
     if args.rainbow:
         bg = gen_rainbow((w + m), (h + m))
