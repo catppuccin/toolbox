@@ -236,6 +236,8 @@ Where:
 + `--background`: Places the composite image on a background colour of your choosing. Example: `--background "#89dceb"`
 + `--margin`: Defines the margin for the `--background` operation, defaults to 40px.
 + `--preview`: is an optional parameter, that previews the output with your image viewer, instead of saving them.
++ `--radius` can be used to set the corner radius for the window(and background).
++ `--outer` can be used to set the outer(background) radius. Defaults to the value of `--radius`.
 + `--help`: A summary of the available parameters.
 
 &nbsp;
