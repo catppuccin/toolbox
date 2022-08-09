@@ -88,9 +88,15 @@ def gen_rainbow(w, h):
 
 def gen_masked(source, mask):
     img = Image.open(source)
+    alpha_mask = mask.convert("RGBA")
+    alpha_mask.putalpha(mask)
 
     output = ImageOps.fit(img, mask.size, centering=(0.5, 0.5))
-    output.putalpha(mask)
+    out_bg = Image.new("RGBA", output.size, (0, 0, 0, 0))
+    out_bg.paste(output, mask=alpha_mask)
+    #output.putalpha(mask)
+    #Image.alpha_composite(output, alpha_mask)
+    output.show()
 
     return output
 
@@ -144,6 +150,7 @@ if __name__ == "__main__":
     for i, arg in enumerate(imgs):
         masked = gen_masked(arg, masks[i])
         final.paste(masked, (0, 0), masked)
+    final.show()
 
     # put it on a coloured background, if `--background` is passed
     m = args.margin
