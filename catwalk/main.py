@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 # vim:ft=python:fenc=utf-8:fdm=marker
 
-from collections.abc import Iterable
-from PIL import Image, ImageOps, ImageDraw, ImageFilter
+from PIL import Image, ImageOps, ImageDraw, ImageFilter, __version__ as PIL_VERSION
 import argparse
 import os
+
+# check for Pillow-SIMD
+if PIL_VERSION == "9.0.0.post1":
+    DS_METHOD = Image.ANTIALIAS
+else:
+    DS_METHOD = Image.Resampling.LANCZOS
 
 # argparse {{{
 parser = argparse.ArgumentParser()
@@ -92,7 +97,7 @@ def gen_masked(source, mask):
 
 def anti_alias(img, output_size):
     """Cheap anti-aliasing."""
-    return img.resize(output_size, Image.Resampling.LANCZOS)
+    return img.resize(output_size, DS_METHOD)
 
 
 def gen_fmask(masks, w, h):
@@ -103,15 +108,14 @@ def gen_fmask(masks, w, h):
 
 
 def shadow(w, h, offset=100, iterations=20):
-    bg = Image.new("RGBA", (w+offset, h+offset), (0, 0, 0, 0))
-    shade = Image.new("L", (w, h), 0) # Black shadow
-    bg.paste(shade, (int(offset/2), int(offset/2)))
+    bg = Image.new("RGBA", (w + offset, h + offset), (0, 0, 0, 0))
+    shade = Image.new("L", (w, h), 0)  # Black shadow
+    bg.paste(shade, (int(offset / 2), int(offset / 2)))
     n = 0
     while n < iterations:
         bg = bg.filter(ImageFilter.BLUR)
         n += 1
     return bg
-    
 
 
 def round_mask(image, radius=40):
@@ -121,7 +125,7 @@ def round_mask(image, radius=40):
     draw.rounded_rectangle([(0, 0), size], radius, fill=255)
 
     # scale down for the output, cheap anti-aliasing
-    rounded = rounded.resize(image.size, Image.Resampling.LANCZOS)
+    rounded = rounded.resize(image.size, DS_METHOD)
     image.putalpha(rounded)
     return image
 
@@ -152,7 +156,7 @@ if __name__ == "__main__":
 
     if args.rainbow:
         bg = gen_rainbow((w + m), (h + m))
-    else: 
+    else:
         bg = Image.new("RGBA", (w + m, h + m), parse_hex(args.background))
     bg = round_mask(bg, args.outer)
     bg.paste(final, (int(m / 2), int(m / 2)), final)
