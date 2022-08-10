@@ -9,7 +9,7 @@ import logging
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 # check for Pillow-SIMD
-if PIL_VERSION == "9.0.0.post1":
+if PIL_VERSION.startswith("9.0.0"):
     DS_METHOD = Image.ANTIALIAS
 else:
     DS_METHOD = Image.Resampling.LANCZOS
