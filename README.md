@@ -221,14 +221,14 @@ $ make unlink	# unlink the binary
 
 #### 🎨Catwalk
 
-A little program that takes in four showcase images and displays them all at once.
+A sweet program that takes in four showcase images and displays them all at once.
 
 Usage:
 
 ```bash
 $ python3 -m pip install --upgrade pip
-$ python3 -m pip install --upgrade Pillow
-$ python3 main.py <images> <--preview>
+$ python3 -m pip install --upgrade Pillow # you can use Pillow-SIMD on x86_64 systems
+$ python3 -m catwalk <images>
 ```
 
 Where:
@@ -238,6 +238,8 @@ Where:
 + `--preview`: is an optional parameter, that previews the output with your image viewer, instead of saving them.
 + `--radius` can be used to set the corner radius for the window(and background).
 + `--outer` can be used to set the outer(background) radius. Defaults to the value of `--radius`.
++ `--rainbow` can be used to add a nice little rainbow background. Will override the `--background` setting.
++ `--shadow` takes in the number of iterations for a shadow. 200 will give a decent result, and 500 iterations will give you a very soft shadow. This will greatly increase processing time.
 + `--help`: A summary of the available parameters.
 
 &nbsp;
