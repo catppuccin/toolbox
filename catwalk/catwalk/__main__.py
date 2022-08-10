@@ -187,7 +187,7 @@ if __name__ == "__main__":
                 logging.error(e)
                 exit(1)
         try:
-            final.save(args.output, None, compress_level=9)
+            final.save(args.output, None, compress_level=9, lossless=True)
             logging.info("Saved to %s" % args.output)
             exit(0)
         except IOError as e:
