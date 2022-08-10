@@ -226,9 +226,10 @@ A sweet program that takes in four showcase images and displays them all at once
 Usage:
 
 ```bash
-$ python3 -m pip install --upgrade pip
-$ python3 -m pip install --upgrade Pillow # you can use Pillow-SIMD on x86_64 systems
-$ python3 -m catwalk <images>
+$ python3 -m pip install --upgrade catppuccin_catwalk
+$ catwalk <images>
+# if `catwalk` doesn't work for you, please try:
+$ python3 -m catwalk
 ```
 
 Where:
