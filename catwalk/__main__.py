@@ -34,7 +34,7 @@ parser.add_argument("-u", "--outer", help="Outer Radius", type=int, default=None
 parser.add_argument("-a", "--rainbow", help="Rainbow BG", action="store_true")
 parser.add_argument("-s", "--shadow", help="Shadow", type=int)
 parser.add_argument(
-    "-o", "--output", help="Output file", type=str, default="out/res.png"
+    "-o", "--output", help="Output file", type=str, default="out/res.webp"
 )
 parser.add_argument("latte", help="Latte screenshot")
 parser.add_argument("frappe", help="Frappe screenshot")
@@ -181,5 +181,15 @@ if __name__ == "__main__":
     else:
         basedir = os.path.dirname(os.path.abspath(args.output))
         if not os.path.exists(basedir):
-            os.makedirs(basedir)
-        final.save(args.output, None, compress_level=9)
+            try:
+                os.makedirs(basedir)
+            except OSError as e:
+                logging.error(e)
+                exit(1)
+        try:
+            final.save(args.output, None, compress_level=9)
+            logging.info("Saved to %s" % args.output)
+            exit(0)
+        except IOError as e:
+            logging.error(e)
+            exit(1)
