@@ -119,6 +119,7 @@ def shadow(w, h, offset=100, iterations=20):
 
 
 def round_mask(image, radius=40):
+    w, h = image.size
     size = (w * 4, h * 4)
     rounded = Image.new("RGBA", size, 0)
     draw = ImageDraw.Draw(rounded)
@@ -131,8 +132,7 @@ def round_mask(image, radius=40):
     return img
 
 
-if __name__ == "__main__":
-
+def main():
     # parse the 4 screenshots into an array
     imgs = [args.latte, args.frappe, args.macchiato, args.mocha]
 
@@ -193,3 +193,7 @@ if __name__ == "__main__":
         except IOError as e:
             logging.error(e)
             exit(1)
+
+
+if __name__ == "__main__":
+    main()
