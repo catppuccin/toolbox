@@ -227,8 +227,8 @@ Usage:
 
 ```bash
 $ python3 -m pip install --upgrade pip
-$ python3 -m pip install --upgrade Pillow
-$ python3 main.py <images> <--preview>
+$ python3 -m pip install --upgrade Pillow # you can use Pillow-SIMD on x86_64 systems
+$ python3 -m catwalk <images>
 ```
 
 Where:
