@@ -4,6 +4,9 @@
 from PIL import Image, ImageOps, ImageDraw, ImageFilter, __version__ as PIL_VERSION
 import argparse
 import os
+import logging
+
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 # check for Pillow-SIMD
 if PIL_VERSION == "9.0.0.post1":
@@ -86,13 +89,10 @@ def gen_rainbow(w, h):
     return final
 
 
-def gen_masked(source, mask):
-    img = Image.open(source)
-
-    output = ImageOps.fit(img, mask.size, centering=(0.5, 0.5))
-    output.putalpha(mask)
-
-    return output
+def gen_masked(source, mask, final):
+    output = ImageOps.fit(source, mask.size, centering=(0.5, 0.5))
+    final.paste(output, (0, 0), mask)
+    return final
 
 
 def anti_alias(img, output_size):
@@ -120,29 +120,42 @@ def shadow(w, h, offset=100, iterations=20):
 
 def round_mask(image, radius=40):
     size = (w * 4, h * 4)
-    rounded = Image.new("L", size, 0)
+    rounded = Image.new("RGBA", size, 0)
     draw = ImageDraw.Draw(rounded)
-    draw.rounded_rectangle([(0, 0), size], radius, fill=255)
-
+    draw.rounded_rectangle(((0, 0), size), radius, fill=(255, 255, 255, 255))
     # scale down for the output, cheap anti-aliasing
     rounded = rounded.resize(image.size, DS_METHOD)
-    image.putalpha(rounded)
-    return image
+
+    img = Image.new("RGBA", image.size, (0, 0, 0, 0))
+    img.paste(image, (0, 0), rounded)
+    return img
 
 
 if __name__ == "__main__":
+
     # parse the 4 screenshots into an array
     imgs = [args.latte, args.frappe, args.macchiato, args.mocha]
-    # input size shorthands
-    w, h = Image.open(args.latte).size
+
+    try:
+        imgs = [Image.open(img) for img in imgs]
+    except IOError as e:
+        logging.error(e)
+        exit(1)
+
+    # check if all images are the same size
+    w, h = imgs[0].size
+    for img in imgs:
+        if img.size != (w, h):
+            logging.warning("Images are not the same size")
+            break
 
     # create the diagonal masks
     masks = gen_masks(w, h)
 
     # make the composite image
-    final = Image.new("RGBA", (w, h), (0, 0, 0))
-    for i, arg in enumerate(imgs):
-        masked = gen_masked(arg, masks[i])
+    final = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    for i, img in enumerate(imgs):
+        masked = gen_masked(img, masks[i], final)
         final.paste(masked, (0, 0), masked)
 
     # put it on a coloured background, if `--background` is passed
@@ -159,7 +172,7 @@ if __name__ == "__main__":
     else:
         bg = Image.new("RGBA", (w + m, h + m), parse_hex(args.background))
     bg = round_mask(bg, args.outer)
-    bg.paste(final, (int(m / 2), int(m / 2)), final)
+    bg.alpha_composite(final, (int(m / 2), int(m / 2)))
 
     final = bg
 
@@ -169,4 +182,4 @@ if __name__ == "__main__":
         basedir = os.path.dirname(os.path.abspath(args.output))
         if not os.path.exists(basedir):
             os.makedirs(basedir)
-        final.save(args.output)
+        final.save(args.output, None, compress_level=9)
