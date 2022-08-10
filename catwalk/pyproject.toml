@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "catppuccin_catwalk"
-version = "0.2.0"
+version = "0.2.1"
 description = "Part of catppuccin/toolbox, to generate preview a single composite screenshot for the four flavours"
 authors = ["Catppuccin Org <core@catppuccin.com>"]
 license = "MIT"
@@ -13,7 +13,7 @@ packages = [
 catwalk = "catwalk:cli"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 Pillow = { version = "^9.2.0", markers = "platform_machine != 'x86_64'"}
 Pillow-SIMD = { version = "^9.0.0", markers = "platform_machine == 'x86_64'"}
 
