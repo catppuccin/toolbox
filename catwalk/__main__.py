@@ -157,7 +157,6 @@ if __name__ == "__main__":
     for i, img in enumerate(imgs):
         masked = gen_masked(img, masks[i], final)
         final.paste(masked, (0, 0), masked)
-    final.show()
 
     # put it on a coloured background, if `--background` is passed
     m = args.margin
