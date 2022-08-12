@@ -226,22 +226,23 @@ A sweet program that takes in four showcase images and displays them all at once
 Usage:
 
 ```bash
-$ python3 -m pip install --upgrade catppuccin_catwalk
+$ python3 -m pip install --upgrade catppuccin-catwalk
 $ catwalk <images>
 # if `catwalk` doesn't work for you, please try:
 $ python3 -m catwalk
 ```
 
-Where:
-+ `images`: 4 images to merge into one. REQUIRED.
-+ `--background`: Places the composite image on a background colour of your choosing. Example: `--background "#89dceb"`
-+ `--margin`: Defines the margin for the `--background` operation, defaults to 40px.
-+ `--preview`: is an optional parameter, that previews the output with your image viewer, instead of saving them.
-+ `--radius` can be used to set the corner radius for the window(and background).
-+ `--outer` can be used to set the outer(background) radius. Defaults to the value of `--radius`.
-+ `--rainbow` can be used to add a nice little rainbow background. Will override the `--background` setting.
-+ `--shadow` takes in the number of iterations for a shadow. 200 will give a decent result, and 500 iterations will give you a very soft shadow. This will greatly increase processing time.
-+ `--help`: A summary of the available parameters.
+| Parameter      | Description                                                                                                                |
+|----------------|----------------------------------------------------------------------------------------------------------------------------|
+| `images`       | 4 images to merge into one. **REQUIRED**. All other parameters are optional.                                                  |
+| `--background` | Places the screenshot on a background colour of your choosing. Provide a hex value like "#89dceb".                         |
+| `--margin`     | Defines the margin around the screenshot. Defaults to 40px.                                                                |
+| `--radius`     | Sets the corner radius for the window. Defaults to 50px.                                                                   |
+| `--outer`      | Set the radius for the background image. Defaults to the value of `--radius`.                                              |
+| `--shadow`     | Enables a drop shadow behind the screenshot, and sets and the strength of the blur. Defaults to 12, if no value is passed. |
+| `--rainbow`    | Adds a rainbow background. Will override the `--background` setting.                                                       |
+| `--preview`    | Previews the output with your image viewer, instead of saving it.                                                          |
+| `--help`       | A summary of the available parameters.                                                                                     |
 
 &nbsp;
 
