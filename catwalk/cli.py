@@ -17,7 +17,7 @@ else:
 
 # argparse {{{
 parser = argparse.ArgumentParser()
-parser.format_help()
+
 parser.add_argument(
     "-p",
     "--preview",
@@ -27,19 +27,54 @@ parser.add_argument(
 parser.add_argument(
     "-b",
     "--background",
-    help="Draw on a solid background colour, specify the hex code",
+    help="Draw on a solid background colour. Specify the hex code of the colour.",
     type=str,
 )
-parser.add_argument("-m", "--margin", help="Margin", type=int, const=40, nargs="?")
-parser.add_argument("-r", "--radius", help="Radius", type=int, default=50)
-parser.add_argument("-u", "--outer", help="Outer Radius", type=int, default=None)
-parser.add_argument("-a", "--rainbow", help="Rainbow BG", action="store_true")
-parser.add_argument("-s", "--shadow", help="Shadow", type=int, const=200, nargs="?")
 parser.add_argument(
-    "-o", "--output", help="Output file", type=str, default="out/res.webp"
+    "-m",
+    "--margin",
+    help="Margin around the screenshot (in pixels). Default: %(default)s",
+    type=int,
+    default=40,
+)
+parser.add_argument(
+    "-r",
+    "--radius",
+    help="Radius of the rounded corners of the screenshot. Default: %(default)s",
+    type=int,
+    default=50,
+)
+parser.add_argument(
+    "-u",
+    "--outer",
+    help="Radius of the background image. Default: Equal to `--radius`.",
+    type=int,
+    default=None,
+)
+parser.add_argument(
+    "-a", "--rainbow", help="Generate a Rainbow background.", action="store_true"
+)
+parser.add_argument(
+    "-s",
+    "--shadow",
+    help="""
+    Make the screenshot cast a drop shadow.
+    You can optionally specify the strength of the blur.
+    Default: %(const)s
+    """,
+    type=int,
+    const=12,
+    nargs="?",
+)
+parser.add_argument(
+    "-o",
+    "--output",
+    help="Output file. Default: %(default)s",
+    type=str,
+    default="out/res.webp",
 )
 parser.add_argument("latte", help="Latte screenshot")
-parser.add_argument("frappe", help="Frappe screenshot")
+parser.add_argument("frappe", help="Frappé screenshot")
 parser.add_argument("macchiato", help="Macchiato screenshot")
 parser.add_argument("mocha", help="Mocha screenshot")
 args = parser.parse_args()
@@ -85,8 +120,8 @@ def gen_rainbow(size: (int, int)) -> Image.Image:
     final = Image.new("RGBA", size, 0)
     masks = gen_masks(size)
     for i, color in enumerate(colors):
-        newimg = Image.new("RGBA", size, parse_hex(color))
-        final.paste(newimg, (0, 0), masks[i])
+        new_img = Image.new("RGBA", size, parse_hex(color))
+        final.paste(new_img, (0, 0), masks[i])
     return final
 
 
@@ -105,7 +140,7 @@ def gen_masked(source: Image.Image, mask: Image.Image, final: Image.Image) -> Im
     return final
 
 
-def gen_composite_image(imgs: List[Image.Image], radius: int = 40) -> Image.Image:
+def gen_composite_image(imgs: List[Image.Image], radius: int) -> Image.Image:
     """Generate a composite image."""
     # find the largest image
     max_w = max([img.width for img in imgs])
@@ -139,14 +174,15 @@ def gen_composite_mask(
 
     for mask in masks:
         img.paste(mask, (0, 0), mask)
-    return anti_alias(ImageOps.invert(img), size)
+
+    img = ImageOps.invert(img)
+    return img.resize(size, DS_METHOD)
 
 
-def gen_shadow(img, strength: int = 12, opacity: float = 0.3):
+def gen_shadow(img, strength: int, opacity: float = 0.3):
     """Generate a shadow effect."""
     caster = Image.new("RGB", img.size, color="black")
     caster.putalpha(img.getchannel("A"))
-    print(caster.size)
 
     padded_size = (round(img.width * 1.2), round(img.height * 1.2))
     bg = Image.new("RGBA", img.size, (0, 0, 0, 0))
@@ -166,7 +202,7 @@ def gen_shadow(img, strength: int = 12, opacity: float = 0.3):
     return bg
 
 
-def round_mask(image, radius):
+def round_mask(image: Image.Image, radius: int) -> Image.Image:
     w, h = image.size
     size = (w * 4, h * 4)
     rounded = Image.new("RGBA", size, 0)
@@ -197,9 +233,7 @@ def main():
             logging.warning("Images are not the same size")
             break
 
-    print(w, h)
-
-    composite = gen_composite_image(imgs, args.outer)
+    composite = gen_composite_image(imgs, args.radius)
 
     # put it on a coloured background, if `--background` is passed
     m = args.margin if args.margin else 0
