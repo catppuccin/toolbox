@@ -1,11 +1,10 @@
-from typing import List
-from PIL import Image, ImageOps, ImageDraw, ImageFilter, __version__ as pil_version
+# vim:ft=python:fenc=utf-8:fdm=marker
 
-# check for Pillow-SIMD
-if pil_version.startswith("9.0.0"):
-    DS_METHOD = Image.ANTIALIAS
-else:
-    DS_METHOD = Image.Resampling.LANCZOS
+from typing import List
+
+from PIL import Image, ImageDraw, ImageFilter, ImageOps
+
+DS_METHOD = Image.LANCZOS
 
 
 # generate anti-aliased slice masks
