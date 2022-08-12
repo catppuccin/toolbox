@@ -2,8 +2,9 @@
 # vim:ft=python:fenc=utf-8:fdm=marker
 
 import argparse
-import os
 import logging
+import os
+
 from PIL import Image
 
 from catwalk.utils import (
