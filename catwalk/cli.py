@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # vim:ft=python:fenc=utf-8:fdm=marker
+from typing import List
 
 from PIL import Image, ImageOps, ImageDraw, ImageFilter, __version__ as PIL_VERSION
 import argparse
@@ -16,6 +17,7 @@ else:
 
 # argparse {{{
 parser = argparse.ArgumentParser()
+parser.format_help()
 parser.add_argument(
     "-p",
     "--preview",
@@ -28,11 +30,11 @@ parser.add_argument(
     help="Draw on a solid background colour, specify the hex code",
     type=str,
 )
-parser.add_argument("-m", "--margin", help="Margin", type=int, default=40)
+parser.add_argument("-m", "--margin", help="Margin", type=int, const=40, nargs="?")
 parser.add_argument("-r", "--radius", help="Radius", type=int, default=50)
 parser.add_argument("-u", "--outer", help="Outer Radius", type=int, default=None)
 parser.add_argument("-a", "--rainbow", help="Rainbow BG", action="store_true")
-parser.add_argument("-s", "--shadow", help="Shadow", type=int)
+parser.add_argument("-s", "--shadow", help="Shadow", type=int, const=200, nargs="?")
 parser.add_argument(
     "-o", "--output", help="Output file", type=str, default="out/res.webp"
 )
@@ -43,82 +45,128 @@ parser.add_argument("mocha", help="Mocha screenshot")
 args = parser.parse_args()
 if args.outer is None:
     args.outer = args.radius
-if not args.background and not args.rainbow:
-    args.background = "#b4befe"
-    args.margin = 0
 # }}}
 
+
 # parse hex code into [r, g, b], stripping # if present
-def parse_hex(hex):
-    hex = hex.lstrip("#")
-    return int(hex[0:2], 16), int(hex[2:4], 16), int(hex[4:6], 16)
+def parse_hex(code: str) -> (int, int, int):
+    code = code.lstrip("#")
+    return int(code[0:2], 16), int(code[2:4], 16), int(code[4:6], 16)
 
 
 # generate anti-aliased slice masks
-def gen_masks(w, h):
+def gen_masks(size: (int, int)):
     # calculate the slices, 4x the original size for anti-aliasing
-    w = w * 4
-    h = h * 4
-    slices_aa = [
+    w = size[0] * 4
+    h = size[1] * 4
+    slices = [
         [0, 0, 0, h, w / 8, h, (w / 8) * 3, 0],
         [w / 8, h, (w / 8) * 3, 0, (w / 8) * 5, 0, (w / 8) * 3, h],
         [(w / 8) * 3, h, (w / 8) * 5, 0, (w / 8) * 7, 0, (w / 8) * 5, h],
         [(w / 8) * 5, h, (w / 8) * 7, 0, w, 0, w, h],
     ]
+
     masks = []
-    for slice in slices_aa:
+    for s in slices:
         img = Image.new("L", (w, h), 0)
         draw = ImageDraw.Draw(img)
-        draw.polygon(slice, fill=255)
+        draw.polygon(s, fill=255)
         masks.append(img)
     w = int(w / 4)
     h = int(h / 4)
     fmasks = [Image.new("L", (w, h), 255)]
     for index in range(1, 4):
-        fmasks.append(gen_fmask(masks[0:(index)], w, h))
+        fmasks.append(gen_composite_mask(masks[0:index], (w, h)))
     return fmasks
 
 
-def gen_rainbow(w, h):
+def gen_rainbow(size: (int, int)) -> Image.Image:
     colors = ["#f38ba8", "#f9e2af", "#a6e3a1", "#89b4fa"]
-    final = Image.new("RGBA", (w, h), 0)
-    masks = gen_masks(w, h)
+    final = Image.new("RGBA", size, 0)
+    masks = gen_masks(size)
     for i, color in enumerate(colors):
-        newimg = Image.new("RGBA", (w, h), parse_hex(color))
+        newimg = Image.new("RGBA", size, parse_hex(color))
         final.paste(newimg, (0, 0), masks[i])
     return final
 
 
-def gen_masked(source, mask, final):
+def alpha_fit(
+    img1: Image.Image, img2: Image.Image, offset: tuple[int, int] = (0, 0)
+) -> Image.Image:
+    dest = ((img1.width // 2 - img2.width // 2), (img1.height // 2 - img2.height // 2))
+    dest = (dest[0] + offset[0], dest[1] + offset[1])
+    img1.alpha_composite(img2, dest)
+    return img1
+
+
+def gen_masked(source: Image.Image, mask: Image.Image, final: Image.Image) -> Image:
     output = ImageOps.fit(source, mask.size, centering=(0.5, 0.5))
     final.paste(output, (0, 0), mask)
     return final
 
 
-def anti_alias(img, output_size):
+def gen_composite_image(imgs: List[Image.Image], radius: int = 40) -> Image.Image:
+    """Generate a composite image."""
+    # find the largest image
+    max_w = max([img.width for img in imgs])
+    max_h = max([img.height for img in imgs])
+    # create the diagonal masks
+    masks = gen_masks((max_w, max_h))
+
+    # make the composite image
+    final = Image.new("RGBA", (max_w, max_h), (0, 0, 0, 0))
+    for i, img in enumerate(imgs):
+        masked = gen_masked(img, masks[i], final)
+        final.paste(masked, (0, 0), masked)
+
+    if radius:
+        final = round_mask(final, radius)
+
+    return final
+
+
+def anti_alias(img: Image.Image, output_size: (int, int)) -> Image.Image:
     """Cheap anti-aliasing."""
     return img.resize(output_size, DS_METHOD)
 
 
-def gen_fmask(masks, w, h):
-    img = Image.new("L", (w * 4, h * 4), 0)
+def gen_composite_mask(
+    masks: List[Image.Image], size: (int, int), aa_factor: int = 4
+) -> Image.Image:
+    w = size[0] * aa_factor
+    h = size[1] * aa_factor
+    img = Image.new("L", (w, h), 0)
+
     for mask in masks:
         img.paste(mask, (0, 0), mask)
-    return anti_alias(ImageOps.invert(img), (w, h))
+    return anti_alias(ImageOps.invert(img), size)
 
 
-def shadow(w, h, offset=100, iterations=20):
-    bg = Image.new("RGBA", (w + offset, h + offset), (0, 0, 0, 0))
-    shade = Image.new("L", (w, h), 0)  # Black shadow
-    bg.paste(shade, (int(offset / 2), int(offset / 2)))
-    n = 0
-    while n < iterations:
-        bg = bg.filter(ImageFilter.BLUR)
-        n += 1
+def gen_shadow(img, strength: int = 12, opacity: float = 0.3):
+    """Generate a shadow effect."""
+    caster = Image.new("RGB", img.size, color="black")
+    caster.putalpha(img.getchannel("A"))
+    print(caster.size)
+
+    padded_size = (round(img.width * 1.2), round(img.height * 1.2))
+    bg = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    bg.alpha_composite(caster)
+
+    # create an image that is a bit larger than the original, to fit the shadow
+    padded = Image.new("RGBA", padded_size, (0, 0, 0, 0))
+    center_offset = (
+        int(padded_size[0] / 2 - img.width / 2),
+        int(padded_size[1] / 2 - img.height / 2),
+    )
+    padded.alpha_composite(bg, center_offset)
+    bg = padded.filter(ImageFilter.GaussianBlur(strength))
+
+    # set the opacity
+    bg.putalpha(Image.eval(bg.split()[3], lambda x: x * opacity))
     return bg
 
 
-def round_mask(image, radius=40):
+def round_mask(image, radius):
     w, h = image.size
     size = (w * 4, h * 4)
     rounded = Image.new("RGBA", size, 0)
@@ -137,7 +185,7 @@ def main():
     imgs = [args.latte, args.frappe, args.macchiato, args.mocha]
 
     try:
-        imgs = [Image.open(img) for img in imgs]
+        imgs = [Image.open(img).convert("RGBA") for img in imgs]
     except IOError as e:
         logging.error(e)
         exit(1)
@@ -149,35 +197,30 @@ def main():
             logging.warning("Images are not the same size")
             break
 
-    # create the diagonal masks
-    masks = gen_masks(w, h)
+    print(w, h)
 
-    # make the composite image
-    final = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    for i, img in enumerate(imgs):
-        masked = gen_masked(img, masks[i], final)
-        final.paste(masked, (0, 0), masked)
+    composite = gen_composite_image(imgs, args.outer)
 
     # put it on a coloured background, if `--background` is passed
-    m = args.margin
-
-    final = round_mask(final, args.radius)
-    if args.shadow:
-        shade = shadow(w, h, iterations=args.shadow)
-        shade.paste(final, (25, 25), final)
-        final = shade
-
+    m = args.margin if args.margin else 0
     if args.rainbow:
-        bg = gen_rainbow((w + m), (h + m))
+        bg = gen_rainbow(((w + m), (h + m)))
     else:
-        bg = Image.new("RGBA", (w + m, h + m), parse_hex(args.background))
-    bg = round_mask(bg, args.outer)
-    bg.alpha_composite(final, (int(m / 2), int(m / 2)))
+        bg_colour = parse_hex(args.background) if args.background else (0, 0, 0, 0)
+        bg = Image.new("RGBA", (w + m, h + m), bg_colour)
 
-    final = bg
+    # round the outer corners
+    bg = round_mask(bg, args.outer)
+
+    # create a drop shadow if `--shadow` is passed
+    if args.shadow:
+        drop_shadow = gen_shadow(composite, strength=args.shadow)
+        bg = alpha_fit(bg, drop_shadow, (20, 20))
+
+    output = alpha_fit(bg, composite)
 
     if args.preview:
-        final.show()
+        output.show()
     else:
         basedir = os.path.dirname(os.path.abspath(args.output))
         if not os.path.exists(basedir):
@@ -187,7 +230,7 @@ def main():
                 logging.error(e)
                 exit(1)
         try:
-            final.save(args.output, None, compress_level=9, lossless=True)
+            output.save(args.output, None, compress_level=9, lossless=True)
             logging.info("Saved to %s" % args.output)
             exit(0)
         except IOError as e:
