@@ -4,6 +4,7 @@
 import argparse
 import logging
 import os
+import re
 
 from PIL import Image
 
@@ -110,6 +111,9 @@ def main():
         bg = gen_rainbow(((w + m), (h + m)))
     else:
         bg_colour = args.background or "#00000000"
+        if not re.match(r"^#[0-9a-fA-F]{6,8}$", bg_colour):
+            logging.error("Invalid background colour. Expected: #RRGGBB or #RRGGBBAA.")
+            exit(1)
         bg = Image.new("RGBA", (w + m, h + m), bg_colour)
 
     # round the outer corners
