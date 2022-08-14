@@ -4,9 +4,9 @@ If you wrote a v1 or v2 Catppuccin theme, you may use Puccinier to automatically
 
 ## Help info
 
-```
+```bash
 puccinier 0.1.2
-Catppuccin Org
+ap-1 <anishp0828@gmail.com>
 Generate the rest of the Catppuccin palettes off of a template file written in one of them
 
 USAGE:
@@ -22,11 +22,15 @@ OPTIONS:
 
 ## Usage
 
-You can find binaries built for `x86_64-unknown-linux-gnu`, `x86_64-apple-darwin`, and `x86_64-pc-windows-msvc` in the releases tab.
-
-To build from source, you must use [cargo](https://github.com/rust-lang/cargo/).
+You can find binaries built for `x86_64-unknown-linux-gnu`, `x86_64-apple-darwin`, and `x86_64-pc-windows-msvc` in the releases tab. Alternatively, you can use [cargo](https://github.com/rust-lang/cargo/):
 
 ```bash
-$ git clone https://github.com/ap-1/puccinier && cd puccinier
-$ cargo install --path .
+cargo install puccinier
+```
+
+To build from source, you must use cargo:
+
+```bash
+git clone https://github.com/ap-1/puccinier && cd puccinier
+cargo install --path .
 ```

@@ -3,9 +3,10 @@ name = "puccinier"
 version = "0.1.2"
 edition = "2021"
 readme = "README.md"
-authors = ["Catppuccin Org"]
+authors = ["ap-1 <anishp0828@gmail.com>"]
 license = "MIT OR Apache-2.0"
 description = "Generate the rest of the Catppuccin palettes off of a template file written in one of them"
+categories = ["command-line-utilities", "template-engine"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
