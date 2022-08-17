@@ -11,6 +11,7 @@ from PIL import Image
 from catwalk.utils import (
     alpha_fit,
     gen_composite_image,
+    gen_grid_image,
     gen_rainbow,
     gen_shadow,
     round_mask,
@@ -20,6 +21,14 @@ logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 # argparse {{{
 parser = argparse.ArgumentParser()
+parser.add_argument(
+    "-l",
+    "--layout",
+    help="Layout style for the output file",
+    default="composite",
+    type=str,
+    choices=["composite", "grid", "stakced"],
+)
 parser.add_argument(
     "-p",
     "--preview",
@@ -89,6 +98,7 @@ if args.outer is None:
 def main():
     # parse the 4 screenshots into an array
     imgs = [args.latte, args.frappe, args.macchiato, args.mocha]
+    style = args.layout
 
     try:
         imgs = [Image.open(img).convert("RGBA") for img in imgs]
@@ -102,8 +112,6 @@ def main():
         if img.size != (w, h):
             logging.warning("Images are not the same size")
             break
-
-    composite = gen_composite_image(imgs, args.radius)
 
     # put it on a coloured background, if `--background` is passed
     m = args.margin if args.margin else 0
@@ -119,12 +127,17 @@ def main():
     # round the outer corners
     bg = round_mask(bg, args.outer)
 
+    if style == "composite":
+        final = gen_composite_image(imgs, args.radius)
+    elif style == "grid":
+        final = gen_grid_image(imgs, args.radius)
+
     # create a drop shadow if `--shadow` is passed
     if args.shadow:
-        drop_shadow = gen_shadow(composite, strength=args.shadow)
+        drop_shadow = gen_shadow(final, strength=args.shadow)
         bg = alpha_fit(bg, drop_shadow, (20, 20))
 
-    output = alpha_fit(bg, composite)
+    output = alpha_fit(bg, final)
 
     if args.preview:
         output.show()

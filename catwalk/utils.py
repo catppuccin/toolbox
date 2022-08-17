@@ -1,6 +1,6 @@
 # vim:ft=python:fenc=utf-8:fdm=marker
 
-from typing import List
+from typing import List, Tuple
 
 from PIL import Image, ImageDraw, ImageFilter, ImageOps
 
@@ -8,7 +8,7 @@ DS_METHOD = Image.LANCZOS
 
 
 # generate anti-aliased slice masks
-def gen_masks(size: (int, int)):
+def gen_masks(size: Tuple[int, int]):
     # calculate the slices, 4x the original size for anti-aliasing
     w = size[0] * 4
     h = size[1] * 4
@@ -34,7 +34,7 @@ def gen_masks(size: (int, int)):
     return fmasks
 
 
-def gen_rainbow(size: (int, int)) -> Image.Image:
+def gen_rainbow(size: Tuple[int, int]) -> Image.Image:
     colors = ["#f38ba8", "#f9e2af", "#a6e3a1", "#89b4fa"]
     final = Image.new("RGBA", size)
     masks = gen_masks(size)
@@ -81,13 +81,38 @@ def gen_composite_image(imgs: List[Image.Image], radius: int) -> Image.Image:
     return final
 
 
-def anti_alias(img: Image.Image, output_size: (int, int)) -> Image.Image:
+def gen_grid_image(imgs: List[Image.Image], radius: int) -> Image.Image:
+    """Generate a grid layout of 4 images"""
+    # find the largest image
+    max_w = max([img.width for img in imgs])
+    max_h = max([img.height for img in imgs])
+
+    final = Image.new("RGBA", (max_w, max_h))
+    # gap = 20
+
+    for i, img in enumerate(imgs):
+        img.resize((int(round(max_w / 2)), int(round(max_h / 2))))
+        final.paste(
+            img,
+            (
+                int((i % 2) * round(max_w / 2)),
+                int((i // 2) * round(max_h / 2)),
+            ),
+        )
+
+    if radius:
+        final = round_mask(final, radius)
+
+    return final
+
+
+def anti_alias(img: Image.Image, output_size: Tuple[int, int]) -> Image.Image:
     """Cheap anti-aliasing."""
     return img.resize(output_size, DS_METHOD)
 
 
 def gen_composite_mask(
-    masks: List[Image.Image], size: (int, int), aa_factor: int = 4
+    masks: List[Image.Image], size: Tuple[int, int], aa_factor: int = 4
 ) -> Image.Image:
     w = size[0] * aa_factor
     h = size[1] * aa_factor
