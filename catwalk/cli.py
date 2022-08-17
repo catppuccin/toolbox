@@ -11,6 +11,7 @@ from PIL import Image
 from catwalk.utils import (
     alpha_fit,
     gen_composite_image,
+    gen_stacked_image,
     gen_grid_image,
     gen_rainbow,
     gen_shadow,
@@ -27,7 +28,7 @@ parser.add_argument(
     help="Layout style for the output file",
     default="composite",
     type=str,
-    choices=["composite", "grid"],
+    choices=["composite", "grid", "stacked"],
 )
 parser.add_argument(
     "-g",
@@ -138,6 +139,8 @@ def main():
         final = gen_composite_image(imgs, args.radius)
     elif style == "grid":
         final = gen_grid_image(imgs, args.radius, args.gap)
+    elif style == "stacked":
+        final = gen_stacked_image(imgs, args.radius)
 
     # create a drop shadow if `--shadow` is passed
     if args.shadow:

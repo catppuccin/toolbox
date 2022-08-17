@@ -111,6 +111,29 @@ def gen_grid_image(imgs: List[Image.Image], radius: int, gap: int) -> Image.Imag
     return final
 
 
+def gen_stacked_image(imgs: List[Image.Image], radius: int) -> Image.Image:
+    """Stack images on top of each other"""
+    max_w = max([img.width for img in imgs])
+    max_h = max([img.height for img in imgs])
+
+    final = Image.new("RGBA", (max_w, max_h))
+    gap = int(((max_h / 2)) // (len(imgs) - 1))
+
+    padding_x = int((max_w / 2 - 3 * gap) / 2)
+
+    for i, img in enumerate(imgs):
+        img = round_mask(
+            img.resize((int(max_w / 2), int(max_h / 2))),
+            radius,
+        )
+        final.paste(img, (padding_x + (gap * i), (gap * i)))
+
+    if radius:
+        final = round_mask(final, radius)
+
+    return final
+
+
 def anti_alias(img: Image.Image, output_size: Tuple[int, int]) -> Image.Image:
     """Cheap anti-aliasing."""
     return img.resize(output_size, DS_METHOD)
