@@ -81,7 +81,7 @@ def gen_composite_image(imgs: List[Image.Image], radius: int) -> Image.Image:
     return final
 
 
-def gen_grid_image(imgs: List[Image.Image], radius: int) -> Image.Image:
+def gen_grid_image(imgs: List[Image.Image], radius: int, gap: int) -> Image.Image:
     """Generate a grid layout of 4 images"""
     # find the largest image
     max_w = max([img.width for img in imgs])
@@ -91,12 +91,17 @@ def gen_grid_image(imgs: List[Image.Image], radius: int) -> Image.Image:
     # gap = 20
 
     for i, img in enumerate(imgs):
-        img.resize((int(round(max_w / 2)), int(round(max_h / 2))))
+        img = round_mask(
+            img.resize(
+                (int(round(max_w / 2) - gap * 2), int(round(max_h / 2) - gap * 2))
+            ),
+            radius,
+        )
         final.paste(
             img,
             (
-                int((i % 2) * round(max_w / 2)),
-                int((i // 2) * round(max_h / 2)),
+                int((i % 2) * round(max_w / 2) + gap),
+                int((i // 2) * round(max_h / 2) + gap),
             ),
         )
 

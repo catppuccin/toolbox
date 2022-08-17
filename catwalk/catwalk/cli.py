@@ -30,6 +30,13 @@ parser.add_argument(
     choices=["composite", "grid", "stakced"],
 )
 parser.add_argument(
+    "-g",
+    "--gap",
+    help="Gap between images for the grid layout",
+    default=20,
+    type=int,
+)
+parser.add_argument(
     "-p",
     "--preview",
     help="Preview the image (saves only as a temporary file)",
@@ -130,7 +137,7 @@ def main():
     if style == "composite":
         final = gen_composite_image(imgs, args.radius)
     elif style == "grid":
-        final = gen_grid_image(imgs, args.radius)
+        final = gen_grid_image(imgs, args.radius, args.gap)
 
     # create a drop shadow if `--shadow` is passed
     if args.shadow:
