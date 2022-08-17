@@ -234,7 +234,9 @@ $ python3 -m catwalk
 
 | Parameter      | Description                                                                                                                |
 |----------------|----------------------------------------------------------------------------------------------------------------------------|
-| `images`       | 4 images to merge into one. **REQUIRED**. All other parameters are optional.                                                  |
+| `images`       | 4 images to merge into one. **REQUIRED**. All other parameters are optional.                                               |
+| `--layout`     | Choose the style of the showcase image. Available options are `composite` (default) and `grid`.                            |
+| `--gap`        | Size of the gap between the `grid` layout. Defaults to 20px.                                                               |
 | `--background` | Places the screenshot on a background colour of your choosing. Provide a hex value like "#89dceb".                         |
 | `--margin`     | Defines the margin around the screenshot. Defaults to 40px.                                                                |
 | `--radius`     | Sets the corner radius for the window. Defaults to 50px.                                                                   |
