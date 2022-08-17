@@ -27,7 +27,7 @@ parser.add_argument(
     help="Layout style for the output file",
     default="composite",
     type=str,
-    choices=["composite", "grid", "stakced"],
+    choices=["composite", "grid", "stacked"],
 )
 parser.add_argument(
     "-g",
