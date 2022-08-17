@@ -27,12 +27,12 @@ parser.add_argument(
     help="Layout style for the output file",
     default="composite",
     type=str,
-    choices=["composite", "grid", "stacked"],
+    choices=["composite", "grid"],
 )
 parser.add_argument(
     "-g",
     "--gap",
-    help="Gap between images for the grid layout",
+    help="Gap between images for the grid layout. Default: %(default)s",
     default=20,
     type=int,
 )
