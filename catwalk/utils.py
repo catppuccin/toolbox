@@ -117,7 +117,7 @@ def gen_stacked_image(imgs: List[Image.Image], radius: int) -> Image.Image:
     max_h = max([img.height for img in imgs])
 
     final = Image.new("RGBA", (max_w, max_h))
-    gap = int(((max_h / 2)) // (len(imgs) - 1))
+    gap = int((max_h / 2) // (len(imgs) - 1))
 
     padding_x = int((max_w / 2 - 3 * gap) / 2)
 
@@ -126,7 +126,7 @@ def gen_stacked_image(imgs: List[Image.Image], radius: int) -> Image.Image:
             img.resize((int(max_w / 2), int(max_h / 2))),
             radius,
         )
-        final.paste(img, (padding_x + (gap * i), (gap * i)))
+        final.alpha_composite(img, (padding_x + (gap * i), (gap * i)))
 
     if radius:
         final = round_mask(final, radius)
