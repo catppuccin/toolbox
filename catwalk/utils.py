@@ -45,7 +45,7 @@ def gen_rainbow(size: Tuple[int, int]) -> Image.Image:
 
 
 def alpha_fit(
-    img1: Image.Image, img2: Image.Image, offset: tuple[int, int] = (0, 0)
+    img1: Image.Image, img2: Image.Image, offset: Tuple[int, int] = (0, 0)
 ) -> Image.Image:
     dest = ((img1.width // 2 - img2.width // 2), (img1.height // 2 - img2.height // 2))
     dest = (dest[0] + offset[0], dest[1] + offset[1])
