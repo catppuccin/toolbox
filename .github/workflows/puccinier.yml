@@ -190,7 +190,7 @@ jobs:
 
   release:
     if: ${{ github.ref == 'refs/heads/main' }}
-    needs: [linux, macos, windows]
+    needs: [version, linux, macos, windows]
     runs-on: ubuntu-latest
 
     steps:
