@@ -75,8 +75,8 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-unknown-linux-gnu
-          path: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-unknown-linux-gnu
+          name: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version }}-x86_64-unknown-linux-gnu
+          path: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version }}-x86_64-unknown-linux-gnu
 
   macos:
     needs: version
@@ -128,8 +128,8 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-apple-darwin
-          path: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-apple-darwin
+          name: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version }}-x86_64-apple-darwin
+          path: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version }}-x86_64-apple-darwin
 
   windows:
     needs: version
@@ -185,8 +185,8 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-pc-windows-msvc
-          path: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-pc-windows-msvc.exe
+          name: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version }}-x86_64-pc-windows-msvc
+          path: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version }}-x86_64-pc-windows-msvc.exe
 
   release:
     if: ${{ github.ref == 'refs/heads/main' }}
