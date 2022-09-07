@@ -1,13 +1,32 @@
-name: Release
+name: Puccinier Release
 
-on: workflow_dispatch
+on:
+  push:
+    paths:
+        - ".github/workflows/puccinier.yml"
+        - "puccinier/**"
 
 env:
   ACTIONS_STEP_DEBUG: true
   PROJECT_NAME: puccinier
 
 jobs:
+  version:
+    runs-on: ubuntu-latest
+  
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+        
+      - name: Set version output
+        id: version
+        run: echo "::set-output name=version::$(grep -m 1 -oP 'version = \K.*' ${{ env.PROJECT_NAME }}/Cargo.toml | xargs)"
+  
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
   linux:
+    needs: version
     strategy:
       matrix:
         os: [ubuntu-latest]
@@ -36,37 +55,31 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Set version output
-        id: version
-        run: echo "::set-output name=version::$(grep -m 1 -oP 'version = \K.*' Cargo.toml | xargs)"
+          key: ${{ runner.os }}-cargo-${{ hashFiles('puccinier/Cargo.lock') }}
 
       - name: Build sources
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release
+          args: --release --manifest-path ${{ env.PROJECT_NAME }}/Cargo.toml
 
       - name: Strip artifact
-        run: strip target/release/${{ env.PROJECT_NAME }}
+        run: strip ${{ env.PROJECT_NAME }}/target/release/${{ env.PROJECT_NAME }}
 
       - name: Run UPX
         run: echo "Not supported on linux platform"
 
       - name: Rename file
-        run: cp target/release/${{ env.PROJECT_NAME }} x86_64-unknown-linux-gnu
+        run: cp ${{ env.PROJECT_NAME }}/target/release/${{ env.PROJECT_NAME }} ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version }}-x86_64-unknown-linux-gnu
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: x86_64-unknown-linux-gnu
-          path: x86_64-unknown-linux-gnu
-
-    outputs:
-      version: ${{ steps.version.outputs.version }}
+          name: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-unknown-linux-gnu
+          path: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-unknown-linux-gnu
 
   macos:
+    needs: version
     strategy:
       matrix:
         os: [macos-latest]
@@ -95,30 +108,31 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ hashFiles('puccinier/Cargo.lock') }}
 
       - name: Build sources
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release
+          args: --release --manifest-path ${{ env.PROJECT_NAME }}/Cargo.toml
 
       - name: Strip artifact
-        run: strip target/release/${{ env.PROJECT_NAME }}
+        run: strip ${{ env.PROJECT_NAME }}/target/release/${{ env.PROJECT_NAME }}
 
       - name: Run UPX
         run: echo "Not supported on darwin platform"
 
       - name: Rename file
-        run: cp target/release/${{ env.PROJECT_NAME }} x86_64-apple-darwin
+        run: cp ${{ env.PROJECT_NAME }}/target/release/${{ env.PROJECT_NAME }} ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version }}-x86_64-apple-darwin
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: x86_64-apple-darwin
-          path: x86_64-apple-darwin
+          name: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-apple-darwin
+          path: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-apple-darwin
 
   windows:
+    needs: version
     strategy:
       matrix:
         os: [windows-latest]
@@ -147,36 +161,36 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ hashFiles('puccinier/Cargo.lock') }}
 
       - name: Build sources
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release
+          args: --release --manifest-path ${{ env.PROJECT_NAME }}/Cargo.toml
 
       - name: Strip artifact
-        run: strip target/release/${{ env.PROJECT_NAME }}.exe
+        run: strip ${{ env.PROJECT_NAME }}/target/release/${{ env.PROJECT_NAME }}.exe
 
       - name: Run UPX
         uses: crazy-max/ghaction-upx@v1
         with:
           version: latest
-          files: target/release/${{ env.PROJECT_NAME }}.exe
+          files: ${{ env.PROJECT_NAME }}/target/release/${{ env.PROJECT_NAME }}.exe
           args: --brute
 
       - name: Rename file
-        run: cp target/release/${{ env.PROJECT_NAME }}.exe x86_64-pc-windows-msvc.exe
+        run: cp ${{ env.PROJECT_NAME }}/target/release/${{ env.PROJECT_NAME }}.exe ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version }}-x86_64-pc-windows-msvc.exe
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: x86_64-pc-windows-msvc
-          path: x86_64-pc-windows-msvc.exe
+          name: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-pc-windows-msvc
+          path: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-pc-windows-msvc.exe
 
   release:
+    if: ${{ github.ref == 'refs/heads/main' }}
     needs: [linux, macos, windows]
-
     runs-on: ubuntu-latest
 
     steps:
@@ -184,21 +198,21 @@ jobs:
         uses: actions/download-artifact@v2
         id: linux
         with:
-          name: x86_64-unknown-linux-gnu
+          name: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-unknown-linux-gnu
           path: artifacts
 
       - name: Download macOS artifact
         uses: actions/download-artifact@v2
         id: macos
         with:
-          name: x86_64-apple-darwin
+          name: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-apple-darwin
           path: artifacts
 
       - name: Download Windows artifact
         uses: actions/download-artifact@v2
         id: windows
         with:
-          name: x86_64-pc-windows-msvc
+          name: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-pc-windows-msvc
           path: artifacts
 
       - name: Display downloaded artifacts
@@ -214,13 +228,14 @@ jobs:
       - name: Release with artifacts
         uses: ncipollo/release-action@v1
         with:
-          name: ${{ needs.linux.outputs.version }}
+          name: toolbox-tools
           body: See `checksum.txt` for SHA 256 checksums.
-          tag: ${{ needs.linux.outputs.version}}
+          tag: toolbox-tools
           token: ${{ secrets.GITHUB_TOKEN }}
           commit: ${{ github.sha }}
+          allowUpdates: true
           artifacts: >-
             checksum.txt,
-            ${{ steps.linux.outputs.download-path }}/x86_64-unknown-linux-gnu,
-            ${{ steps.macos.outputs.download-path }}/x86_64-apple-darwin,
-            ${{ steps.windows.outputs.download-path }}/x86_64-pc-windows-msvc.exe
+            ${{ steps.linux.outputs.download-path }}/${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-unknown-linux-gnu,
+            ${{ steps.macos.outputs.download-path }}/${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-apple-darwin,
+            ${{ steps.windows.outputs.download-path }}/${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-pc-windows-msvc.exe
