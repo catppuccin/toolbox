@@ -7,8 +7,8 @@
 </p>
 
 <p align="center">
-	<a href="https://github.com/catppuccin/catppuccin/stargazers">
-		<img alt="Stars" src="https://img.shields.io/github/stars/catppuccin/catppuccin?style=for-the-badge&logo=starship&color=C9CBFF&logoColor=D9E0EE&labelColor=302D41"></a>
+	<a href="https://github.com/catppuccin/toolbox/stargazers">
+		<img alt="Stars" src="https://img.shields.io/github/stars/catppuccin/toolbox?style=for-the-badge&logo=starship&color=C9CBFF&logoColor=D9E0EE&labelColor=302D41"></a>
 	<a href="https://github.com/catppuccin/catppuccin/issues">
 		<img alt="Issues" src="https://img.shields.io/github/issues/catppuccin/catppuccin?style=for-the-badge&logo=bilibili&color=F5E0DC&logoColor=D9E0EE&labelColor=302D41"></a>
 	<a href="https://github.com/catppuccin/catppuccin">
