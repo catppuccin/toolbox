@@ -198,21 +198,21 @@ jobs:
         uses: actions/download-artifact@v2
         id: linux
         with:
-          name: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-unknown-linux-gnu
+          name: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version }}-x86_64-unknown-linux-gnu
           path: artifacts
 
       - name: Download macOS artifact
         uses: actions/download-artifact@v2
         id: macos
         with:
-          name: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-apple-darwin
+          name: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version }}-x86_64-apple-darwin
           path: artifacts
 
       - name: Download Windows artifact
         uses: actions/download-artifact@v2
         id: windows
         with:
-          name: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-pc-windows-msvc
+          name: ${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version }}-x86_64-pc-windows-msvc
           path: artifacts
 
       - name: Display downloaded artifacts
@@ -236,6 +236,6 @@ jobs:
           allowUpdates: true
           artifacts: >-
             checksum.txt,
-            ${{ steps.linux.outputs.download-path }}/${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-unknown-linux-gnu,
-            ${{ steps.macos.outputs.download-path }}/${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-apple-darwin,
-            ${{ steps.windows.outputs.download-path }}/${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version}}-x86_64-pc-windows-msvc.exe
+            ${{ steps.linux.outputs.download-path }}/${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version }}-x86_64-unknown-linux-gnu,
+            ${{ steps.macos.outputs.download-path }}/${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version }}-x86_64-apple-darwin,
+            ${{ steps.windows.outputs.download-path }}/${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version }}-x86_64-pc-windows-msvc.exe
