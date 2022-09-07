@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-	Catppuccin's developement tools
+	Catppuccin's development tools
 </p>
 
 <p align="center">
