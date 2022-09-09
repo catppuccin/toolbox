@@ -5,8 +5,8 @@ edition = "2021"
 readme = "README.md"
 authors = ["ap-1 <anishp0828@gmail.com>"]
 license = "MIT"
-repository = "https://github.com/ap-1/puccinier"
-homepage = "https://github.com/ap-1/puccinier"
+repository = "https://github.com/catppuccin/toolbox"
+homepage = "https://github.com/catppuccin/toolbox/tree/main/puccinier"
 description = "Generate the rest of the Catppuccin palettes off of a template file written in one of them"
 categories = ["command-line-utilities", "template-engine"]
 
