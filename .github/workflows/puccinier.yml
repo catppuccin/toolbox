@@ -4,7 +4,8 @@ on:
   push:
     paths:
         - ".github/workflows/puccinier.yml"
-        - "puccinier/**"
+        - "puccinier/**/*.rs"
+        - "puccinier/**/*.toml"
 
 env:
   ACTIONS_STEP_DEBUG: true
@@ -234,6 +235,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit: ${{ github.sha }}
           allowUpdates: true
+          omitBodyDuringUpdate: true
           artifacts: >-
             checksum.txt,
             ${{ steps.linux.outputs.download-path }}/${{ env.PROJECT_NAME }}-${{ needs.version.outputs.version }}-x86_64-unknown-linux-gnu,
