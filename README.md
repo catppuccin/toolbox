@@ -205,7 +205,7 @@ cargo install puccinier
 To build from source, you must use cargo:
 
 ```bash
-git clone https://github.com/ap-1/puccinier && cd puccinier
+git clone https://github.com/catppuccin/toolbox && cd toolbox/puccinier
 cargo install --path .
 ```
 
