@@ -14,16 +14,16 @@ const HEALTH_FILES = {
 	},
 	any: {
 		editorconfig:
-			'https://raw.githubusercontent.com/catppuccin/.github/main/health_files/any/.editorconfig',
+			'https://raw.githubusercontent.com/catppuccin/.github/main/health/any/.editorconfig',
 		prettierrc:
-			'https://raw.githubusercontent.com/catppuccin/.github/main/health_files/any/.prettierrc.json',
+			'https://raw.githubusercontent.com/catppuccin/.github/main/health/any/.prettierrc.json',
 		makefile:
-			'https://raw.githubusercontent.com/catppuccin/.github/main/health_files/any/Makefile'
+			'https://raw.githubusercontent.com/catppuccin/.github/main/health/any/Makefile'
 	},
 	npm: {
 		npmignore:
-			'https://raw.githubusercontent.com/catppuccin/.github/main/health_files/npm/.npmignore',
-		npmrc: 'https://raw.githubusercontent.com/catppuccin/.github/main/health_files/npm/.npmrc',
+			'https://raw.githubusercontent.com/catppuccin/.github/main/health/npm/.npmignore',
+		npmrc: 'https://raw.githubusercontent.com/catppuccin/.github/main/health/npm/.npmrc',
 	},
 }
 
