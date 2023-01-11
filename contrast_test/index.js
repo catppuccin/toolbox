@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import {variants, labels} from '@catppuccin/palette'
 import ColorContrastChecker from "color-contrast-checker"
 import chalk from "chalk"

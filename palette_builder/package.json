@@ -7,12 +7,23 @@
   "scripts": {
     "start": "node index.js"
   },
+  "bin": {
+	"palette_builder": "index.js"
+  },
   "keywords": [
     "catppuccin"
   ],
   "author": "Catppuccin Org",
   "license": "MIT",
-  "devDependencies": {
+  "repository": {
+	"type": "git",
+	"url": "git+https://github.com/catppuccin/toolbox.git#main"
+  },
+  "bugs": {
+	"url": "https://github.com/catppuccin/toolbox/issues"
+  },
+  "homepage": "https://github.com/catppuccin/toolbox/tree/main/palette_builder",
+  "dependencies": {
     "@catppuccin/palette": "^0.1.2"
   }
 }
