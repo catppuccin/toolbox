@@ -64,7 +64,7 @@ in
       };
 
       meta = with pkgs.lib; {
-        description = "Generate the rest of the Catppuccin palettes off of a template file written in one of them";
+        description = "Generate the other Catppuccin flavours off a template file written in one of them";
         homepage = "https://github.com/catppuccin/toolbox/tree/main/puccinier";
         license = licenses.mit;
         maintainers = with maintainers; [rubyowo];
