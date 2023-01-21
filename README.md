@@ -33,6 +33,7 @@
 + [🎨 Catwalk](#catwalk)
 + [🌈 Contrast Test](#-contrast-test)
 + [😽 Meow](#-meow)
++ [❄️  Nix](#%EF%B8%8F--nix)
 
 &nbsp;
 
@@ -257,6 +258,80 @@ $ npm start
 #### 😽 Meow
 
 "Waouh Waouh", said the French Poodle
+
+#### ❄️  Nix
+##### With Flakes
+Add the following to your `flake.nix`:
+###### NixOS
+```nix
+{
+    inputs = {
+        catppuccin-toolbox.url = "github:catppuccin/toolbox";
+    };
+    outputs = {nixpkgs, catppuccin-toolbox, ...}: {
+        nixosConfigurations.HOSTNAME = nixpkgs.lib.nixosSystem {
+          modules = [
+          {
+              environment.systemPackages = [
+                catppuccin-toolbox.packages.${pkgs.system}.puccinier
+              ];
+            }
+          ];
+        };
+      };
+    }
+}
+```
+###### Home-Manager
+```nix
+{
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    catppuccin-toolbox.url = "github:catppuccin/toolbox";
+  };
+
+  outputs = {nixpkgs, home-manager, catppuccin-toolbox, ...}: {
+    homeConfigurations."user@hostname" = home-manager.lib.homeManagerConfiguration {
+      pkgs = nixpkgs.legacyPackages.x86_64-linux;
+
+      modules = [
+        {        
+            home.packages = [
+                catppuccin-toolbox.packages.${pkgs.system}.puccinier
+            ];
+        } 
+      ];
+    };
+  };
+}
+```
+
+##### Without Flakes
+Add the following to your configuration:
+```nix
+{config, pkgs, ...}: let
+  flake-compat = builtins.fetchTarball "https://github.com/edolstra/flake-compat/archive/master.tar.gz";
+  catppuccin-toolbox = (import flake-compat {
+    src = builtins.fetchTarball "https://github.com/catppuccin/toolbox/archive/main.tar.gz";
+  }).defaultNix;
+in {
+    # Home Manager
+    home.packages = [
+        catppuccin-toolbox.packages.${pkgs.system}.puccinier
+    ];
+
+    # Nix
+    environment.systemPackages = [
+        catppuccin-toolbox.packages.${pkgs.system}.puccinier
+    ];
+}
+```
 
 &nbsp;
 

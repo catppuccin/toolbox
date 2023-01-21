@@ -105,3 +105,6 @@ dist
 
 # Puccinier
 puccinier/target
+
+# Nix build
+result/
