@@ -212,11 +212,18 @@ cargo install --path .
 
 &nbsp;
 
-#### 🎨Catwalk
+#### 🎨 Catwalk
 
 A sweet program that takes in four showcase images and displays them all at once.
 
-Usage:
+Install with [pipx](https://pypa.github.io/pipx/) (preferred):
+
+```bash
+$ pipx install catppuccin-catwalk
+$ catwalk <images>
+```
+
+Install using pip (inside of a virtual environment):
 
 ```bash
 $ python3 -m pip install --upgrade catppuccin-catwalk
@@ -226,7 +233,7 @@ $ python3 -m catwalk
 ```
 
 | Parameter      | Description                                                                                                                |
-|----------------|----------------------------------------------------------------------------------------------------------------------------|
+| -------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | `images`       | 4 images to merge into one. **REQUIRED**. All other parameters are optional.                                               |
 | `--layout`     | Choose the style of the showcase image. Available options are `composite` (default), `grid`, and `stacked`.                |
 | `--gap`        | Size of the gap between the `grid` layout. Defaults to 20px.                                                               |
