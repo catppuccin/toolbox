@@ -30,7 +30,7 @@
 + [🖌️ InkCat](#%EF%B8%8F-inkcat)
 + [🇨 DocPuccin](#-docpuccin)
 + [🖼️ Puccinier](#%EF%B8%8F-puccinier)
-+ [🎨 Catwalk](#catwalk)
++ [🎨 Catwalk](#-catwalk)
 + [🌈 Contrast Test](#-contrast-test)
 + [😽 Meow](#-meow)
 + [❄️  Nix](#%EF%B8%8F--nix)
