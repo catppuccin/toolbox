@@ -1,6 +1,3 @@
-__pycache__/
-**/*.gif
-**/*.jpeg
-**/*.jpg
-**/*.png
-**/*.webp
+assets/
+.vscode/
+result.png

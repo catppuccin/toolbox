@@ -1,0 +1,12 @@
+[package]
+name = "catwalk"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = { version = "4.3.1", features = ["derive"] }
+hex = "0.4.3"
+image = "0.24.6"
+rayon = "1.7.0"
