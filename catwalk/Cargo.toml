@@ -8,5 +8,5 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.3.1", features = ["derive"] }
 hex = "0.4.3"
-image = "0.24.6"
+image = { version = "0.24.6", features = ["webp-encoder"] }
 rayon = "1.7.0"
