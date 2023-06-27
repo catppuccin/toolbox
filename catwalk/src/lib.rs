@@ -7,6 +7,7 @@ use rayon::prelude::*;
 
 #[derive(Parser, Debug, Clone)]
 #[command(author, version, about, long_about = None)]
+#[command(arg_required_else_help(true))]
 pub struct Args {
     /// Latte screenshot
     latte: Option<String>,
@@ -16,23 +17,15 @@ pub struct Args {
     macchiato: Option<String>,
     /// Mocha screenshot
     mocha: Option<String>,
+    /// Layout
     #[arg(short, long, default_value_t = str::to_string("composite"))]
     pub layout: String,
-    /// Margin
-    #[arg(short, long, default_value_t = 0)]
-    pub margin: u32,
     /// Gap (grid layout)
-    #[arg(short, long, default_value_t = 50)]
+    #[arg(short, long, default_value_t = 150)]
     pub gap: u32,
-    /// Background Color
-    #[arg(short, long, default_value_t = str::to_string("#00000000"))]
-    pub background: String,
-    /// Sets the inner radius.
-    #[arg(short, long, default_value_t = 0)]
+    /// Sets the radius.
+    #[arg(short, long, default_value_t = 75)]
     pub radius: u32,
-    /// Sets the background(outer) radius.
-    #[arg(short, long, default_value_t = -1)]
-    pub outer: i32,
 }
 
 
@@ -116,20 +109,6 @@ impl Magic {
                 panic!("All images must have the same dimensions.")
             }
         }
-    }
-}
-
-pub trait MagicTricks {
-    fn margin(&self, m: u32, color: String) -> MagicBuf;
-}
-impl MagicTricks for MagicBuf {
-    fn margin(&self, m: u32, color: String) -> MagicBuf {
-        // Decode hex
-        let mut hex_color = [0 as u8; 4];
-        hex::decode_to_slice(color, &mut hex_color).expect("Please provide a valid RGBA hex.");
-        let mut result = MagicBuf::from_pixel(self.width()+(m*2), self.height()+(m*2), Rgba(hex_color));
-        image::imageops::overlay(&mut result, self, m as i64, m as i64);
-        result
     }
 }
 
