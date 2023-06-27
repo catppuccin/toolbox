@@ -19,8 +19,11 @@ pub struct Args {
     #[arg(short, long, default_value_t = str::to_string("composite"))]
     pub layout: String,
     /// Margin
-    #[arg(short, long, default_value_t = 40)]
+    #[arg(short, long, default_value_t = 0)]
     pub margin: u32,
+    /// Gap (grid layout)
+    #[arg(short, long, default_value_t = 50)]
+    pub gap: u32,
     /// Background Color
     #[arg(short, long, default_value_t = str::to_string("#00000000"))]
     pub background: String,
@@ -44,11 +47,7 @@ impl Magic {
         let height = self.images[0].height();
         let width = self.images[0].width();
         let round = RoundMask { radius };
-        for image in self.images.iter() {
-            if image.height() != height || image.width() != width {
-                panic!("All images must have the same dimensions.")
-            }
-        }
+        self.check_heights(height, width);
         let mut masked: Vec<(MagicBuf, usize)> = self.images.par_iter()
             .enumerate()
             .map(|(i, x)| (Self::gen_mask(height as f32, width as f32, i).mask(x), i))
@@ -65,11 +64,7 @@ impl Magic {
         let height = self.images[0].height();
         let width = self.images[0].width();
         let round = RoundMask { radius };
-        for image in self.images.iter() {
-            if image.height() != height || image.width() != width {
-                panic!("All images must have the same dimensions.")
-            }
-        }
+        self.check_heights(height, width);
         let gap = height / 3;
         let padding_x = f32::floor((width as f32 - (3.0 * gap as f32)) / 2.0) as u32;
         let mut result = MagicBuf::from_pixel((height * 2) + (padding_x * 3) + gap, height * 2, Rgba([0, 0, 0, 0]));
@@ -78,6 +73,25 @@ impl Magic {
             .enumerate()
             .for_each(|(i, x)| {
                 image::imageops::overlay(&mut result, &x, (padding_x + (gap * (i as u32))) as i64, (gap * (i as u32)) as i64);
+            });
+        result
+    }
+
+    pub fn gen_grid(&self, radius: u32, gap: u32) -> MagicBuf {
+        let height = self.images[0].height();
+        let width = self.images[0].width();
+        let round = RoundMask { radius };
+        // Check heights or panic
+        self.check_heights(height, width);
+        // Round images
+        let rounded: Vec<MagicBuf> = self.images.par_iter().map(|x| round.mask(&x)).collect();
+        // Create final
+        let mut result = MagicBuf::from_pixel((width * 2) + gap, (height * 2) + gap, Rgba([0, 0, 0, 0]));
+        // Paste final
+        rounded.iter()
+            .enumerate()
+            .for_each(|(i, x)| {
+                image::imageops::overlay(&mut result, x, (((i as u32) % 2) * (width + gap)).into(), (((i as u32) / 2) * (height + gap)).into())
             });
         result
     }
@@ -94,6 +108,15 @@ impl Magic {
         // We only need to return the line here: the trapezoid is from top to bottom
         TrapMask::new(vec![(trap_top*w, 0.0), (trap_btm*w, h)])
     }
+
+    /// Panics if all images don't match the supplied dimensions
+    fn check_heights(&self, height: u32, width: u32) {
+        for image in self.images.iter() {
+            if image.height() != height || image.width() != width {
+                panic!("All images must have the same dimensions.")
+            }
+        }
+    }
 }
 
 pub trait MagicTricks {
@@ -104,8 +127,8 @@ impl MagicTricks for MagicBuf {
         // Decode hex
         let mut hex_color = [0 as u8; 4];
         hex::decode_to_slice(color, &mut hex_color).expect("Please provide a valid RGBA hex.");
-        let mut result = MagicBuf::from_pixel(self.width()+m, self.height()+m, Rgba(hex_color));
-        image::imageops::overlay(&mut result, self, (m/2) as i64, (m/2) as i64);
+        let mut result = MagicBuf::from_pixel(self.width()+(m*2), self.height()+(m*2), Rgba(hex_color));
+        image::imageops::overlay(&mut result, self, m as i64, m as i64);
         result
     }
 }

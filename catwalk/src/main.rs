@@ -15,6 +15,8 @@ fn main() {
         result = magic.gen_composite(args.radius);
     } else if args.layout == "stacked".to_string() {
         result = magic.gen_stacked(args.radius);
+    } else if args.layout == "grid".to_string() {
+        result = magic.gen_grid(args.radius, args.gap);
     } else {
         panic!("Invalid layout: {}", args.layout);
     }

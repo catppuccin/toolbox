@@ -21,6 +21,27 @@
       };
     };
 
+  mkRustPkg = {
+    pname,
+    version,
+    description,
+  }:
+    pkgs.rustPlatform.buildRustPackage {
+      inherit pname version;
+      src = ../${pname};
+
+      cargoLock = {
+        lockFile = ../${pname}/Cargo.lock;
+      };
+
+      meta = with pkgs.lib; {
+        inherit description;
+        homepage = "https://github.com/catppuccin/toolbox/tree/main/${pname}";
+        license = licenses.mit;
+        maintainers = with maintainers; [rubyowo];
+      };
+    };
+
   nodePkgs = [
     {
       pname = "docpuccin";
@@ -47,45 +68,25 @@
       description = "Export Catppuccin flavours in various formats";
     }
   ];
+
+  rustPkgs = [
+    {
+      pname = "puccinier";
+      version = "0.1.2";
+      description = "Generate the other Catppuccin flavours off a template file written in one of them";
+    }
+    {
+      pname = "catwalk";
+      version = "0.5.0";
+      description = "Generate a preview as a single composite screenshot for the four flavours";
+    }
+  ];
 in
   builtins.listToAttrs (builtins.map ({...} @ args: {
       name = args.pname;
       value = mkNodePkg args;
+    }) nodePkgs) // builtins.listToAttrs (builtins.map ({...} @ args: {
+      name = args.pname;
+      value = mkRustPkg args;
     })
-    nodePkgs)
-  // {
-    puccinier = pkgs.rustPlatform.buildRustPackage {
-      pname = "puccinier";
-      version = "0.1.2";
-      src = ../puccinier;
-
-      cargoLock = {
-        lockFile = ../puccinier/Cargo.lock;
-      };
-
-      meta = with pkgs.lib; {
-        description = "Generate the other Catppuccin flavours off a template file written in one of them";
-        homepage = "https://github.com/catppuccin/toolbox/tree/main/puccinier";
-        license = licenses.mit;
-        maintainers = with maintainers; [rubyowo];
-      };
-    };
-
-    catwalk = with pkgs.python3Packages;
-      buildPythonApplication rec {
-        pname = "catwalk";
-        version = "0.4.0";
-        format = "pyproject";
-        src = ../catwalk;
-        doCheck = false;
-        nativeBuildInputs = [poetry-core];
-        propagatedBuildInputs = [pillow];
-
-        meta = with pkgs.lib; {
-          description = "Generate a preview as a single composite screenshot for the four flavours";
-          homepage = "https://github.com/catppuccin/toolbox/tree/main/catwalk";
-          license = licenses.mit;
-          maintainers = with maintainers; [rubyowo];
-        };
-      };
-  }
+    rustPkgs)
