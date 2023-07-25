@@ -1,9 +1,12 @@
 use catwalk::Magic;
 use clap::{Args, Command, CommandFactory, Parser, Subcommand, ValueEnum};
 use clap_complete::{generate, Generator, Shell};
-use image::open;
-use rayon::prelude::*;
-use std::path::PathBuf;
+use color_eyre::{
+    eyre::{eyre, Context},
+    Result,
+};
+use image::{open, RgbaImage};
+use std::path::{Path, PathBuf};
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
 enum Layout {
@@ -38,8 +41,8 @@ struct Cli {
     #[command(flatten)]
     images: Option<ImageArgs>,
     /// Output file
-    #[arg(short, long)]
-    output: Option<PathBuf>,
+    #[arg(short, long, default_value = "result.webp")]
+    output: PathBuf,
     /// Layout
     #[arg(short, long, value_enum, default_value_t=Layout::Composite)]
     layout: Layout,
@@ -58,7 +61,16 @@ fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
     generate(gen, cmd, cmd.get_name().to_string(), &mut std::io::stdout());
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn open_rgba_image(path: &Path) -> Result<RgbaImage> {
+    Ok(open(path)?.to_rgba8())
+}
+
+fn main() -> Result<()> {
+    color_eyre::config::HookBuilder::default()
+        .panic_section("Consider reporting this issue to https://github.com/catppuccin/toolbox")
+        .display_env_section(false)
+        .install()?;
+
     let args = Cli::parse();
 
     if let Some(generator) = args.command {
@@ -67,32 +79,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let mut cmd = Cli::command();
                 eprintln!("Generating completion file for {generator:?}...");
                 print_completions(shell, &mut cmd);
-                std::process::exit(0);
+                return Ok(());
             }
         }
     }
 
+    let images = args.images.ok_or_else(|| eyre!("No images provided"))?;
+
     let magic = Magic::new(
-        args.images
-            .map_or_else(
-                || {
-                    eprintln!("No images provided");
-                    std::process::exit(1);
-                },
-                |x| vec![x.latte, x.frappe, x.macchiato, x.mocha],
-            )
-            .par_iter()
-            .map(open)
-            .map(|x| {
-                x.unwrap_or_else(|e| {
-                    eprintln!("Failed to open image: {}", e);
-                    std::process::exit(1)
-                })
-                .to_rgba8()
-            })
-            .collect::<Vec<_>>()
-            .try_into()
-            .expect("Failed to convert images to array"),
+        [
+            open_rgba_image(&images.latte).context("Failed to open Latte image")?,
+            open_rgba_image(&images.frappe).context("Failed to open Frappé image")?,
+            open_rgba_image(&images.macchiato).context("Failed to open Macchiato image")?,
+            open_rgba_image(&images.mocha).context("Failed to open Mocha image")?,
+        ],
         args.radius,
     )?;
 
@@ -101,7 +101,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Layout::Stacked => magic.gen_stacked(),
         Layout::Grid => magic.gen_grid(args.gap),
     })
-    .save(args.output.unwrap_or_else(|| PathBuf::from("result.webp")))?;
+    .save(args.output)?;
 
     Ok(())
 }

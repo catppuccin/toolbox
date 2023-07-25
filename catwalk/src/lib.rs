@@ -1,6 +1,7 @@
 mod mask;
 
 use crate::mask::{RoundMask, TrapMask};
+use color_eyre::{eyre::eyre, Result};
 use image::{ImageBuffer, Rgba, RgbaImage};
 use rayon::prelude::*;
 
@@ -14,7 +15,7 @@ pub struct Magic {
 
 impl Magic {
     /// Creates a new instance of Magic.
-    pub fn new(images: [RgbaImage; 4], radius: u32) -> Result<Self, &'static str> {
+    pub fn new(images: [RgbaImage; 4], radius: u32) -> Result<Self> {
         let height = images[0].height();
         let width = images[0].width();
 
@@ -23,7 +24,7 @@ impl Magic {
             .iter()
             .any(|x| x.height() != height || x.width() != width)
         {
-            return Err("Images must be the same size");
+            return Err(eyre!("Images must be the same size"));
         };
 
         let rounding_mask = RoundMask { radius };
