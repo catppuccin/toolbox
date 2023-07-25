@@ -1,46 +1,28 @@
 mod mask;
-use crate::mask::TrapMask;
-pub use crate::mask::{MagicBuf, RoundMask};
-pub use clap::Parser;
-use image::{open, ImageBuffer, Rgba};
-use rayon::prelude::*;
 
-#[derive(Parser, Debug, Clone)]
-#[command(author, version, about, long_about = None)]
-#[command(arg_required_else_help(true))]
-pub struct Args {
-    /// Latte screenshot
-    latte: Option<String>,
-    /// Frappe screenshot
-    frappe: Option<String>,
-    /// Macchiato screenshot
-    macchiato: Option<String>,
-    /// Mocha screenshot
-    mocha: Option<String>,
-    /// Layout
-    #[arg(short, long, default_value_t = str::to_string("composite"))]
-    pub layout: String,
-    /// Gap (grid layout)
-    #[arg(short, long, default_value_t = 150)]
-    pub gap: u32,
-    /// Sets the radius.
-    #[arg(short, long, default_value_t = 75)]
-    pub radius: u32,
-}
+pub use crate::mask::RoundMask;
+use crate::mask::TrapMask;
+use image::{ImageBuffer, Rgba, RgbaImage};
+use rayon::prelude::*;
 
 #[derive(Debug)]
 pub struct Magic {
-    images: [MagicBuf; 4],
+    images: [RgbaImage; 4],
 }
 
 impl Magic {
+    /// Creates a new instance of Magic.
+    pub fn new(images: [RgbaImage; 4]) -> Self {
+        Self { images }
+    }
+
     /// Creates the slants image.
-    pub fn gen_composite(&self, radius: u32) -> MagicBuf {
+    pub fn gen_composite(&self, radius: u32) -> RgbaImage {
         let height = self.images[0].height();
         let width = self.images[0].width();
         let round = RoundMask { radius };
         self.check_heights(height, width);
-        let mut masked: Vec<(MagicBuf, usize)> = self
+        let mut masked: Vec<(RgbaImage, usize)> = self
             .images
             .par_iter()
             .enumerate()
@@ -53,15 +35,16 @@ impl Magic {
         }
         round.mask(&result)
     }
+
     // Creates a stacked image.
-    pub fn gen_stacked(&self, radius: u32) -> MagicBuf {
+    pub fn gen_stacked(&self, radius: u32) -> RgbaImage {
         let height = self.images[0].height();
         let width = self.images[0].width();
         let round = RoundMask { radius };
         self.check_heights(height, width);
         let gap = height / 3;
         let padding_x = f32::floor((width as f32 - (3.0 * gap as f32)) / 2.0) as u32;
-        let mut result = MagicBuf::from_pixel(
+        let mut result = RgbaImage::from_pixel(
             (height * 2) + (padding_x * 3) + gap,
             height * 2,
             Rgba([0, 0, 0, 0]),
@@ -81,17 +64,17 @@ impl Magic {
         result
     }
 
-    pub fn gen_grid(&self, radius: u32, gap: u32) -> MagicBuf {
+    pub fn gen_grid(&self, radius: u32, gap: u32) -> RgbaImage {
         let height = self.images[0].height();
         let width = self.images[0].width();
         let round = RoundMask { radius };
         // Check heights or panic
         self.check_heights(height, width);
         // Round images
-        let rounded: Vec<MagicBuf> = self.images.par_iter().map(|x| round.mask(x)).collect();
+        let rounded: Vec<RgbaImage> = self.images.par_iter().map(|x| round.mask(x)).collect();
         // Create final
         let mut result =
-            MagicBuf::from_pixel((width * 2) + gap, (height * 2) + gap, Rgba([0, 0, 0, 0]));
+            RgbaImage::from_pixel((width * 2) + gap, (height * 2) + gap, Rgba([0, 0, 0, 0]));
         // Paste final
         rounded.iter().enumerate().for_each(|(i, x)| {
             image::imageops::overlay(
@@ -123,40 +106,6 @@ impl Magic {
             if image.height() != height || image.width() != width {
                 panic!("All images must have the same dimensions.")
             }
-        }
-    }
-}
-
-/// Create a new Magic from arguments provided
-impl From<Args> for Magic {
-    fn from(args: Args) -> Self {
-        Self {
-            images: [
-                open(
-                    args.latte
-                        .unwrap_or_else(|| panic!("Not enough arguments.")),
-                )
-                .unwrap_or_else(|_| panic!("Failed to open file(s)."))
-                .into_rgba8(),
-                open(
-                    args.frappe
-                        .unwrap_or_else(|| panic!("Not enough arguments.")),
-                )
-                .unwrap_or_else(|_| panic!("Failed to open file(s)."))
-                .into_rgba8(),
-                open(
-                    args.macchiato
-                        .unwrap_or_else(|| panic!("Not enough arguments.")),
-                )
-                .unwrap_or_else(|_| panic!("Failed to open file(s)."))
-                .into_rgba8(),
-                open(
-                    args.mocha
-                        .unwrap_or_else(|| panic!("Not enough arguments.")),
-                )
-                .unwrap_or_else(|_| panic!("Failed to open file(s)."))
-                .into_rgba8(),
-            ],
         }
     }
 }

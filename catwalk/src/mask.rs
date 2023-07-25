@@ -1,6 +1,4 @@
-use image::{ImageBuffer, Rgba};
-
-pub type MagicBuf = ImageBuffer<Rgba<u8>, Vec<u8>>;
+use image::{Rgba, RgbaImage};
 
 enum MaskType {
     Full,
@@ -16,7 +14,7 @@ pub struct RoundMask {
 
 impl RoundMask {
     // Applies a round mask on an object
-    pub fn mask(&self, mask: &MagicBuf) -> MagicBuf {
+    pub fn mask(&self, mask: &RgbaImage) -> RgbaImage {
         // Save us some work
         if self.radius == 0 {
             return mask.clone();
@@ -26,7 +24,7 @@ impl RoundMask {
         let r = self.radius;
         // Inner corners
         let corners = [(r, r), (w - r, r), (w - r, h - r), (r, h - r)];
-        MagicBuf::from_fn(w, h, |x, y| {
+        RgbaImage::from_fn(w, h, |x, y| {
             if ((x <= r) || (x >= corners[2].0)) && ((y <= r) || (y >= corners[2].1)) {
                 // y is in corner squares
                 if corners
@@ -61,13 +59,13 @@ impl TrapMask {
         }
     }
     /// Apply mask onto given image
-    pub fn mask(&self, mask: &MagicBuf) -> MagicBuf {
+    pub fn mask(&self, mask: &RgbaImage) -> RgbaImage {
         match &self.vertices {
             MaskType::Full => mask.clone(),
             MaskType::Partial(v) => {
                 // Use x/y to "ground" the point later on
                 let inverse_slope = -1.0 * f32::abs((v[0].0 - v[1].0) / (v[0].1 - v[1].1));
-                MagicBuf::from_fn(mask.width(), mask.height(), |x, y| {
+                RgbaImage::from_fn(mask.width(), mask.height(), |x, y| {
                     if ((x as f32) - ((y as f32) * inverse_slope)) <= v[0].0 {
                         // In mask
                         mask[(x, y)]
