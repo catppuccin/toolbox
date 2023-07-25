@@ -1,9 +1,10 @@
 use catwalk::Magic;
-use clap::{Command, CommandFactory};
-pub use clap::{Parser, ValueEnum};
+use clap::Command;
+pub use clap::{Args, CommandFactory, Parser, Subcommand, ValueEnum};
 use clap_complete::Shell;
 use clap_complete::{generate, Generator};
 use image::open;
+use rayon::prelude::*;
 use std::path::PathBuf;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
@@ -13,18 +14,30 @@ pub enum Layout {
     Grid,
 }
 
-#[derive(Parser, Debug, Clone)]
+#[derive(Args, Clone, Debug)]
+#[command(args_conflicts_with_subcommands(true))]
+pub struct ImageArgs {
+    pub latte: PathBuf,
+    pub frappe: PathBuf,
+    pub macchiato: PathBuf,
+    pub mocha: PathBuf,
+}
+
+#[derive(Subcommand, Clone, Debug)]
+pub enum Commands {
+    #[command(about = "Generates a completion file for the given shell")]
+    Completion {
+        #[arg(value_enum)]
+        shell: Shell,
+    },
+}
+
+#[derive(Parser, Clone, Debug)]
 #[command(author, version, about, long_about = None)]
 #[command(arg_required_else_help(true))]
-pub struct Args {
-    /// Latte screenshot
-    pub latte: PathBuf,
-    /// Frappe screenshot
-    pub frappe: PathBuf,
-    /// Macchiato screenshot
-    pub macchiato: PathBuf,
-    /// Mocha screenshot
-    pub mocha: PathBuf,
+pub struct Cli {
+    #[command(flatten)]
+    pub images: Option<ImageArgs>,
     /// Layout
     #[arg(short, long, value_enum, default_value_t=Layout::Composite)]
     pub layout: Layout,
@@ -35,8 +48,8 @@ pub struct Args {
     #[arg(short, long, default_value_t = 75)]
     pub radius: u32,
     // Shell completion
-    #[arg(long, value_enum)]
-    completion: Option<Shell>,
+    #[command(subcommand)]
+    command: Option<Commands>,
 }
 
 fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
@@ -44,17 +57,29 @@ fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = Cli::parse();
 
-    if let Some(generator) = args.completion {
-        let mut cmd = Args::command();
-        eprintln!("Generating completion file for {generator:?}...");
-        print_completions(generator, &mut cmd);
-        return;
+    if let Some(generator) = args.command {
+        match generator {
+            Commands::Completion { shell } => {
+                let mut cmd = Cli::command();
+                eprintln!("Generating completion file for {generator:?}...");
+                print_completions(shell, &mut cmd);
+                std::process::exit(0);
+            }
+        }
     }
 
     let magic = Magic::new(
-        [args.latte, args.frappe, args.macchiato, args.mocha]
+        args.images
+            .map_or_else(
+                || {
+                    eprintln!("No images provided");
+                    std::process::exit(1);
+                },
+                |x| vec![x.latte, x.frappe, x.macchiato, x.mocha],
+            )
+            .par_iter()
             .map(open)
             .map(|x| {
                 x.unwrap_or_else(|_| {
@@ -62,7 +87,10 @@ fn main() {
                     std::process::exit(1)
                 })
                 .to_rgba8()
-            }),
+            })
+            .collect::<Vec<_>>()
+            .try_into()
+            .expect("Failed to convert images to array"),
     );
 
     (match args.layout {
