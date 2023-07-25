@@ -4,7 +4,7 @@ pub type MagicBuf = ImageBuffer<Rgba<u8>, Vec<u8>>;
 
 enum MaskType {
     Full,
-    Partial(Vec<(f32, f32)>)
+    Partial(Vec<(f32, f32)>),
 }
 pub struct TrapMask {
     vertices: MaskType,
@@ -29,7 +29,12 @@ impl RoundMask {
         MagicBuf::from_fn(w, h, |x, y| {
             if ((x <= r) || (x >= corners[2].0)) && ((y <= r) || (y >= corners[2].1)) {
                 // y is in corner squares
-                if corners.iter().map(|c| Self::is_dis(&(x, y), c, r)).collect::<Vec<bool>>() == vec![false, false, false, false] {
+                if corners
+                    .iter()
+                    .map(|c| Self::is_dis(&(x, y), c, r))
+                    .collect::<Vec<bool>>()
+                    == vec![false, false, false, false]
+                {
                     // y is not in rectangle
                     return Rgba([0, 0, 0, 0]);
                 }
@@ -47,7 +52,9 @@ impl TrapMask {
     /// Construct a new shape.
     pub fn new(vertices: Vec<(f32, f32)>) -> Self {
         if vertices.is_empty() {
-            return Self { vertices: MaskType::Full }
+            return Self {
+                vertices: MaskType::Full,
+            };
         }
         Self {
             vertices: MaskType::Partial(vertices),
@@ -61,7 +68,7 @@ impl TrapMask {
                 // Use x/y to "ground" the point later on
                 let inverse_slope = -1.0 * f32::abs((v[0].0 - v[1].0) / (v[0].1 - v[1].1));
                 MagicBuf::from_fn(mask.width(), mask.height(), |x, y| {
-                    if ((x as f32) - ((y as f32)*inverse_slope)) <= v[0].0 {
+                    if ((x as f32) - ((y as f32) * inverse_slope)) <= v[0].0 {
                         // In mask
                         mask[(x, y)]
                     } else {

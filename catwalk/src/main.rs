@@ -1,4 +1,4 @@
-use catwalk::{Args, Magic, Parser, MagicBuf};
+use catwalk::{Args, Magic, MagicBuf, Parser};
 
 fn main() {
     let args = Args::parse();

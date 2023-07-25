@@ -42,10 +42,11 @@
       pkgs = nixpkgs.legacyPackages.${system};
     in {
       catwalk = pkgs.mkShell {
-        nativeBuildInputs = with pkgs; [
+        buildInputs = with pkgs; [
           cargo
           clippy
           rust-analyzer
+          rustfmt
           rustc
         ];
       };
