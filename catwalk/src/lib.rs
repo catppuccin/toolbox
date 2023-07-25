@@ -62,7 +62,7 @@ impl Magic {
         let padding_x = f32::floor((width as f32 - (3.0 * gap as f32)) / 2.0) as u32;
         let mut result = MagicBuf::from_pixel((height * 2) + (padding_x * 3) + gap, height * 2, Rgba([0, 0, 0, 0]));
         self.images.iter()
-            .map(|x| round.mask(&x))
+            .map(|x| round.mask(x))
             .enumerate()
             .for_each(|(i, x)| {
                 image::imageops::overlay(&mut result, &x, (padding_x + (gap * (i as u32))) as i64, (gap * (i as u32)) as i64);
@@ -77,7 +77,7 @@ impl Magic {
         // Check heights or panic
         self.check_heights(height, width);
         // Round images
-        let rounded: Vec<MagicBuf> = self.images.par_iter().map(|x| round.mask(&x)).collect();
+        let rounded: Vec<MagicBuf> = self.images.par_iter().map(|x| round.mask(x)).collect();
         // Create final
         let mut result = MagicBuf::from_pixel((width * 2) + gap, (height * 2) + gap, Rgba([0, 0, 0, 0]));
         // Paste final

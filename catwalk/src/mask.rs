@@ -29,7 +29,7 @@ impl RoundMask {
         MagicBuf::from_fn(w, h, |x, y| {
             if ((x <= r) || (x >= corners[2].0)) && ((y <= r) || (y >= corners[2].1)) {
                 // y is in corner squares
-                if corners.iter().map(|c| Self::is_dis(&(x, y), &c, r)).collect::<Vec<bool>>() == vec![false, false, false, false] {
+                if corners.iter().map(|c| Self::is_dis(&(x, y), c, r)).collect::<Vec<bool>>() == vec![false, false, false, false] {
                     // y is not in rectangle
                     return Rgba([0, 0, 0, 0]);
                 }
