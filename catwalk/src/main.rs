@@ -1,14 +1,12 @@
 use catwalk::Magic;
-use clap::Command;
-pub use clap::{Args, CommandFactory, Parser, Subcommand, ValueEnum};
-use clap_complete::Shell;
-use clap_complete::{generate, Generator};
+use clap::{Args, Command, CommandFactory, Parser, Subcommand, ValueEnum};
+use clap_complete::{generate, Generator, Shell};
 use image::open;
 use rayon::prelude::*;
 use std::path::PathBuf;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
-pub enum Layout {
+enum Layout {
     Composite,
     Stacked,
     Grid,
@@ -16,15 +14,15 @@ pub enum Layout {
 
 #[derive(Args, Clone, Debug)]
 #[command(args_conflicts_with_subcommands(true))]
-pub struct ImageArgs {
-    pub latte: PathBuf,
-    pub frappe: PathBuf,
-    pub macchiato: PathBuf,
-    pub mocha: PathBuf,
+struct ImageArgs {
+    latte: PathBuf,
+    frappe: PathBuf,
+    macchiato: PathBuf,
+    mocha: PathBuf,
 }
 
 #[derive(Subcommand, Clone, Debug)]
-pub enum Commands {
+enum Commands {
     #[command(about = "Generates a completion file for the given shell")]
     Completion {
         #[arg(value_enum)]
@@ -35,18 +33,22 @@ pub enum Commands {
 #[derive(Parser, Clone, Debug)]
 #[command(author, version, about, long_about = None)]
 #[command(arg_required_else_help(true))]
-pub struct Cli {
+struct Cli {
+    /// Image inputs
     #[command(flatten)]
-    pub images: Option<ImageArgs>,
+    images: Option<ImageArgs>,
+    /// Output file
+    #[arg(short, long)]
+    output: Option<PathBuf>,
     /// Layout
     #[arg(short, long, value_enum, default_value_t=Layout::Composite)]
-    pub layout: Layout,
+    layout: Layout,
     /// Gap (grid layout)
     #[arg(short, long, default_value_t = 150)]
-    pub gap: u32,
+    gap: u32,
     /// Sets the radius.
     #[arg(short, long, default_value_t = 75)]
-    pub radius: u32,
+    radius: u32,
     // Shell completion
     #[command(subcommand)]
     command: Option<Commands>,
@@ -56,7 +58,7 @@ fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
     generate(gen, cmd, cmd.get_name().to_string(), &mut std::io::stdout());
 }
 
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Cli::parse();
 
     if let Some(generator) = args.command {
@@ -82,8 +84,8 @@ fn main() {
             .par_iter()
             .map(open)
             .map(|x| {
-                x.unwrap_or_else(|_| {
-                    eprintln!("Failed to open image");
+                x.unwrap_or_else(|e| {
+                    eprintln!("Failed to open image: {}", e);
                     std::process::exit(1)
                 })
                 .to_rgba8()
@@ -91,13 +93,15 @@ fn main() {
             .collect::<Vec<_>>()
             .try_into()
             .expect("Failed to convert images to array"),
-    );
+        args.radius,
+    )?;
 
     (match args.layout {
-        Layout::Composite => magic.gen_composite(args.radius),
-        Layout::Stacked => magic.gen_stacked(args.radius),
-        Layout::Grid => magic.gen_grid(args.radius, args.gap),
+        Layout::Composite => magic.gen_composite(),
+        Layout::Stacked => magic.gen_stacked(),
+        Layout::Grid => magic.gen_grid(args.gap),
     })
-    .save("result.webp")
-    .unwrap();
+    .save(args.output.unwrap_or_else(|| PathBuf::from("result.webp")))?;
+
+    Ok(())
 }

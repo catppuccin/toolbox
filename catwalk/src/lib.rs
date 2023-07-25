@@ -1,57 +1,74 @@
 mod mask;
 
-pub use crate::mask::RoundMask;
-use crate::mask::TrapMask;
+use crate::mask::{RoundMask, TrapMask};
 use image::{ImageBuffer, Rgba, RgbaImage};
 use rayon::prelude::*;
 
 #[derive(Debug)]
 pub struct Magic {
     images: [RgbaImage; 4],
+    height: u32,
+    width: u32,
+    rounding_mask: RoundMask,
 }
 
 impl Magic {
     /// Creates a new instance of Magic.
-    pub fn new(images: [RgbaImage; 4]) -> Self {
-        Self { images }
+    pub fn new(images: [RgbaImage; 4], radius: u32) -> Result<Self, &'static str> {
+        let height = images[0].height();
+        let width = images[0].width();
+
+        // verify that they're all the same size
+        if images
+            .iter()
+            .any(|x| x.height() != height || x.width() != width)
+        {
+            return Err("Images must be the same size");
+        };
+
+        let rounding_mask = RoundMask { radius };
+
+        Ok(Self {
+            images,
+            height,
+            width,
+            rounding_mask,
+        })
     }
 
     /// Creates the slants image.
-    pub fn gen_composite(&self, radius: u32) -> RgbaImage {
-        let height = self.images[0].height();
-        let width = self.images[0].width();
-        let round = RoundMask { radius };
-        self.check_heights(height, width);
+    pub fn gen_composite(&self) -> RgbaImage {
         let mut masked: Vec<(RgbaImage, usize)> = self
             .images
             .par_iter()
             .enumerate()
-            .map(|(i, x)| (Self::gen_mask(height as f32, width as f32, i).mask(x), i))
+            .map(|(i, x)| {
+                (
+                    Self::gen_mask(self.height as f32, self.width as f32, i).mask(x),
+                    i,
+                )
+            })
             .collect();
         masked.sort_by(|a, b| b.1.cmp(&a.1));
-        let mut result = ImageBuffer::new(width, height);
+        let mut result = ImageBuffer::new(self.width, self.height);
         for mask in masked.iter() {
             image::imageops::overlay(&mut result, &mask.0, 0, 0);
         }
-        round.mask(&result)
+        self.rounding_mask.mask(&result)
     }
 
     // Creates a stacked image.
-    pub fn gen_stacked(&self, radius: u32) -> RgbaImage {
-        let height = self.images[0].height();
-        let width = self.images[0].width();
-        let round = RoundMask { radius };
-        self.check_heights(height, width);
-        let gap = height / 3;
-        let padding_x = f32::floor((width as f32 - (3.0 * gap as f32)) / 2.0) as u32;
+    pub fn gen_stacked(&self) -> RgbaImage {
+        let gap = self.height / 3;
+        let padding_x = f32::floor((self.width as f32 - (3.0 * gap as f32)) / 2.0) as u32;
         let mut result = RgbaImage::from_pixel(
-            (height * 2) + (padding_x * 3) + gap,
-            height * 2,
+            (self.height * 2) + (padding_x * 3) + gap,
+            self.height * 2,
             Rgba([0, 0, 0, 0]),
         );
         self.images
             .iter()
-            .map(|x| round.mask(x))
+            .map(|x| self.rounding_mask.mask(x))
             .enumerate()
             .for_each(|(i, x)| {
                 image::imageops::overlay(
@@ -64,24 +81,26 @@ impl Magic {
         result
     }
 
-    pub fn gen_grid(&self, radius: u32, gap: u32) -> RgbaImage {
-        let height = self.images[0].height();
-        let width = self.images[0].width();
-        let round = RoundMask { radius };
-        // Check heights or panic
-        self.check_heights(height, width);
+    pub fn gen_grid(&self, gap: u32) -> RgbaImage {
         // Round images
-        let rounded: Vec<RgbaImage> = self.images.par_iter().map(|x| round.mask(x)).collect();
+        let rounded: Vec<RgbaImage> = self
+            .images
+            .par_iter()
+            .map(|x| self.rounding_mask.mask(x))
+            .collect();
         // Create final
-        let mut result =
-            RgbaImage::from_pixel((width * 2) + gap, (height * 2) + gap, Rgba([0, 0, 0, 0]));
+        let mut result = RgbaImage::from_pixel(
+            (self.width * 2) + gap,
+            (self.height * 2) + gap,
+            Rgba([0, 0, 0, 0]),
+        );
         // Paste final
         rounded.iter().enumerate().for_each(|(i, x)| {
             image::imageops::overlay(
                 &mut result,
                 x,
-                (((i as u32) % 2) * (width + gap)).into(),
-                (((i as u32) / 2) * (height + gap)).into(),
+                (((i as u32) % 2) * (self.width + gap)).into(),
+                (((i as u32) / 2) * (self.height + gap)).into(),
             )
         });
         result
@@ -98,14 +117,5 @@ impl Magic {
         // Return trapezoid mask
         // We only need to return the line here: the trapezoid is from top to bottom
         TrapMask::new(vec![(trap_top * w, 0.0), (trap_btm * w, h)])
-    }
-
-    /// Panics if all images don't match the supplied dimensions
-    fn check_heights(&self, height: u32, width: u32) {
-        for image in self.images.iter() {
-            if image.height() != height || image.width() != width {
-                panic!("All images must have the same dimensions.")
-            }
-        }
     }
 }

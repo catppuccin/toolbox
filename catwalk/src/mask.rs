@@ -8,6 +8,7 @@ pub struct TrapMask {
     vertices: MaskType,
 }
 
+#[derive(Debug)]
 pub struct RoundMask {
     pub radius: u32,
 }
