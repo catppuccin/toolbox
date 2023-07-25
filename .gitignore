@@ -103,11 +103,11 @@ dist
 # TernJS port file
 .tern-port
 
-# Puccinier
-puccinier/target
+.vscode/
 
 # Nix build
-result/
+result
+.direnv/
 
-# Catwalk
-catwalk/target/
+# rust
+target/

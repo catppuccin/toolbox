@@ -1,36 +1,56 @@
 {
   description = "Catppuccin's development tools";
 
-  inputs = {
-    flake-utils.url = "github:numtide/flake-utils";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-  };
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
   outputs = {
-    flake-utils,
+    self,
     nixpkgs,
-    ...
-  }:
-    flake-utils.lib.eachDefaultSystem (
-      system: let
-        pkgs = nixpkgs.legacyPackages.${system};
-        derivs = pkgs.callPackage ./nix {inherit system;};
-      in rec {
-        packages = builtins.listToAttrs (builtins.map (name: {
-          inherit name;
-          value = derivs.${name};
-        }) ["puccinier" "catwalk" "inkcat" "docpuccin" "contrast_test" "palette_builder"]);
+  }: let
+    systems = [
+      "aarch64-darwin"
+      "aarch64-linux"
+      "armv6l-linux"
+      "armv7l-linux"
+      "x86_64-darwin"
+      "x86_64-linux"
+    ];
+    forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
+  in rec {
+    packages = forAllSystems (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+      derivs = pkgs.callPackage ./nix {inherit system;};
+    in
+      builtins.listToAttrs (builtins.map (name: {
+        inherit name;
+        value = derivs.${name};
+      }) ["puccinier" "catwalk" "inkcat" "docpuccin" "contrast_test" "palette_builder"]));
 
-        apps = builtins.listToAttrs (builtins.map (name: {
+    apps = forAllSystems (
+      system:
+        builtins.listToAttrs (builtins.map (name: {
             inherit name;
-            value = flake-utils.lib.mkApp {
-              drv = derivs.${name};
+            value = {
+              type = "app";
+              program = "${self.packages.${system}}/bin/${name}";
             };
           })
-          (builtins.attrNames
-            packages));
-
-        formatter = pkgs.alejandra;
-      }
+          (builtins.attrNames packages))
     );
+
+    devShells = forAllSystems (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      catwalk = pkgs.mkShell {
+        nativeBuildInputs = with pkgs; [
+          cargo
+          clippy
+          rust-analyzer
+          rustc
+        ];
+      };
+    });
+
+    formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
+  };
 }

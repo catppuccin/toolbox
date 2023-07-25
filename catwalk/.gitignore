@@ -1,4 +1,2 @@
-assets/
-.vscode/
-.direnv/
-result.png
+*.png
+*.webp

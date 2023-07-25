@@ -85,7 +85,9 @@ in
   builtins.listToAttrs (builtins.map ({...} @ args: {
       name = args.pname;
       value = mkNodePkg args;
-    }) nodePkgs) // builtins.listToAttrs (builtins.map ({...} @ args: {
+    })
+    nodePkgs)
+  // builtins.listToAttrs (builtins.map ({...} @ args: {
       name = args.pname;
       value = mkRustPkg args;
     })
