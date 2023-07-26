@@ -8,7 +8,8 @@ use color_eyre::{
     eyre::{eyre, Context},
     Result,
 };
-use image::{open, RgbaImage};
+use image::codecs::webp::{WebPEncoder, WebPQuality};
+use image::{open, EncodableLayout, ImageEncoder, RgbaImage};
 use std::path::Path;
 
 fn open_rgba_image(path: &Path) -> Result<RgbaImage> {
@@ -46,12 +47,25 @@ fn main() -> Result<()> {
         args.radius,
     )?;
 
-    (match args.layout {
+    if args.output.extension().unwrap_or_default() != "webp" {
+        return Err(eyre!("Output file must be a .webp file"));
+    }
+
+    let buffer = match args.layout {
         Layout::Composite => magic.gen_composite(),
         Layout::Stacked => magic.gen_stacked(),
         Layout::Grid => magic.gen_grid(args.gap),
-    })
-    .save(args.output)?;
+    };
+
+    let mut buf = Vec::new();
+    WebPEncoder::new_with_quality(&mut buf, WebPQuality::lossless()).write_image(
+        buffer.as_bytes(),
+        buffer.width(),
+        buffer.height(),
+        image::ColorType::Rgba8,
+    )?;
+
+    std::fs::write(args.output, buf)?;
 
     Ok(())
 }
