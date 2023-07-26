@@ -2,15 +2,30 @@
 name = "catwalk"
 description = "A sweet program that takes in four showcase images and displays them all at once."
 authors = ["Catppuccin Org <releases@catppuccin.com>"]
+repository = "https://github.com/catppuccin/toolbox"
+license = "MIT"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+crate-type = ["cdylib", "rlib"]
+
 [dependencies]
+image = "0.24.6"
+thiserror = "1.0.44"
+
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
 clap = { version = "4.3.19", features = ["derive"] }
-clap_complete = "4.3.2"
+clap_complete = { version = "4.3.2" }
 color-eyre = { version = "0.6.2", default-features = false }
 image = { version = "0.24.6", features = ["webp", "webp-encoder"] }
-rayon = "1.7.0"
+
+[target.'cfg(target_family = "wasm")'.dependencies]
+wasm-bindgen = "0.2.87"
+wee_alloc = "0.4.5"
+
+[profile.release]
+opt-level = "s"
 
 [build-dependencies]
 clap = { version = "*", features = ["derive"] }

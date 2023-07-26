@@ -1,9 +1,14 @@
 mod mask;
 
 use crate::mask::{RoundMask, TrapMask};
-use color_eyre::{eyre::eyre, Result};
 use image::{ImageBuffer, Rgba, RgbaImage};
-use rayon::prelude::*;
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum CatwalkError {
+    #[error("Images must be the same size")]
+    SameSize,
+}
 
 #[derive(Debug)]
 pub struct Magic {
@@ -15,7 +20,7 @@ pub struct Magic {
 
 impl Magic {
     /// Creates a new instance of Magic.
-    pub fn new(images: [RgbaImage; 4], radius: u32) -> Result<Self> {
+    pub fn new(images: [RgbaImage; 4], radius: u32) -> Result<Self, CatwalkError> {
         let height = images[0].height();
         let width = images[0].width();
 
@@ -24,7 +29,7 @@ impl Magic {
             .iter()
             .any(|x| x.height() != height || x.width() != width)
         {
-            return Err(eyre!("Images must be the same size"));
+            return Err(CatwalkError::SameSize);
         };
 
         let rounding_mask = RoundMask { radius };
@@ -41,7 +46,7 @@ impl Magic {
     pub fn gen_composite(&self) -> RgbaImage {
         let mut masked: Vec<(RgbaImage, usize)> = self
             .images
-            .par_iter()
+            .iter()
             .enumerate()
             .map(|(i, x)| {
                 (
@@ -86,7 +91,7 @@ impl Magic {
         // Round images
         let rounded: Vec<RgbaImage> = self
             .images
-            .par_iter()
+            .iter()
             .map(|x| self.rounding_mask.mask(x))
             .collect();
         // Create final
@@ -119,4 +124,32 @@ impl Magic {
         // We only need to return the line here: the trapezoid is from top to bottom
         TrapMask::new(vec![(trap_top * w, 0.0), (trap_btm * w, h)])
     }
+}
+
+#[cfg(target_family = "wasm")]
+use wasm_bindgen::prelude::*;
+// Use `wee_alloc` as the global allocator for WASM.
+#[cfg(target_family = "wasm")]
+extern crate wee_alloc;
+#[cfg(target_family = "wasm")]
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
+#[cfg(target_family = "wasm")]
+#[wasm_bindgen]
+pub fn convert_images(
+    latte: Vec<u8>,
+    frappe: Vec<u8>,
+    macchiato: Vec<u8>,
+    mocha: Vec<u8>,
+) -> Result<Vec<u8>, JsError> {
+    let images = [latte, frappe, macchiato, mocha]
+        .iter()
+        .map(|x| image::load_from_memory(x).unwrap().to_rgba8())
+        .collect::<Vec<RgbaImage>>();
+
+    let magic = Magic::new(images.try_into().unwrap(), 10)?;
+    let composite = magic.gen_composite();
+
+    Ok(composite.to_vec())
 }
