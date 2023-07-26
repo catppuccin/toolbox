@@ -1,65 +1,15 @@
+mod cli;
+
 use catwalk::Magic;
-use clap::{Args, Command, CommandFactory, Parser, Subcommand, ValueEnum};
-use clap_complete::{generate, Generator, Shell};
+use clap::CommandFactory;
+
+use cli::{get_cli_arguments, print_completions, Cli, Commands, Layout};
 use color_eyre::{
     eyre::{eyre, Context},
     Result,
 };
 use image::{open, RgbaImage};
-use std::path::{Path, PathBuf};
-
-#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
-enum Layout {
-    Composite,
-    Stacked,
-    Grid,
-}
-
-#[derive(Args, Clone, Debug)]
-#[command(args_conflicts_with_subcommands(true))]
-struct ImageArgs {
-    latte: PathBuf,
-    frappe: PathBuf,
-    macchiato: PathBuf,
-    mocha: PathBuf,
-}
-
-#[derive(Subcommand, Clone, Debug)]
-enum Commands {
-    #[command(about = "Generates a completion file for the given shell")]
-    Completion {
-        #[arg(value_enum)]
-        shell: Shell,
-    },
-}
-
-#[derive(Parser, Clone, Debug)]
-#[command(author, version, about, long_about = None)]
-#[command(arg_required_else_help(true))]
-struct Cli {
-    /// Image inputs
-    #[command(flatten)]
-    images: Option<ImageArgs>,
-    /// Output file
-    #[arg(short, long, default_value = "result.webp")]
-    output: PathBuf,
-    /// Layout
-    #[arg(short, long, value_enum, default_value_t=Layout::Composite)]
-    layout: Layout,
-    /// Gap (grid layout)
-    #[arg(short, long, default_value_t = 150)]
-    gap: u32,
-    /// Sets the radius.
-    #[arg(short, long, default_value_t = 75)]
-    radius: u32,
-    // Shell completion
-    #[command(subcommand)]
-    command: Option<Commands>,
-}
-
-fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
-    generate(gen, cmd, cmd.get_name().to_string(), &mut std::io::stdout());
-}
+use std::path::Path;
 
 fn open_rgba_image(path: &Path) -> Result<RgbaImage> {
     Ok(open(path)?.to_rgba8())
@@ -71,7 +21,7 @@ fn main() -> Result<()> {
         .display_env_section(false)
         .install()?;
 
-    let args = Cli::parse();
+    let args = get_cli_arguments();
 
     if let Some(generator) = args.command {
         match generator {

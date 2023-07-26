@@ -11,3 +11,7 @@ clap_complete = "4.3.2"
 color-eyre = { version = "0.6.2", default-features = false }
 image = { version = "0.24.6", features = ["webp-encoder"] }
 rayon = "1.7.0"
+
+[build-dependencies]
+clap = { version = "*", features = ["derive"] }
+clap_complete = "*"
