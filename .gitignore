@@ -111,3 +111,10 @@ result
 
 # rust
 target/
+
+# catwalk
+catwalk/*.gif
+catwalk/**/*.jpg
+catwalk/**/*.jpeg
+catwalk/**/*.png
+catwalk/**/*.webp

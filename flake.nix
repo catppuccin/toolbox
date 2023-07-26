@@ -19,7 +19,10 @@
   in rec {
     packages = forAllSystems (system: let
       pkgs = nixpkgs.legacyPackages.${system};
-      derivs = pkgs.callPackage ./nix {inherit system;};
+      derivs = pkgs.callPackage ./nix {
+        inherit system;
+        version = builtins.substring 0 8 self.lastModifiedDate;
+      };
     in
       builtins.listToAttrs (builtins.map (name: {
         inherit name;
