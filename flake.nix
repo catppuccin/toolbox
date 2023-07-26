@@ -32,10 +32,10 @@
             inherit name;
             value = {
               type = "app";
-              program = "${self.packages.${system}}/bin/${name}";
+              program = "${packages.${system}.${name}}/bin/${name}";
             };
           })
-          (builtins.attrNames packages))
+          (builtins.attrNames packages.${system}))
     );
 
     devShells = forAllSystems (system: let
