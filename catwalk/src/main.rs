@@ -18,7 +18,10 @@ fn open_rgba_image(path: &Path) -> Result<RgbaImage> {
 
 fn main() -> Result<()> {
     color_eyre::config::HookBuilder::default()
-        .panic_section("Consider reporting this issue to https://github.com/catppuccin/toolbox")
+        .panic_section(format!(
+            "Consider reporting this issue to {}",
+            env!("CARGO_PKG_REPOSITORY")
+        ))
         .display_env_section(false)
         .install()?;
 
