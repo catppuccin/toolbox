@@ -11,21 +11,19 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-image = "0.24.6"
 thiserror = "1.0.44"
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 clap = { version = "4.3.19", features = ["derive"] }
 clap_complete = { version = "4.3.2" }
 color-eyre = { version = "0.6.2", default-features = false }
-image = { version = "0.24.6", features = ["webp", "webp-encoder"] }
+ril = { version = "0", default-features = false, features = ["resize", "webp"] }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
+ril = { version = "0", default-features = false, features = ["resize"] }
 wasm-bindgen = "0.2.87"
+web-sys = { version = "0.3.64", features = ["ImageData"] }
 wee_alloc = "0.4.5"
-
-[profile.release]
-opt-level = "s"
 
 [build-dependencies]
 clap = { version = "*", features = ["derive"] }

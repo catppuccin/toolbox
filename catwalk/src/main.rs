@@ -8,12 +8,11 @@ use color_eyre::{
     eyre::{eyre, Context},
     Result,
 };
-use image::codecs::webp::{WebPEncoder, WebPQuality};
-use image::{open, EncodableLayout, ImageEncoder, RgbaImage};
+use ril::{encodings::webp, prelude::*, Encoder};
 use std::path::Path;
 
-fn open_rgba_image(path: &Path) -> Result<RgbaImage> {
-    Ok(open(path)?.to_rgba8())
+fn open_rgba_image(path: &Path) -> Result<Image<Rgba>> {
+    Image::<Rgba>::open(path).map_or(Err(eyre!("Failed to open image")), Ok)
 }
 
 fn main() -> Result<()> {
@@ -60,15 +59,11 @@ fn main() -> Result<()> {
         Layout::Grid => magic.gen_grid(args.gap),
     };
 
-    let mut buf = Vec::new();
-    WebPEncoder::new_with_quality(&mut buf, WebPQuality::lossless()).write_image(
-        buffer.as_bytes(),
-        buffer.width(),
-        buffer.height(),
-        image::ColorType::Rgba8,
-    )?;
+    let mut writebuf = Vec::new();
+    let mut lossless_webp_encoder = webp::WebPEncoder::new().with_lossless(true);
+    lossless_webp_encoder
+        .encode(&buffer, &mut writebuf)
+        .map_err(|e| eyre!("Failed to encode image: {}", e))?;
 
-    std::fs::write(args.output, buf)?;
-
-    Ok(())
+    std::fs::write(args.output, writebuf).map_err(|e| eyre!("Failed to write image: {}", e))
 }
