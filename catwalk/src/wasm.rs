@@ -10,7 +10,6 @@ use wee_alloc;
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
-#[cfg(target_family = "wasm")]
 pub fn open_rgba_image(bytes: &Vec<u8>) -> Result<Image<Rgba>, JsError> {
     Image::<Rgba>::from_bytes_inferred(bytes).map_or(Err(JsError::new("Failed to open image")), Ok)
 }
@@ -23,7 +22,6 @@ pub enum Layout {
     Grid,
 }
 
-#[cfg(target_family = "wasm")]
 #[wasm_bindgen]
 pub fn convert_images(
     latte: ImageData,
