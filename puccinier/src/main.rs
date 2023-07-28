@@ -85,11 +85,7 @@ fn main() {
         let line: String = match line {
             Ok(line) => line,
             Err(e) => {
-                cmd.clone()
-                    .error(ErrorKind::Io, format!("Failed to read line: {e}, skipping"))
-                    .print()
-                    .unwrap();
-                continue;
+                cmd.error(ErrorKind::Io, format!("Failed to read line: {e}")).exit();
             }
         };
 
