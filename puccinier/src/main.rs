@@ -47,14 +47,28 @@ fn main() -> io::Result<()> {
     xflags::xflags! {
         /// Generate the other Catppuccin flavours off a template file written in one of them
         cmd puccinier {
-            /// Set the source file to convert
+            /// The source file to convert
             required source: PathBuf
-            /// Set the themes to generate from the source file
+            /// Set the themes to generate from the source file (one of 'latte', 'frappe', 'macchiato', or 'mocha')
             repeated -o, --output type: String
         }
     };
 
-    let flags = Puccinier::from_env_or_exit();
+    let mut flags = Puccinier::from_env_or_exit();
+	flags.output.sort_unstable();
+	flags.output.dedup();
+	flags.output.retain(|theme| {
+		if theme != "latte" && theme != "frappe" && theme != "macchiato" && theme != "mocha" {
+			eprintln!("Invalid output theme: {theme}. Must be one of 'latte', 'frappe', 'macchiato', or 'mocha'.");
+			eprintln!("Skipping.");
+			return false;
+		}
+		true
+	});
+	if flags.output.len() == 0 {
+		eprintln!("Warning: no output themes");
+		return Ok(())
+	}
 
     let source_file = File::open(&flags.source)?;
 
