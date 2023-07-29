@@ -1,4 +1,3 @@
-use miniserde::json;
 use std::{
     collections::HashMap,
     fs::File,
@@ -6,44 +5,9 @@ use std::{
     path::PathBuf,
 };
 
-pub type Color = HashMap<String, String>;
-pub type Palette = HashMap<String, Color>;
+mod palette;
 
 fn main() -> io::Result<()> {
-    let mut color_from_variant: HashMap<&'static str, Palette> = HashMap::new();
-    color_from_variant.insert(
-        "v1",
-        json::from_str(include_str!("../palettes/v1/converted.json")).unwrap(),
-    );
-    color_from_variant.insert(
-        "latte",
-        json::from_str(include_str!("../palettes/v2/latte.json")).unwrap(),
-    );
-    color_from_variant.insert(
-        "frappe",
-        json::from_str(include_str!("../palettes/v2/frappe.json")).unwrap(),
-    );
-    color_from_variant.insert(
-        "macchiato",
-        json::from_str(include_str!("../palettes/v2/macchiato.json")).unwrap(),
-    );
-    color_from_variant.insert(
-        "mocha",
-        json::from_str(include_str!("../palettes/v2/mocha.json")).unwrap(),
-    );
-
-    let mut variant_from_color: HashMap<String, [String; 3]> = HashMap::new();
-    for (variant, labels) in &color_from_variant {
-        for (label, colors) in labels.iter() {
-            for (format, value) in colors.iter() {
-                variant_from_color.insert(
-                    value.to_owned(),
-                    [variant.to_string(), label.to_string(), format.to_string()],
-                );
-            }
-        }
-    }
-
     xflags::xflags! {
         /// Generate the other Catppuccin flavours off a template file written in one of them
         cmd puccinier {
@@ -55,9 +19,9 @@ fn main() -> io::Result<()> {
     };
 
     let mut flags = Puccinier::from_env_or_exit();
-	flags.output.sort_unstable();
-	flags.output.dedup();
-	flags.output.retain(|theme| {
+    flags.output.sort_unstable();
+    flags.output.dedup();
+    flags.output.retain(|theme| {
 		if theme != "latte" && theme != "frappe" && theme != "macchiato" && theme != "mocha" {
 			eprintln!("Invalid output theme: {theme}. Must be one of 'latte', 'frappe', 'macchiato', or 'mocha'.");
 			eprintln!("Skipping.");
@@ -65,16 +29,26 @@ fn main() -> io::Result<()> {
 		}
 		true
 	});
-	if flags.output.len() == 0 {
-		eprintln!("Warning: no output themes");
-		return Ok(())
-	}
+    if flags.output.is_empty() {
+        eprintln!("Warning: no output themes");
+        return Ok(());
+    }
+
+    let color_from_variant = palette::palettes();
+
+    let mut variant_from_color: HashMap<&'static str, [&'static str; 3]> = HashMap::new();
+    for (variant, labels) in &color_from_variant {
+        for (label, colors) in labels.iter() {
+            for (format, value) in colors.iter() {
+                variant_from_color.insert(value, [variant, label, format]);
+            }
+        }
+    }
 
     let source_file = File::open(&flags.source)?;
 
-    let output_themes: Vec<String> = flags.output;
-
-    let writers: io::Result<Vec<BufWriter<File>>> = output_themes
+    let writers: io::Result<Vec<BufWriter<File>>> = flags
+        .output
         .iter()
         .map(|theme| -> io::Result<BufWriter<File>> {
             let mut path = flags.source.with_file_name(theme);
@@ -91,26 +65,20 @@ fn main() -> io::Result<()> {
     for line in BufReader::new(&source_file).lines() {
         let line = line?;
 
-        for (theme, writer) in output_themes.iter().zip(&mut writers) {
+        for (theme, writer) in flags.output.iter().zip(&mut writers) {
             let mut copy = line.clone();
 
-            regex
-                .find_iter(&line)
-                .filter_map(|item| {
-                    let replacement: &str = item.as_str();
-                    variant_from_color
-                        .get(&replacement.to_lowercase())
-                        .cloned()
-                        .zip(Some(replacement))
-                })
-                .for_each(|(lookup, replacement)| {
-                    let label: &Palette = color_from_variant.get(theme.as_str()).unwrap();
-                    let color_format: &Color = label.get(&lookup[1]).unwrap();
-                    let color_value: &String = color_format.get(&lookup[2]).unwrap();
+            for item in regex.find_iter(&line) {
+                let lookup = match variant_from_color.get(item.as_str().to_lowercase().as_str()) {
+                    Some(it) => it,
+                    None => continue,
+                };
+                let label = color_from_variant.get(theme.as_str()).unwrap();
+                let color_format = label.get(&lookup[1]).unwrap();
+                let color_value = color_format.get(&lookup[2]).unwrap();
 
-                    copy = copy.replace(replacement, color_value);
-                });
-
+                copy.replace_range(item.range(), color_value);
+            }
             writeln!(writer, "{}", copy)?;
         }
     }

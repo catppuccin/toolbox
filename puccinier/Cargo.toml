@@ -12,8 +12,7 @@ categories = ["command-line-utilities", "template-engine"]
 
 [dependencies]
 xflags = "0.3"
-miniserde = "0.1"
-regex = "1.6.0"
+regex = "1.6"
 
 [profile.release]
 opt-level = "z"
