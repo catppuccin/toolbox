@@ -1,28 +1,45 @@
+use miniserde::json;
 use std::{
+    collections::HashMap,
     fs::File,
     io::{self, BufRead, BufReader, BufWriter, Write},
     path::PathBuf,
-    collections::HashMap,
 };
-use miniserde::json;
 
 pub type Color = HashMap<String, String>;
 pub type Palette = HashMap<String, Color>;
 
-
 fn main() -> io::Result<()> {
     let mut color_from_variant: HashMap<&'static str, Palette> = HashMap::new();
-    color_from_variant.insert("v1", json::from_str(include_str!("../palettes/v1/converted.json")).unwrap());
-    color_from_variant.insert("latte", json::from_str(include_str!("../palettes/v2/latte.json")).unwrap());
-    color_from_variant.insert("frappe", json::from_str(include_str!("../palettes/v2/frappe.json")).unwrap());
-    color_from_variant.insert("macchiato", json::from_str(include_str!("../palettes/v2/macchiato.json")).unwrap());
-    color_from_variant.insert("mocha", json::from_str(include_str!("../palettes/v2/mocha.json")).unwrap());
+    color_from_variant.insert(
+        "v1",
+        json::from_str(include_str!("../palettes/v1/converted.json")).unwrap(),
+    );
+    color_from_variant.insert(
+        "latte",
+        json::from_str(include_str!("../palettes/v2/latte.json")).unwrap(),
+    );
+    color_from_variant.insert(
+        "frappe",
+        json::from_str(include_str!("../palettes/v2/frappe.json")).unwrap(),
+    );
+    color_from_variant.insert(
+        "macchiato",
+        json::from_str(include_str!("../palettes/v2/macchiato.json")).unwrap(),
+    );
+    color_from_variant.insert(
+        "mocha",
+        json::from_str(include_str!("../palettes/v2/mocha.json")).unwrap(),
+    );
 
     let mut variant_from_color: HashMap<String, [String; 3]> = HashMap::new();
     for (variant, labels) in &color_from_variant {
         for (label, colors) in labels.iter() {
             for (format, value) in colors.iter() {
-                variant_from_color.insert(value.to_owned(), [variant.to_string(), label.to_string(), format.to_string()]);
+                variant_from_color.insert(
+                    value.to_owned(),
+                    [variant.to_string(), label.to_string(), format.to_string()],
+                );
             }
         }
     }
@@ -38,7 +55,6 @@ fn main() -> io::Result<()> {
     };
 
     let flags = Puccinier::from_env_or_exit();
-
 
     let source_file = File::open(&flags.source)?;
 
@@ -56,15 +72,16 @@ fn main() -> io::Result<()> {
         .collect();
     let mut writers = writers?;
 
-
-    let regex = regex::Regex::new(r"(?i)#([A-F0-9]{6}|[A-F0-9]{3})|rgba?\(.+\)|hsla?\(.+\)").unwrap();
+    let regex =
+        regex::Regex::new(r"(?i)#([A-F0-9]{6}|[A-F0-9]{3})|rgba?\(.+\)|hsla?\(.+\)").unwrap();
     for line in BufReader::new(&source_file).lines() {
         let line = line?;
 
         for (theme, writer) in output_themes.iter().zip(&mut writers) {
             let mut copy = line.clone();
 
-            regex.find_iter(&line)
+            regex
+                .find_iter(&line)
                 .filter_map(|item| {
                     let replacement: &str = item.as_str();
                     variant_from_color
