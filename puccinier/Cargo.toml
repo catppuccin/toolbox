@@ -11,8 +11,12 @@ description = "Generate the other Catppuccin flavours off a template file writte
 categories = ["command-line-utilities", "template-engine"]
 
 [dependencies]
-clap = { version = "3.2.15", features = ["cargo"] }
-serde = { version = "1.0.140", features = ["serde_derive"] }
-serde_json = "1.0.82"
-lazy_static = "1.4.0"
+xflags = "0.3"
+miniserde = "0.1"
 regex = "1.6.0"
+
+[profile.release]
+opt-level = "z"
+codegen-units = 1
+lto = true
+strip = true
