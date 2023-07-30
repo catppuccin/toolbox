@@ -44,7 +44,6 @@ impl RoundMask {
         });
         // downsample for anti-aliasing
         mask.resize(img.width(), img.height(), ResizeAlgorithm::Lanczos3);
-        mask.save(ImageFormat::WebP, "mask.webp").unwrap();
 
         // Apply mask
         let mut res = img.clone();
