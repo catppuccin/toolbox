@@ -27,14 +27,14 @@ fn main() -> Result<()> {
     let args = get_cli_arguments();
 
     if let Some(generator) = args.command {
-        match generator {
+        return match generator {
             Commands::Completion { shell } => {
                 let mut cmd = Cli::command();
                 eprintln!("Generating completion file for {generator:?}...");
                 print_completions(shell, &mut cmd);
-                return Ok(());
+                Ok(())
             }
-        }
+        };
     }
 
     let images = args.images.ok_or_else(|| eyre!("No images provided"))?;

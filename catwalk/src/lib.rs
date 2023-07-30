@@ -95,17 +95,19 @@ impl Magic {
             .collect();
         // Create final
         let mut result = Image::new(
-            (self.width * 2) + gap,
-            (self.height * 2) + gap,
+            (self.width * 2) + (gap * 3),
+            (self.height * 2) + (gap * 3),
             Rgba::transparent(),
         )
         .with_overlay_mode(OverlayMode::Merge);
-        // Paste final
-        rounded.iter().enumerate().for_each(|(i, x)| {
+        // calculate the top left coordinates for each image, and paste
+        rounded.iter().enumerate().for_each(|(i, img)| {
+            let x = i % 2;
+            let y = i / 2;
             result.paste(
-                ((i as u32) % 2) * (self.width + gap),
-                ((i as u32) / 2) * (self.height + gap),
-                x,
+                gap + (self.width + gap) * x as u32,
+                gap + (self.height + gap) * y as u32,
+                img,
             )
         });
         result

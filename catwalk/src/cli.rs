@@ -41,7 +41,7 @@ pub struct Cli {
     #[arg(short, long, value_enum, default_value_t=Layout::Composite)]
     pub layout: Layout,
     /// Gap (grid layout)
-    #[arg(short, long, default_value_t = 150)]
+    #[arg(short, long, default_value_t = 50)]
     pub gap: u32,
     /// Sets the radius.
     #[arg(short, long, default_value_t = 75)]
