@@ -33,6 +33,13 @@ impl Magic {
             return Err(CatwalkError::SameSize);
         };
 
+        // radius as a percentage of the image width if height > width, vice versa
+        let radius = if height > width {
+            (width as f32 * (radius as f32 / 100.0)) as u32
+        } else {
+            (height as f32 * (radius as f32 / 100.0)) as u32
+        };
+
         let rounding_mask = RoundMask {
             radius,
             aa_level: 4,

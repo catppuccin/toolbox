@@ -43,8 +43,8 @@ pub struct Cli {
     /// Gap (grid layout)
     #[arg(short, long, default_value_t = 50)]
     pub gap: u32,
-    /// Sets the radius.
-    #[arg(short, long, default_value_t = 75)]
+    /// Sets the radius (percentage)
+    #[arg(short, long, default_value_t = 3)]
     pub radius: u32,
     // Shell completion
     #[command(subcommand)]
