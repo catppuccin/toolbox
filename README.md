@@ -226,24 +226,16 @@ $ catwalk <images>
 Install using pip (inside of a virtual environment):
 
 ```bash
-$ python3 -m pip install --upgrade catppuccin-catwalk
-$ catwalk <images>
-# if `catwalk` doesn't work for you, please try:
-$ python3 -m catwalk
+$ cargo install catppuccin-catwalk
+$ catwalk <images> <flags>
+# There's also a flake option
+$ nix run .#catwalk <images> -- <flags>
 ```
 
 | Parameter      | Description                                                                                                                |
 | -------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | `images`       | 4 images to merge into one. **REQUIRED**. All other parameters are optional.                                               |
 | `--layout`     | Choose the style of the showcase image. Available options are `composite` (default), `grid`, and `stacked`.                |
-| `--gap`        | Size of the gap between the `grid` layout. Defaults to 20px.                                                               |
-| `--background` | Places the screenshot on a background colour of your choosing. Provide a hex value like "#89dceb".                         |
-| `--margin`     | Defines the margin around the screenshot. Defaults to 40px.                                                                |
-| `--radius`     | Sets the corner radius for the window. Defaults to 50px.                                                                   |
-| `--outer`      | Set the radius for the background image. Defaults to the value of `--radius`.                                              |
-| `--shadow`     | Enables a drop shadow behind the screenshot, and sets and the strength of the blur. Defaults to 12, if no value is passed. |
-| `--rainbow`    | Adds a rainbow background. Will override the `--background` setting.                                                       |
-| `--preview`    | Previews the output with your image viewer, instead of saving it.                                                          |
 | `--help`       | A summary of the available parameters.                                                                                     |
 
 &nbsp;
