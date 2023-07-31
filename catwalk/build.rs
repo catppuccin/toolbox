@@ -1,3 +1,5 @@
+#![cfg(not(target_family = "wasm"))]
+
 use clap::CommandFactory;
 use clap_complete::generate_to;
 use std::env;

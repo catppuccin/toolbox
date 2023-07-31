@@ -28,13 +28,9 @@ ril = { version = "0", default-features = false, features = ["resize"] }
 wasm-bindgen = "0.2"
 web-sys = { version = "0.3", features = ["ImageData"] }
 
-[build-dependencies]
+[target.'cfg(not(target_family = "wasm"))'.build-dependencies]
 clap = { version = "4", features = ["derive"] }
 clap_complete = "4"
-
-[profile.release]
-lto = true
-opt-level = "s"
 
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = ['-O3']
