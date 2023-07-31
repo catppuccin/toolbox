@@ -48,6 +48,23 @@
           })
           binaryen
           wasm-pack
+          (
+            # waiting on https://github.com/NixOS/nixpkgs/pull/244334
+            wasm-bindgen-cli.overrideAttrs (old: rec {
+              pname = "wasm-bindgen-cli";
+              version = "0.2.87";
+              src = pkgs.fetchCrate {
+                inherit pname version;
+                sha256 = "sha256-0u9bl+FkXEK2b54n7/l9JOCtKo+pb42GF9E1EnAUQa0=";
+              };
+              cargoDeps = old.cargoDeps.overrideAttrs (lib.const {
+                name = "${pname}-${version}-vendor.tar.gz";
+                inherit src;
+                outputHash = "sha256-AsZBtE2qHJqQtuCt/wCAgOoxYMfvDh8IzBPAOkYSYko=";
+              });
+              doCheck = false;
+            })
+          )
         ];
       };
     });
