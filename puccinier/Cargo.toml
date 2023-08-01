@@ -13,6 +13,7 @@ categories = ["command-line-utilities", "template-engine"]
 [dependencies]
 xflags = "0.3"
 regex = { version = "1.6", default-features = false, features = ["std"] }
+atty = "0.2"
 
 [profile.release]
 opt-level = "z"
