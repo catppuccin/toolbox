@@ -2,7 +2,7 @@ use ril::prelude::*;
 
 enum MaskType {
     Full,
-    Partial(Vec<(f32, f32)>),
+    Partial(f32, f32),
 }
 
 pub struct TrapMask {
@@ -16,54 +16,63 @@ pub struct RoundMask {
 }
 
 impl RoundMask {
-    // Applies a round mask on an object
-    pub fn mask(&self, img: &Image<Rgba>) -> Image<Rgba> {
+    /// Applies a round mask on an object
+    pub fn mask(&self, image: &Image<Rgba>) -> Image<Rgba> {
         // Save us some work
         if self.radius == 0 {
-            return img.clone();
+            return image.clone();
         }
-        let h = img.height() * self.aa_level;
-        let w = img.width() * self.aa_level;
-        let r = self.radius * self.aa_level;
+        let h = image.height();
+        let w = image.width();
+        let r = self.radius;
         // Inner corners
         let corners = [(r, r), (w - r, r), (w - r, h - r), (r, h - r)];
-        let mut mask = Image::from_fn(w, h, |x, y| {
+        let res = Image::from_fn(w, h, |x, y| {
             if ((x <= r) || (x >= corners[2].0)) && ((y <= r) || (y >= corners[2].1)) {
                 // y is in corner squares
-                if corners
-                    .iter()
-                    .map(|c| Self::is_dis(&(x, y), c, r))
+                let distances = corners.iter().map(|c| Self::get_dis(&(x, y), c));
+                if distances
+                    .clone()
+                    .map(|c| c <= r.pow(2))
                     .collect::<Vec<bool>>()
                     == vec![false, false, false, false]
                 {
-                    // y is not in rectangle
+                    // y is not in mask
+                    let diffs: Vec<u32> = distances.map(|dis| dis - r.pow(2)).collect();
+                    for diff in diffs {
+                        if diff <= self.aa_level.pow(2) {
+                            // Fraction of opacity
+                            let frac: f32 = 1.0 - (diff as f32 / self.aa_level.pow(2) as f32);
+                            return image.pixel(x, y).with_alpha((255.0 * frac) as u8);
+                        }
+                    }
                     return Rgba::transparent();
                 }
             }
-            Rgba::white()
+            image.pixel(x, y).clone()
         });
         // downsample for anti-aliasing
-        mask.resize(img.width(), img.height(), ResizeAlgorithm::Lanczos3);
+        //mask.resize(img.width(), img.height(), ResizeAlgorithm::Lanczos3);
 
         // Apply mask
-        let mut res = img.clone();
-        res.mask_alpha(&mask.bands().3);
+        //let mut res = img.clone();
+        //res.mask_alpha(&mask.bands().3);
         res
     }
 
-    // Checks if two points are at most r away from each other.
-    fn is_dis(p1: &(u32, u32), p2: &(u32, u32), r: u32) -> bool {
-        u32::abs_diff(p1.0, p2.0).pow(2) + u32::abs_diff(p1.1, p2.1).pow(2) <= r.pow(2)
+    /// Gets distance between two points
+    fn get_dis(p1: &(u32, u32), p2: &(u32, u32)) -> u32 {
+        u32::abs_diff(p1.0, p2.0).pow(2) + u32::abs_diff(p1.1, p2.1).pow(2) //<= r.pow(2)
     }
 }
 
 impl TrapMask {
     /// Construct a new shape.
-    pub fn new(vertices: Vec<(f32, f32)>, aa_level: u32) -> Self {
+    pub fn new(vertex: Option<f32>, inverse_slope: f32, aa_level: u32) -> Self {
         Self {
-            vertices: match vertices.len() {
-                0 => MaskType::Full,
-                _ => MaskType::Partial(vertices),
+            vertices: match vertex {
+                None => MaskType::Full,
+                Some(vertex) => MaskType::Partial(vertex, inverse_slope),
             },
             aa_level,
         }
@@ -73,23 +82,28 @@ impl TrapMask {
     pub fn mask(&self, image: &Image<Rgba>) -> Image<Rgba> {
         match &self.vertices {
             MaskType::Full => image.clone(),
-            MaskType::Partial(v) => {
-                // Use x/y to "ground" the point later on
-                let inverse_slope = -1.0 * f32::abs((v[0].0 - v[1].0) / (v[0].1 - v[1].1));
-                let w = image.width() * self.aa_level;
-                let h = image.height() * self.aa_level;
-                let mut mask = Image::from_fn(w, h, |x, y| {
-                    if ((x as f32) - ((y as f32) * inverse_slope)) <= v[0].0 {
-                        Rgba::white()
+            MaskType::Partial(v, inverse_slope) => {
+                let w = image.width();
+                let h = image.height();
+                let res = Image::from_fn(w, h, |x, y| {
+                    let gpos = (x as f32) - ((y as f32) * inverse_slope);
+                    if gpos <= *v {
+                        image.pixel(x, y).clone()
                     } else {
                         // Not in mask
+                        let diff: f32 = gpos - v;
+                        if diff <= self.aa_level as f32 {
+                            // Fraction of opacity
+                            let frac = 1.0 - (diff / (self.aa_level as f32));
+                            return image.pixel(x, y).with_alpha((255.0 * frac) as u8);
+                        }
                         Rgba::transparent()
                     }
                 });
                 // downsample for anti-aliasing
-                mask.resize(image.width(), image.height(), ResizeAlgorithm::Lanczos3);
-                let mut res = image.clone();
-                res.mask_alpha(&mask.bands().3);
+                //mask.resize(image.width(), image.height(), ResizeAlgorithm::Lanczos3);
+                //let mut res = image.clone();
+                //res.mask_alpha(&mask.bands().3);
                 res
             }
         }

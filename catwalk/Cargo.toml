@@ -11,6 +11,7 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+rayon = "1.7.0"
 thiserror = "1"
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
