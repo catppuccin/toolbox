@@ -3,7 +3,6 @@ mod mask;
 mod wasm;
 
 use mask::{RoundMask, TrapMask};
-use rayon::prelude::*;
 use ril::prelude::*;
 use thiserror::Error;
 
@@ -62,7 +61,7 @@ impl Magic {
         let inverse_slope = -w / (4.0 * h);
         let mut masked: Vec<(Image<Rgba>, usize)> = self
             .images
-            .par_iter()
+            .iter()
             .enumerate()
             .map(|(i, x)| (Self::gen_mask(w, i, 2, inverse_slope).mask(x), i))
             .collect();
@@ -97,7 +96,7 @@ impl Magic {
         // Round images
         let rounded: Vec<Image<Rgba>> = self
             .images
-            .par_iter()
+            .iter()
             .map(|x| self.rounding_mask.mask(x))
             .collect();
         // Create final

@@ -4,6 +4,3 @@ members = ["catwalk"]
 
 [profile.release]
 lto = true
-
-[profile.release.package.catwalk]
-opt-level = "s"
