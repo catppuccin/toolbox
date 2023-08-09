@@ -51,12 +51,6 @@ impl RoundMask {
             }
             image.pixel(x, y).clone()
         });
-        // downsample for anti-aliasing
-        //mask.resize(img.width(), img.height(), ResizeAlgorithm::Lanczos3);
-
-        // Apply mask
-        //let mut res = img.clone();
-        //res.mask_alpha(&mask.bands().3);
         res
     }
 
@@ -100,10 +94,6 @@ impl TrapMask {
                         Rgba::transparent()
                     }
                 });
-                // downsample for anti-aliasing
-                //mask.resize(image.width(), image.height(), ResizeAlgorithm::Lanczos3);
-                //let mut res = image.clone();
-                //res.mask_alpha(&mask.bands().3);
                 res
             }
         }
