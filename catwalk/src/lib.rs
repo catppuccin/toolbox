@@ -42,7 +42,7 @@ impl Magic {
 
         let rounding_mask = RoundMask {
             radius,
-            aa_level: 4,
+            aa_level: 15,
         };
 
         Ok(Self {
@@ -55,16 +55,15 @@ impl Magic {
 
     /// Creates the slants image.
     pub fn gen_composite(&self) -> Image<Rgba> {
+        let w = self.width as f32;
+        let h = self.height as f32;
+        // Use x/y to "ground" the point later on
+        let inverse_slope = -w / (4.0 * h);
         let mut masked: Vec<(Image<Rgba>, usize)> = self
             .images
             .iter()
             .enumerate()
-            .map(|(i, x)| {
-                (
-                    Self::gen_mask(self.height as f32, self.width as f32, i, 4).mask(x),
-                    i,
-                )
-            })
+            .map(|(i, x)| (Self::gen_mask(w, i, 2, inverse_slope).mask(x), i))
             .collect();
         masked.sort_by(|a, b| b.1.cmp(&a.1));
         let mut result = Image::new(self.width, self.height, Rgba::default())
@@ -120,19 +119,15 @@ impl Magic {
         result
     }
     /// Generates a mask for the given image.
-    fn gen_mask(h: f32, w: f32, index: usize, aa_level: u32) -> TrapMask {
-        let w = w * aa_level as f32;
-        let h = h * aa_level as f32;
-
+    fn gen_mask(w: f32, index: usize, aa_level: u32, inverse_slope: f32) -> TrapMask {
         if index == 3 {
             // Full mask
-            return TrapMask::new(vec![], aa_level);
+            return TrapMask::new(None, 0.0, aa_level);
         }
         let i = index as f32;
-        let trap_top: f32 = ((i * 2.0) + 3.0) / 8.0;
-        let trap_btm: f32 = ((i * 2.0) + 1.0) / 8.0;
+        let trap_top: f32 = w * ((i * 2.0) + 3.0) / 8.0;
         // Return trapezoid mask
-        // We only need to return the line here: the trapezoid is from top to bottom
-        TrapMask::new(vec![(trap_top * w, 0.0), (trap_btm * w, h)], 4)
+        // We only need to return bottom x here; we'll use the inverse slope to make a line
+        TrapMask::new(Some(trap_top), inverse_slope, aa_level)
     }
 }
