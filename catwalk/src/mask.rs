@@ -27,7 +27,7 @@ impl RoundMask {
         let r = self.radius;
         // Inner corners
         let corners = [(r, r), (w - r, r), (w - r, h - r), (r, h - r)];
-        let res = Image::from_fn(w, h, |x, y| {
+        Image::from_fn(w, h, |x, y| {
             if ((x <= r) || (x >= corners[2].0)) && ((y <= r) || (y >= corners[2].1)) {
                 // y is in corner squares
                 let distances = corners.iter().map(|c| Self::get_dis(&(x, y), c));
@@ -49,9 +49,8 @@ impl RoundMask {
                     return Rgba::transparent();
                 }
             }
-            image.pixel(x, y).clone()
-        });
-        res
+            *image.pixel(x, y)
+        })
     }
 
     /// Gets distance between two points
@@ -79,10 +78,10 @@ impl TrapMask {
             MaskType::Partial(v, inverse_slope) => {
                 let w = image.width();
                 let h = image.height();
-                let res = Image::from_fn(w, h, |x, y| {
+                Image::from_fn(w, h, |x, y| {
                     let gpos = (x as f32) - ((y as f32) * inverse_slope);
                     if gpos <= *v {
-                        image.pixel(x, y).clone()
+                        *image.pixel(x, y)
                     } else {
                         // Not in mask
                         let diff: f32 = gpos - v;
@@ -93,8 +92,7 @@ impl TrapMask {
                         }
                         Rgba::transparent()
                     }
-                });
-                res
+                })
             }
         }
     }
