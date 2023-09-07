@@ -30,9 +30,10 @@
   } @ args:
     pkgs.rustPlatform.buildRustPackage ({
         inherit pname version;
-        src = pkgs.nix-gitignore.gitignoreSourcePure [../.gitignore] ../${pname};
+        src = pkgs.nix-gitignore.gitignoreSourcePure [../.gitignore] ../.;
 
-        cargoLock.lockFile = ../${pname}/Cargo.lock;
+        cargoLock.lockFile = ../Cargo.lock;
+        cargoBuildFlags = "-p ${pname}";
 
         meta = with pkgs.lib; {
           inherit description;
