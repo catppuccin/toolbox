@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = ["catwalk", "puccinier"]
+default-members = ["catwalk"]
 
 [profile.release]
 lto = true
