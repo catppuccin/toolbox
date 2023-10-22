@@ -1,107 +1,63 @@
 <h3 align="center">
-	<img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/logos/exports/1544x1544_circle.png" width="100" alt="Logo"/><br/>
-	<img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
-	Catppuccin Toolbox
-	<img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
+  <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/logos/exports/1544x1544_circle.png" width="100" alt="Logo"/><br/>
+  <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
+  Catppuccin Toolbox
+  <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
 </h3>
 
 <p align="center">
-    <a href="https://github.com/catppuccin/toolbox/stargazers"><img src="https://img.shields.io/github/stars/catppuccin/toolbox?colorA=363a4f&colorB=b7bdf8&style=for-the-badge"></a>
-    <a href="https://github.com/catppuccin/toolbox/issues"><img src="https://img.shields.io/github/issues/catppuccin/toolbox?colorA=363a4f&colorB=f5a97f&style=for-the-badge"></a>
-    <a href="https://github.com/catppuccin/toolbox/contributors"><img src="https://img.shields.io/github/contributors/catppuccin/toolbox?colorA=363a4f&colorB=a6da95&style=for-the-badge"></a>
+  <a href="https://github.com/catppuccin/toolbox/stargazers"><img src="https://img.shields.io/github/stars/catppuccin/toolbox?colorA=363a4f&colorB=b7bdf8&style=for-the-badge"></a>
+  <a href="https://github.com/catppuccin/toolbox/issues"><img src="https://img.shields.io/github/issues/catppuccin/toolbox?colorA=363a4f&colorB=f5a97f&style=for-the-badge"></a>
+  <a href="https://github.com/catppuccin/toolbox/contributors"><img src="https://img.shields.io/github/contributors/catppuccin/toolbox?colorA=363a4f&colorB=a6da95&style=for-the-badge"></a>
 </p>
 
 &nbsp;
 
 ### Catppuccin's development tools 
-A set of software tools by Catppuccin developers, for Catppuccin developers
+A set of software tools by Catppuccin developers, for Catppuccin developers.
 
-+ [🖌️ InkCat](#%EF%B8%8F-inkcat)
-+ [🇨 DocPuccin](#-docpuccin)
-+ [🖼️ Puccinier](#%EF%B8%8F-puccinier)
-+ [🎨 Catwalk](#-catwalk)
-+ [🌈 Contrast Test](#-contrast-test)
-+ [❄️  Nix](#%EF%B8%8F--nix)
+- [Catwalk](#catwalk)
+- [Puccinier](#puccinier)
+- [InkCat](#inkcat)
+- [DocPuccin](#docpuccin)
+- [Contrast Test](#contrast-test)
+- [️Nix usage notes](#nix)
 
 &nbsp;
 
-#### 🖌️ InkCat
+#### Catwalk
 
-InkCat is a minimal and versatile solution for displaying colors from each one of Catppuccin's
-flavours in your terminal. This program also allows you to copy them to your clipboard.
+A sweet program that takes in four showcase images and displays them all at once.
 
-Usage:
-
-```bash
-$ npm install -g @catppuccin/inkcat # Install command
-$ inkcat --help
-$ npm uninstall -g @catppuccin/inkcat	# Uninstall command
-```
-
-Help info:
-
-```
-Usage:
-	#1: inkcat <palette(s)> <color(s)>
-	#2: inkcat <flags>
-
-Args:
-	<palette(s)>            Palettes separated by commas (e.g. frappe,latte)
-	<color(s)>              Colors separated by commas (e.g. peach,rosewater,lavender)
-
-Flags:
-	-h,--help               See this help message
-	-n,--no-copy            Don't copy the colors to the clipboard
-	-f,--format             Specify format (hex, hsl, rgb)
-
-Examples:
-	#1: inkcat frappe,latte peach,rosewater,lavender
-	#2: inkcat macchiato base,yellow --no-copy
-	#3: inkcat mocha
-	#4: inkcat mocha maroon --format rgb
-```
-
-#### 🇨🇭 DocPuccin
-
-Docpuccin is a small program that fetches health files needed per project type
-
-Usage:
+Installation with Cargo or Nix:
 
 ```bash
-$ npm install -g @catppuccin/docpuccin # Install command
-$ docpuccin --help
-$ npm uninstall -g @catppuccin/docpuccin # Uninstall command
+$ cargo install --git https://github.com/catppuccin/toolbox catwalk
+$ catwalk <images> <flags>
+# There's also a flake option
+$ nix run github:catppuccin/toolbox#catwalk -- <images> <flags>
 ```
 
-Help info:
+To install from source, you can use cargo:
 
-```
-Usage:
-	#1: docpuccin <health_file_type> <file(s)>
-	#2: docpuccin <flags>
+| Parameter      | Description                                                                                      |
+| -------------- | -------------------------------------------------------------------------------------------------|
+| `images[4]`    | 4 images to merge into one. **REQUIRED**. *All other parameters are optional.*                   |
+| `--layout`     | Style of the showcase image. Available options are `composite` (default), `grid`, and `stacked`. |
+| `--gap`        | Gap size for the `grid` layout.                                                                  |
+| `--radius`     | Radius of rounded corners.                                                                       |
+| `--output`     | Output file (defaults to `./result.webp`)                                                        |
+| `--help`       | A summary of the available parameters.                                                           |
 
-Args:
-	<health_file_type>	Check the "Available health files" section
-	<file(s)>		Health files to be downloaded. They can be comma separated (e.g. npmrc,npmignore)
+&nbsp;
 
-Flags:
-	-h,--help		See this help message
-
-Examples:
-	#1: docpuccin npm npmignore
-	#2: docpuccin repo license
-	#3: docpuccin any makefile,editorconfig`
-```
-
-To see the available health files please download the tool and run it with the `--help` flag.
-
-#### 🖼️ Puccinier
+#### Puccinier
 
 If you wrote a v1 or v2 Catppuccin theme, you may use Puccinier to automatically create the the rest of the v2 themes. Puccinier supports the conversion of properly formatted hex, rgb, and hsl colors (case insensitive).
 
 Help info:
 
-```bash
+```
 Generate the rest of the Catppuccin palettes off of a template file written in one of them
 
 USAGE:
@@ -131,33 +87,77 @@ $ cargo install --git https://github.com/catppuccin/toolbox puccinier
 
 &nbsp;
 
-#### 🎨 Catwalk
+#### InkCat
 
-A sweet program that takes in four showcase images and displays them all at once.
+InkCat is a minimal and versatile solution for displaying colors from each one of Catppuccin's
+flavours in your terminal. This program also allows you to copy them to your clipboard.
 
-Installation with Cargo or Nix:
+Usage:
 
 ```bash
-$ cargo install --git https://github.com/catppuccin/toolbox catwalk
-$ catwalk <images> <flags>
-# There's also a flake option
-$ nix run github:catppuccin/toolbox#catwalk -- <images> <flags>
+$ npm install -g @catppuccin/inkcat # Install command
+$ inkcat --help
+$ npm uninstall -g @catppuccin/inkcat   # Uninstall command
 ```
 
-To install from source, you can use cargo:
+Help info:
 
-| Parameter      | Description                                                                                      |
-| -------------- | -------------------------------------------------------------------------------------------------|
-| `images[4]`    | 4 images to merge into one. **REQUIRED**. *All other parameters are optional.*                   |
-| `--layout`     | Style of the showcase image. Available options are `composite` (default), `grid`, and `stacked`. |
-| `--gap`        | Gap size for the `grid` layout.                                                                  |
-| `--radius`     | Radius of rounded corners.                                                                       |
-| `--output`     | Output file (defaults to `./result.webp`)                                                        |
-| `--help`       | A summary of the available parameters.                                                           |
+```
+Usage:
+    #1: inkcat <palette(s)> <color(s)>
+    #2: inkcat <flags>
 
-&nbsp;
+Args:
+    <palette(s)>            Palettes separated by commas (e.g. frappe,latte)
+    <color(s)>              Colors separated by commas (e.g. peach,rosewater,lavender)
 
-#### 🌈 Contrast Test
+Flags:
+    -h,--help               See this help message
+    -n,--no-copy            Don't copy the colors to the clipboard
+    -f,--format             Specify format (hex, hsl, rgb)
+
+Examples:
+    #1: inkcat frappe,latte peach,rosewater,lavender
+    #2: inkcat macchiato base,yellow --no-copy
+    #3: inkcat mocha
+    #4: inkcat mocha maroon --format rgb
+```
+
+#### DocPuccin
+
+Docpuccin is a small program that fetches health files needed per project type
+
+Usage:
+
+```bash
+$ npm install -g @catppuccin/docpuccin # Install command
+$ docpuccin --help
+$ npm uninstall -g @catppuccin/docpuccin # Uninstall command
+```
+
+Help info:
+
+```
+Usage:
+    #1: docpuccin <health_file_type> <file(s)>
+    #2: docpuccin <flags>
+
+Args:
+    <health_file_type>  Check the "Available health files" section
+    <file(s)>       Health files to be downloaded. They can be comma separated (e.g. npmrc,npmignore)
+
+Flags:
+    -h,--help       See this help message
+
+Examples:
+    #1: docpuccin npm npmignore
+    #2: docpuccin repo license
+    #3: docpuccin any makefile,editorconfig`
+```
+
+To see the available health files please download the tool and run it with the `--help` flag.
+
+#### Contrast Test
 
 Test Catppuccin's flavours compliance with modern web contrast standards
 
@@ -172,7 +172,7 @@ $ npm run contrast_test
 
 &nbsp;
 
-#### ❄️  Nix
+#### Nix
 
 ##### With Flakes
 Add the following to your `flake.nix`:
