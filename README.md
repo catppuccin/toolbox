@@ -100,7 +100,7 @@ To see the available health files please download the tool and run it with the `
 
 If you wrote a v1 or v2 Catppuccin theme, you may use Puccinier to automatically create the the rest of the v2 themes. Puccinier supports the conversion of properly formatted hex, rgb, and hsl colors (case insensitive).
 
-## Help info
+##### Help info
 
 ```bash
 Generate the rest of the Catppuccin palettes off of a template file written in one of them
@@ -116,7 +116,7 @@ OPTIONS:
     -V, --version              Print version information
 ```
 
-## Usage
+##### Usage
 
 You can find binaries built for x86_64 Linux, macOS, and Windows in the releases tab. Alternatively, you can use [cargo](https://github.com/rust-lang/cargo):
 
