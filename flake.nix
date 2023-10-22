@@ -24,11 +24,14 @@
     in (builtins.listToAttrs (builtins.map (name: {
       inherit name;
       value = derivs.${name};
-    }) ["puccinier" "catwalk" "inkcat" "docpuccin" "contrast_test" "palette_builder"])));
+    }) ["catwalk" "contrast_test" "docpuccin" "inkcat" "puccinier"])));
 
     devShells = forEachSystem (pkgs: rec {
       default = pkgs.mkShell {
-        buildInputs = [self.formatter.${pkgs.system}];
+        buildInputs = with pkgs; [
+          node2nix
+          self.formatter.${pkgs.system}
+        ];
       };
       catwalk = pkgs.mkShell {
         buildInputs = with pkgs;
@@ -40,6 +43,7 @@
             rustfmt
 
             binaryen
+            deno
             nodejs
             wasm-bindgen-cli
             wasm-pack

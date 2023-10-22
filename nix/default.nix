@@ -5,13 +5,16 @@
   mkNodePkg = {
     pname,
     description,
-    npmDepsHash,
     ...
   } @ args:
     pkgs.buildNpmPackage ({
-        inherit pname version npmDepsHash;
+        inherit pname version;
         src = pkgs.nix-gitignore.gitignoreSourcePure [../.gitignore] ../${pname};
         dontNpmBuild = true;
+        prePatch = ''
+          cp -r ${../package-lock.json} ./package-lock.json
+        '';
+        npmDepsHash = "sha256-mxrzw1Y3c9/XuZBIsg3X026pj/quWm3WWLtyvT2jY0Q=";
 
         meta = with pkgs.lib; {
           inherit description;
@@ -46,23 +49,15 @@
   nodePkgs = [
     {
       pname = "docpuccin";
-      npmDepsHash = "sha256-7/3wIis9c/P8zlQD3YbnRBPtpOcGDXchwcuC7/9fiWE=";
       description = "Fetch health files needed per project type";
     }
     {
       pname = "inkcat";
-      npmDepsHash = "sha256-LrAnfBrsuDLTiKcJEws6+Amv91xMVjt+xFzDfDD5B5c=";
       description = "Display Catppuccin flavors in your terminal";
     }
     {
       pname = "contrast_test";
-      npmDepsHash = "sha256-6tpPo7uNMVcSLUzcC7KZZmmaKWDWKkf6qWblY4qFrdU";
       description = "Test Catppuccin's flavors compliance with modern web contrast standards";
-    }
-    {
-      pname = "palette_builder";
-      npmDepsHash = "sha256-ynPXZycGJw9gF0dBmXBP0MqyMqYg64H7dDXi0E4fHzg=";
-      description = "Export Catppuccin flavors in various formats";
     }
   ];
 
