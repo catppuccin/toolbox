@@ -26,7 +26,7 @@ Flags:
 	-n,--no-copy\t\tDon't copy the colors to the clipboard
 	-f,--format\t\tSpecify format (hex, hsl, rgb)
 
-Exmaples:
+Examples:
 	#1: inkcat frappe,latte peach,rosewater,lavender
 	#2: inkcat macchiato base,yellow --no-copy
 	#3: inkcat mocha

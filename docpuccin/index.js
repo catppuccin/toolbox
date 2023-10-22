@@ -46,7 +46,7 @@ ${chalk.hex(variants['macchiato']['green']['hex'])(
     JSON.stringify(HEALTH_FILES, undefined, 2)
 )}
 
-Exmaples:
+Examples:
 	#1: docpuccin npm npmignore
 	#2: docpuccin repo license
 	#3: docpuccin any makefile,editorconfig`

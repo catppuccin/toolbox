@@ -16,7 +16,6 @@
 ### Catppuccin's development tools 
 A set of software tools by Catppuccin developers, for Catppuccin developers
 
-+ [👷 Palette Builder](#-palette-builder)
 + [🖌️ InkCat](#%EF%B8%8F-inkcat)
 + [🇨 DocPuccin](#-docpuccin)
 + [🖼️ Puccinier](#%EF%B8%8F-puccinier)
@@ -55,7 +54,7 @@ Flags:
 	-n,--no-copy            Don't copy the colors to the clipboard
 	-f,--format             Specify format (hex, hsl, rgb)
 
-Exmaples:
+Examples:
 	#1: inkcat frappe,latte peach,rosewater,lavender
 	#2: inkcat macchiato base,yellow --no-copy
 	#3: inkcat mocha
@@ -88,7 +87,7 @@ Args:
 Flags:
 	-h,--help		See this help message
 
-Exmaples:
+Examples:
 	#1: docpuccin npm npmignore
 	#2: docpuccin repo license
 	#3: docpuccin any makefile,editorconfig`
@@ -100,7 +99,7 @@ To see the available health files please download the tool and run it with the `
 
 If you wrote a v1 or v2 Catppuccin theme, you may use Puccinier to automatically create the the rest of the v2 themes. Puccinier supports the conversion of properly formatted hex, rgb, and hsl colors (case insensitive).
 
-##### Help info
+Help info:
 
 ```bash
 Generate the rest of the Catppuccin palettes off of a template file written in one of them
@@ -116,7 +115,7 @@ OPTIONS:
     -V, --version              Print version information
 ```
 
-##### Usage
+Usage:
 
 You can find binaries built for x86_64 Linux, macOS, and Windows in the releases tab. Alternatively, you can use [cargo](https://github.com/rust-lang/cargo):
 
@@ -174,8 +173,10 @@ $ npm run contrast_test
 &nbsp;
 
 #### ❄️  Nix
+
 ##### With Flakes
 Add the following to your `flake.nix`:
+
 ###### NixOS
 ```nix
 {
@@ -196,7 +197,9 @@ Add the following to your `flake.nix`:
     }
 }
 ```
+
 ###### Home-Manager
+
 ```nix
 {
   inputs = {
@@ -227,7 +230,9 @@ Add the following to your `flake.nix`:
 ```
 
 ##### Without Flakes
+
 Add the following to your configuration:
+
 ```nix
 {config, pkgs, ...}: let
   flake-compat = builtins.fetchTarball "https://github.com/edolstra/flake-compat/archive/master.tar.gz";
