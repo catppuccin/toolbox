@@ -2,13 +2,14 @@ mod cli;
 
 use catwalk::Magic;
 use clap::CommandFactory;
+use std::io::Cursor;
 
 use cli::{get_cli_arguments, print_completions, Cli, Commands, Layout};
 use color_eyre::{
     eyre::{eyre, Context},
     Result,
 };
-use ril::{encodings::webp, prelude::*, Encoder};
+use ril::{encodings::webp, prelude::*};
 use std::path::Path;
 
 fn open_rgba_image(path: &Path) -> Result<Image<Rgba>> {
@@ -59,11 +60,12 @@ fn main() -> Result<()> {
         Layout::Grid => magic.gen_grid(args.gap),
     };
 
-    let mut writebuf = Vec::new();
-    let mut lossless_webp_encoder = webp::WebPEncoder::new().with_lossless(true);
-    lossless_webp_encoder
-        .encode(&buffer, &mut writebuf)
-        .map_err(|e| eyre!("Failed to encode image: {}", e))?;
+    let mut writebuf = Cursor::new(Vec::new());
+    let encoder_options = webp::WebPEncoderOptions::new().with_lossless(true);
+    let encoder_metadata = EncoderMetadata::<Rgba>::from(&buffer).with_config(encoder_options);
+    let mut encoder = webp::WebPStaticEncoder::new(&mut writebuf, encoder_metadata)?;
+    encoder.add_frame(&buffer)?;
 
-    std::fs::write(args.output, writebuf).map_err(|e| eyre!("Failed to write image: {}", e))
+    std::fs::write(args.output, writebuf.get_ref())
+        .map_err(|e| eyre!("Failed to write image: {}", e))
 }
