@@ -1,6 +1,5 @@
 {
   pkgs,
-  system,
   version,
 }: let
   mkNodePkg = {
