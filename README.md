@@ -1,78 +1,28 @@
-<p align="center">
-  <h2 align="center">😸🧰 Toolbox</h2>
-</p>
+<h3 align="center">
+	<img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/logos/exports/1544x1544_circle.png" width="100" alt="Logo"/><br/>
+	<img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
+	Catppuccin Toolbox
+	<img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
+</h3>
 
 <p align="center">
-	Catppuccin's development tools
-</p>
-
-<p align="center">
-	<a href="https://github.com/catppuccin/toolbox/stargazers">
-		<img alt="Stars" src="https://img.shields.io/github/stars/catppuccin/toolbox?style=for-the-badge&logo=starship&color=C9CBFF&logoColor=D9E0EE&labelColor=302D41"></a>
-	<a href="https://github.com/catppuccin/catppuccin/issues">
-		<img alt="Issues" src="https://img.shields.io/github/issues/catppuccin/catppuccin?style=for-the-badge&logo=bilibili&color=F5E0DC&logoColor=D9E0EE&labelColor=302D41"></a>
-	<a href="https://github.com/catppuccin/catppuccin">
-		<img alt="Repo Size" src="https://img.shields.io/github/repo-size/catppuccin/catppuccin?color=%23DDB6F2&label=SIZE&logo=codesandbox&style=for-the-badge&logoColor=D9E0EE&labelColor=302D41"/></a>
+    <a href="https://github.com/catppuccin/toolbox/stargazers"><img src="https://img.shields.io/github/stars/catppuccin/toolbox?colorA=363a4f&colorB=b7bdf8&style=for-the-badge"></a>
+    <a href="https://github.com/catppuccin/toolbox/issues"><img src="https://img.shields.io/github/issues/catppuccin/toolbox?colorA=363a4f&colorB=f5a97f&style=for-the-badge"></a>
+    <a href="https://github.com/catppuccin/toolbox/contributors"><img src="https://img.shields.io/github/contributors/catppuccin/toolbox?colorA=363a4f&colorB=a6da95&style=for-the-badge"></a>
 </p>
 
 &nbsp;
 
-<p align="center">
-	A set of software tools by Catppuccin developers, for Catppuccin developers
-</p>
-
-&nbsp;
-
-### 🪴 Index
+### Catppuccin's development tools 
+A set of software tools by Catppuccin developers, for Catppuccin developers
 
 + [👷 Palette Builder](#-palette-builder)
-+ [🟠 Circular Thumbnails Generator](#-circular-thumbnails-generator)
 + [🖌️ InkCat](#%EF%B8%8F-inkcat)
 + [🇨 DocPuccin](#-docpuccin)
 + [🖼️ Puccinier](#%EF%B8%8F-puccinier)
 + [🎨 Catwalk](#-catwalk)
 + [🌈 Contrast Test](#-contrast-test)
-+ [😽 Meow](#-meow)
 + [❄️  Nix](#%EF%B8%8F--nix)
-
-&nbsp;
-
-&nbsp;
-
-#### 👷 Palette Builder
-
-Export the colors of every Catppuccin flavour into various formats. Currently it supports:
-+ CSS
-+ Json
-
-Usage:
-
-```bash
-$ git clone https://github.com/catppuccin/toolbox.git && cd toolbox/palette_builder
-$ npm install	# fetch dependencies
-$ npm start <format> <out_file>
-```
-
-Where:
-+ `<format>`: can be `json` or `css`
-+`<out_file>`: is an optional parameter. In its absence the new format is printed to the console
-
-&nbsp;
-
-#### 🟠 Circular Thumbnails Generator
-
-Generate circular thumbnails of the palettes
-
-Usage:
-
-```bash
-$ python3 -m pip install --upgrade pip
-$ python3 -m pip install --upgrade Pillow
-$ python3 __init__.py <--show>
-```
-
-Where:
-+ `--show`: is an optional parameter that displays the PNGs in your device's image previewing software instead saving them into an `out/` directory
 
 &nbsp;
 
@@ -84,11 +34,10 @@ flavours in your terminal. This program also allows you to copy them to your cli
 Usage:
 
 ```bash
-$ npm install -g @catppuccin/inkcat && inkcat --help	# Install command
+$ npm install -g @catppuccin/inkcat # Install command
+$ inkcat --help
 $ npm uninstall -g @catppuccin/inkcat	# Uninstall command
 ```
-
-> Note: use `sudo` if needed
 
 Help info:
 
@@ -113,18 +62,6 @@ Exmaples:
 	#4: inkcat mocha maroon --format rgb
 ```
 
-Testing:
-
-```bash
-$ npm install	# fetch dependencies
-$ make link	# to link the binary locally
-$ make unlink	# to unlink the binary
-```
-
-> Note: use `sudo` if needed
-
-&nbsp;
-
 #### 🇨🇭 DocPuccin
 
 Docpuccin is a small program that fetches health files needed per project type
@@ -132,11 +69,10 @@ Docpuccin is a small program that fetches health files needed per project type
 Usage:
 
 ```bash
-$ npm install -g @catppuccin/docpuccin && docpuccin --help	# Install command
-$ npm uninstall -g @catppuccin/docpuccin	# Uninstall command
+$ npm install -g @catppuccin/docpuccin # Install command
+$ docpuccin --help
+$ npm uninstall -g @catppuccin/docpuccin # Uninstall command
 ```
-
-> Note: use `sudo` if needed
 
 Help info:
 
@@ -160,19 +96,6 @@ Exmaples:
 
 To see the available health files please download the tool and run it with the `--help` flag.
 
-Testing:
-
-```bash
-$ git clone https://github.com/catppuccin/toolbox.git && cd toolbox/docpuccin/
-$ npm install	# fetch dependencies
-$ make link	# to link the binary locally
-$ make unlink	# to unlink the binary
-```
-
-> Note: use `sudo` if needed
-
-&nbsp;
-
 #### 🖼️ Puccinier
 
 If you wrote a v1 or v2 Catppuccin theme, you may use Puccinier to automatically create the the rest of the v2 themes. Puccinier supports the conversion of properly formatted hex, rgb, and hsl colors (case insensitive).
@@ -180,8 +103,6 @@ If you wrote a v1 or v2 Catppuccin theme, you may use Puccinier to automatically
 ## Help info
 
 ```bash
-puccinier 0.1.2
-ap-1 <anishp0828@gmail.com>
 Generate the rest of the Catppuccin palettes off of a template file written in one of them
 
 USAGE:
@@ -197,17 +118,16 @@ OPTIONS:
 
 ## Usage
 
-You can find binaries built for `x86_64-unknown-linux-gnu`, `x86_64-apple-darwin`, and `x86_64-pc-windows-msvc` in the releases tab. Alternatively, you can use [cargo](https://github.com/rust-lang/cargo/):
+You can find binaries built for x86_64 Linux, macOS, and Windows in the releases tab. Alternatively, you can use [cargo](https://github.com/rust-lang/cargo):
 
 ```bash
 cargo install puccinier
 ```
 
-To build from source, you must use cargo:
+To install from source, you can use cargo:
 
 ```bash
-git clone https://github.com/catppuccin/toolbox && cd toolbox/puccinier
-cargo install --path .
+$ cargo install --git https://github.com/catppuccin/toolbox puccinier
 ```
 
 &nbsp;
@@ -216,27 +136,25 @@ cargo install --path .
 
 A sweet program that takes in four showcase images and displays them all at once.
 
-Install with [pipx](https://pypa.github.io/pipx/) (preferred):
+Installation with Cargo or Nix:
 
 ```bash
-$ pipx install catppuccin-catwalk
-$ catwalk <images>
-```
-
-Install using pip (inside of a virtual environment):
-
-```bash
-$ cargo install catppuccin-catwalk
+$ cargo install --git https://github.com/catppuccin/toolbox catwalk
 $ catwalk <images> <flags>
 # There's also a flake option
-$ nix run .#catwalk <images> -- <flags>
+$ nix run github:catppuccin/toolbox#catwalk -- <images> <flags>
 ```
 
-| Parameter      | Description                                                                                                                |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `images`       | 4 images to merge into one. **REQUIRED**. All other parameters are optional.                                               |
-| `--layout`     | Choose the style of the showcase image. Available options are `composite` (default), `grid`, and `stacked`.                |
-| `--help`       | A summary of the available parameters.                                                                                     |
+To install from source, you can use cargo:
+
+| Parameter      | Description                                                                                      |
+| -------------- | -------------------------------------------------------------------------------------------------|
+| `images[4]`    | 4 images to merge into one. **REQUIRED**. *All other parameters are optional.*                   |
+| `--layout`     | Style of the showcase image. Available options are `composite` (default), `grid`, and `stacked`. |
+| `--gap`        | Gap size for the `grid` layout.                                                                  |
+| `--radius`     | Radius of rounded corners.                                                                       |
+| `--output`     | Output file (defaults to `./result.webp`)                                                        |
+| `--help`       | A summary of the available parameters.                                                           |
 
 &nbsp;
 
@@ -247,16 +165,13 @@ Test Catppuccin's flavours compliance with modern web contrast standards
 Usage:
 
 ```bash
-$ git clone https://github.com/catppuccin/toolbox.git && cd toolbox/contrast_test/
-$ npm install	# fetch dependencies
-$ npm start
+$ git clone https://github.com/catppuccin/toolbox.git 
+$ cd toolbox/
+$ npm ci
+$ npm run contrast_test
 ```
 
 &nbsp;
-
-#### 😽 Meow
-
-"Waouh Waouh", said the French Poodle
 
 #### ❄️  Nix
 ##### With Flakes
@@ -337,4 +252,3 @@ in {
 <p align="center"><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/footers/gray0_ctp_on_line.svg?sanitize=true" /></p>
 <p align="center">Copyright &copy; 2021-present <a href="https://github.com/catppuccin" target="_blank">Catppuccin Org</a>
 <p align="center"><a href="https://github.com/catppuccin/catppuccin/blob/main/LICENSE"><img src="https://img.shields.io/static/v1.svg?style=for-the-badge&label=License&message=MIT&logoColor=d9e0ee&colorA=302d41&colorB=b7bdf8"/></a></p>
-
