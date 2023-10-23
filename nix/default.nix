@@ -73,9 +73,10 @@
       nativeBuildInputs = [pkgs.installShellFiles];
 
       postInstall = ''
-        installShellCompletion \
-          $releaseDir/build/${pname}-*/out/${pname}.{bash,fish} \
-          --zsh $releaseDir/build/${pname}-*/out/_${pname}
+        installShellCompletion --cmd catwalk \
+          --bash <($out/bin/catwalk completion bash) \
+          --fish <($out/bin/catwalk completion fish) \
+          --zsh <($out/bin/catwalk completion zsh)
       '';
     }
   ];

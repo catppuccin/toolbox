@@ -13,6 +13,9 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 thiserror = "1"
 
+[features]
+wasm_buffers = ["ril/png"]
+
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 clap = { version = "4", features = ["derive"] }
 clap_complete = { version = "4" }
@@ -24,13 +27,10 @@ ril = { version = "0", default-features = false, features = [
 ] }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
-ril = { version = "0.10", default-features = false}
+js-sys = "0.3"
+ril = { version = "0.10", default-features = false }
 wasm-bindgen = "0.2"
 web-sys = { version = "0.3", features = ["ImageData"] }
-
-[target.'cfg(not(target_family = "wasm"))'.build-dependencies]
-clap = { version = "4", features = ["derive"] }
-clap_complete = "4"
 
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = ['-O3']

@@ -1,16 +1,15 @@
+#![cfg(not(target_family = "wasm"))]
 mod cli;
 
-use catwalk::Magic;
+use catwalk::Catwalk;
 use clap::CommandFactory;
-use std::io::Cursor;
-
-use cli::{get_cli_arguments, print_completions, Cli, Commands, Layout};
+use cli::{get_cli_arguments, print_completions, Cli, Commands};
 use color_eyre::{
     eyre::{eyre, Context},
     Result,
 };
-use ril::{encodings::webp, prelude::*};
-use std::path::Path;
+use ril::prelude::*;
+use std::{io::Cursor, path::Path};
 
 fn open_rgba_image(path: &Path) -> Result<Image<Rgba>> {
     Image::<Rgba>::open(path).map_or(Err(eyre!("Failed to open image")), Ok)
@@ -40,31 +39,37 @@ fn main() -> Result<()> {
 
     let images = args.images.ok_or_else(|| eyre!("No images provided"))?;
 
-    let magic = Magic::new(
-        [
-            open_rgba_image(&images.latte).context("Failed to open Latte image")?,
-            open_rgba_image(&images.frappe).context("Failed to open Frappé image")?,
-            open_rgba_image(&images.macchiato).context("Failed to open Macchiato image")?,
-            open_rgba_image(&images.mocha).context("Failed to open Mocha image")?,
-        ],
-        args.radius,
-    )?;
-
-    if args.output.extension().unwrap_or_default() != "webp" {
-        return Err(eyre!("Output file must be a .webp file"));
-    }
-
-    let buffer = match args.layout {
-        Layout::Composite => magic.gen_composite(),
-        Layout::Stacked => magic.gen_stacked(),
-        Layout::Grid => magic.gen_grid(args.gap),
-    };
+    let catwalk = Catwalk::new([
+        open_rgba_image(&images.latte).context("Failed to open Latte image")?,
+        open_rgba_image(&images.frappe).context("Failed to open Frappé image")?,
+        open_rgba_image(&images.macchiato).context("Failed to open Macchiato image")?,
+        open_rgba_image(&images.mocha).context("Failed to open Mocha image")?,
+    ])?
+    .gap(args.gap)
+    .layout(args.layout)
+    .radius(args.radius)?
+    .build()?;
 
     let mut writebuf = Cursor::new(Vec::new());
-    let encoder_options = webp::WebPEncoderOptions::new().with_lossless(true);
-    let encoder_metadata = EncoderMetadata::<Rgba>::from(&buffer).with_config(encoder_options);
-    let mut encoder = webp::WebPStaticEncoder::new(&mut writebuf, encoder_metadata)?;
-    encoder.add_frame(&buffer)?;
+    match args.output.extension() {
+        None => return Err(eyre!("Output file type could not be determined")),
+        Some(os_str) => match os_str.to_str() {
+            Some("png") => {
+                use ril::encodings::png::PngEncoder;
+
+                PngEncoder::encode_static(&catwalk, &mut writebuf)?;
+            }
+            Some("webp") => {
+                use ril::encodings::webp::{WebPEncoderOptions, WebPStaticEncoder};
+
+                let opt = WebPEncoderOptions::new().with_lossless(true);
+                let meta = EncoderMetadata::<Rgba>::from(&catwalk).with_config(opt);
+                let mut encoder = WebPStaticEncoder::new(&mut writebuf, meta)?;
+                encoder.add_frame(&catwalk)?;
+            }
+            _ => return Err(eyre!("Output file type not supported")),
+        },
+    }
 
     std::fs::write(args.output, writebuf.get_ref())
         .map_err(|e| eyre!("Failed to write image: {}", e))
