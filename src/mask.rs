@@ -1,3 +1,6 @@
+// all of the stuff is named ...Mask here
+#![allow(clippy::module_name_repetitions)]
+
 use ril::prelude::*;
 
 enum MaskType {
@@ -10,6 +13,7 @@ pub struct TrapMask {
     aa_level: u32,
 }
 
+#[derive(Debug)]
 pub struct RoundMask {
     pub radius: u32,
     pub aa_level: u32,
@@ -30,7 +34,7 @@ impl RoundMask {
         Image::from_fn(w, h, |x, y| {
             if ((x <= r) || (x >= corners[2].0)) && ((y <= r) || (y >= corners[2].1)) {
                 // y is in corner squares
-                let distances = corners.iter().map(|c| Self::get_dis(&(x, y), c));
+                let distances = corners.iter().map(|c| Self::get_dis((x, y), c.to_owned()));
                 if distances
                     .clone()
                     .map(|c| c <= r.pow(2))
@@ -54,7 +58,7 @@ impl RoundMask {
     }
 
     /// Gets distance between two points
-    fn get_dis(p1: &(u32, u32), p2: &(u32, u32)) -> u32 {
+    const fn get_dis(p1: (u32, u32), p2: (u32, u32)) -> u32 {
         u32::abs_diff(p1.0, p2.0).pow(2) + u32::abs_diff(p1.1, p2.1).pow(2) //<= r.pow(2)
     }
 }
@@ -63,10 +67,7 @@ impl TrapMask {
     /// Construct a new shape.
     pub fn new(vertex: Option<f32>, inverse_slope: f32, aa_level: u32) -> Self {
         Self {
-            vertices: match vertex {
-                None => MaskType::Full,
-                Some(vertex) => MaskType::Partial(vertex, inverse_slope),
-            },
+            vertices: vertex.map_or(MaskType::Full, |v| MaskType::Partial(v, inverse_slope)),
             aa_level,
         }
     }

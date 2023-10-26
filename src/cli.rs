@@ -1,13 +1,7 @@
-use clap::{Args, Command, Parser, Subcommand, ValueEnum};
+use catwalk::Layout;
+use clap::{Args, Command, Parser, Subcommand};
 use clap_complete::{generate, Generator, Shell};
 use std::path::PathBuf;
-
-#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
-pub enum Layout {
-    Composite,
-    Stacked,
-    Grid,
-}
 
 #[derive(Args, Clone, Debug)]
 #[command(args_conflicts_with_subcommands(true))]
@@ -38,14 +32,14 @@ pub struct Cli {
     #[arg(short, long, default_value = "result.webp")]
     pub output: PathBuf,
     /// Layout
-    #[arg(short, long, value_enum, default_value_t=Layout::Composite)]
-    pub layout: Layout,
+    #[arg(short, long, value_enum)]
+    pub layout: Option<Layout>,
     /// Gap (grid layout)
-    #[arg(short, long, default_value_t = 50)]
-    pub gap: u32,
+    #[arg(short, long)]
+    pub gap: Option<u32>,
     /// Sets the radius (percentage)
-    #[arg(short, long, default_value_t = 3)]
-    pub radius: u32,
+    #[arg(short, long)]
+    pub radius: Option<u32>,
     // Shell completion
     #[command(subcommand)]
     pub command: Option<Commands>,
