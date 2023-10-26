@@ -18,8 +18,7 @@ build-wasm:
     --target deno \
     --out-dir ./pkg/deno \
     .
-  # keep deno for ESM once stabilized
-  #rm ./pkg/deno/.gitignore || true
+  rm ./pkg/deno/.gitignore || true
 
 check:
   cargo clippy || true
