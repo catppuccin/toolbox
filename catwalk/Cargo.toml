@@ -13,14 +13,11 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 thiserror = "1"
 
-[features]
-wasm_buffers = ["ril/png"]
-
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 clap = { version = "4", features = ["derive"] }
 clap_complete = { version = "4" }
 color-eyre = { version = "0.6", default-features = false }
-ril = { version = "0", default-features = false, features = [
+ril = { version = "0.10", default-features = false, features = [
   "png",
   "resize",
   "webp",

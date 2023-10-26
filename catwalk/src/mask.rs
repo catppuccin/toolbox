@@ -1,3 +1,6 @@
+// all of the stuff is named ...Mask here
+#![allow(clippy::module_name_repetitions)]
+
 use ril::prelude::*;
 
 enum MaskType {

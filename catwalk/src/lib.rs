@@ -68,7 +68,9 @@ impl Default for Catwalk {
 
 #[cfg_attr(target_family = "wasm", wasm_bindgen)]
 impl Catwalk {
-    /// Creates a new instance of Magic.
+    /// Creates a new instance of Catwalk.
+    /// # Errors
+    /// Returns an error if the images are not the same size.
     #[cfg(not(target_family = "wasm"))]
     pub fn new(images: [Image<Rgba>; 4]) -> Result<Self, CatwalkError> {
         let height = images[0].height();
@@ -118,7 +120,8 @@ impl Catwalk {
     }
 
     /// Sets the radius of the rounding mask.
-    // wasm
+    /// # Errors
+    /// Returns an error if the height or width are not set (automatically inferred from the `new` method arguments)
     #[allow(clippy::use_self)]
     pub fn radius(mut self, radius: Option<u32>) -> Result<Catwalk, CatwalkError> {
         let radius = radius.unwrap_or(self.radius);
@@ -157,6 +160,9 @@ impl Catwalk {
         })
     }
 
+    /// Calculates the catwalk image.
+    /// # Errors
+    /// Returns an error if any of `self.images`, `self.height`, or `self.width` are not set.
     #[cfg(not(target_family = "wasm"))]
     pub fn build(self) -> Result<Image<Rgba>, CatwalkError> {
         let catwalk = self.prepare()?;
@@ -254,12 +260,19 @@ impl Magic {
         TrapMask::new(Some(trap_top), inverse_slope, aa_level)
     }
 
-    #[cfg(not(target_family = "wasm"))]
-    pub fn result(self) -> Image<Rgba> {
+    // this looks a bit odd because the WASM bindings use this as well, so
+    // `result()` isn't just an oversight.
+    fn process(self) -> Image<Rgba> {
         match self.layout {
             Layout::Composite => self.gen_composite(),
             Layout::Stacked => self.gen_stacked(),
             Layout::Grid => self.gen_grid(),
         }
+    }
+
+    #[cfg(not(target_family = "wasm"))]
+    #[must_use]
+    pub fn result(self) -> Image<Rgba> {
+        self.process()
     }
 }

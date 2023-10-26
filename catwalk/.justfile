@@ -4,19 +4,19 @@ default:
 
 [private]
 wasm-pack-build *args:
-  wasm-pack build --scope catppuccin --release --no-pack {{args}}
+  wasm-pack build --scope catppuccin --release {{args}}
 
 build-wasm:
   @echo "Building npm package..."
-  @rm -rf ./pkg/{runtime,web} || true
+  @rm -rf ./pkg || true
+  @mkdir -p ./pkg
+  @just wasm-pack-build \
+    --target bundler \
+    --out-dir ./pkg \
+    .
   @just wasm-pack-build \
     --target deno \
     --out-dir ./pkg/deno \
-    . \
-    --features wasm_buffers
-  @just wasm-pack-build \
-    --target web \
-    --out-dir ./pkg/web \
     .
   # keep deno for ESM once stabilized
   #rm ./pkg/deno/.gitignore || true
