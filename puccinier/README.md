@@ -1,7 +1,7 @@
 <h3 align="center">
   <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/logos/exports/1544x1544_circle.png" width="100" alt="Logo"/><br/>
   <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
-  Catppuccin Catwalk
+  Catppuccin Puccinier
   <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
 </h3>
 
@@ -13,29 +13,26 @@
 
 &nbsp;
 
-A sweet program that takes in four showcase images and displays them all at once.
+If you wrote a v1 or v2 Catppuccin theme, you may use Puccinier to automatically create the rest of the v2 themes. Puccinier supports the conversion of properly formatted hex, rgb, and hsl colors (case insensitive).
 
 Installation with Cargo, Nix, or from source:
 
 ```bash
-$ cargo install catppuccin-catwalk
-$ catwalk <images> <flags>
+$ cargo install puccinier
 # to install from source:
-$ cargo install --git https://github.com/catppuccin/toolbox catwalk
+$ cargo install --git https://github.com/catppuccin/toolbox puccinier
 # there's also a Nix flake:
-$ nix run github:catppuccin/toolbox#catwalk -- <images> <flags>
+$ nix run github:catppuccin/toolbox#puccinier -- <source> --flags
 ```
 
 Usage:
 
-| Parameter      | Description                                                                                      |
-| -------------- | -------------------------------------------------------------------------------------------------|
-| `images[4]`    | 4 images to merge into one. **REQUIRED**. *All other parameters are optional.*                   |
-| `--layout`     | Style of the showcase image. Available options are `composite` (default), `grid`, and `stacked`. |
-| `--gap`        | Gap size for the `grid` layout.                                                                  |
-| `--radius`     | Radius of rounded corners.                                                                       |
-| `--output`     | Output file (defaults to `./result.webp`)                                                        |
-| `--help`       | A summary of the available parameters.                                                           |
+| Parameter  | Description                                                                                       |
+|------------|---------------------------------------------------------------------------------------------------|
+| `source`   | The source file to convert                                                                        |
+| `--output` | Set the themes to generate from the source file (one of `latte`, `frappe`, `macchiato`, `mocha`). |
+| `--silent` | Disable showing which parts of the file were replaced.                                            |
+| `--help`   | Prints help information.                                                                          |
 
 &nbsp;
 
