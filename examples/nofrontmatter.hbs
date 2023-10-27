@@ -1,0 +1,15 @@
+flavor: {{ titlecase flavor }}
+
+red:                #{{ red }} / {{ rgb red }} / {{ hsl red }}
+10% lighter:        #{{ lighten red 0.1 }} / {{ rgb (lighten red 0.1) }} / {{ hsl (lighten red 0.1) }}
+10% darker:         #{{ darken red 0.1 }} / {{ rgb (darken red 0.1) }} / {{ hsl (darken red 0.1) }}
+{{ #with (mix red base 0.3) as | red | }}
+30% mix with base:  #{{ red }} / {{ rgb red }} / {{ hsl red }}
+{{ /with }}
+{{ #with (opacity red 0.5) as | red | }}
+50% opacity:        #{{ red }} / {{ rgba red }} / {{ hsla red }}
+{{ /with }}
+
+this is a {{ darklight "dark" "light" }} theme
+
+unquote this: "{{ unquote isLight }}"
