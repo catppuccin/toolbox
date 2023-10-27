@@ -5,8 +5,8 @@ authors = ["backwardspy <backwardspy@pigeon.life>"]
 edition = "2021"
 description = "Soothing port creation tool for the high-spirited!"
 readme = "README.md"
-homepage = "https://github.com/backwardspy/whiskers"
-repository = "https://github.com/backwardspy/whiskers"
+homepage = "https://github.com/catppuccin/toolbox/tree/main/whiskers"
+repository = "https://github.com/catppuccin/toolbox"
 license = "MIT"
 
 [dependencies]
