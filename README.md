@@ -17,6 +17,7 @@
 A set of software tools by Catppuccin developers, for Catppuccin developers.
 
 - [Catwalk](https://github.com/catppuccin/toolbox/tree/main/catwalk#readme)
+- [Whiskers](https://github.com/catppuccin/toolbox/tree/main/whiskers#readme)
 - [Puccinier](https://github.com/catppuccin/toolbox/tree/main/puccinier#readme)
 - [InkCat](#inkcat)
 - [DocPuccin](#docpuccin)
@@ -195,3 +196,4 @@ in {
 <p align="center"><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/footers/gray0_ctp_on_line.svg?sanitize=true" /></p>
 <p align="center">Copyright &copy; 2021-present <a href="https://github.com/catppuccin" target="_blank">Catppuccin Org</a>
 <p align="center"><a href="https://github.com/catppuccin/catppuccin/blob/main/LICENSE"><img src="https://img.shields.io/static/v1.svg?style=for-the-badge&label=License&message=MIT&logoColor=d9e0ee&colorA=302d41&colorB=b7bdf8"/></a></p>
+

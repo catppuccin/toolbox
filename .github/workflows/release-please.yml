@@ -22,6 +22,8 @@ jobs:
       catwalk_tag: ${{ steps.release.outputs['catwalk--tag_name'] }}
       puccinier_release: ${{ steps.release.outputs['puccinier--release_created'] || env.ACT }}
       puccinier_tag: ${{ steps.release.outputs['puccinier--tag_name'] }}
+      whiskers_release: ${{ steps.release.outputs['whiskers--release_created'] || env.ACT }}
+      whiskers_tag: ${{ steps.release.outputs['whiskers--tag_name'] }}
 
   upload-catwalk:
     needs: release-please
@@ -40,3 +42,12 @@ jobs:
       tag: ${{ needs.release-please.outputs.puccinier_tag }}
       executable: puccinier
       member: puccinier
+
+  upload-whiskers:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.puccinier_release }}
+    uses: ./.github/workflows/upload-rust.yml
+    with:
+      tag: ${{ needs.release-please.outputs.whiskers_tag }}
+      executable: whiskers
+      member: catppuccin-whiskers

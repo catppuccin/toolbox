@@ -1,6 +1,6 @@
 {
   pkgs,
-  version,
+  version ? "dirty",
 }: let
   mkNodePkg = {
     pname,
@@ -80,6 +80,11 @@
           --fish <($out/bin/${pname} completion fish) \
           --zsh <($out/bin/${pname} completion zsh)
       '';
+    }
+    {
+      pname = "whiskers";
+      membername = "catppuccin-whiskers";
+      description = "Soothing port creation tool for the high-spirited!";
     }
   ];
 in
