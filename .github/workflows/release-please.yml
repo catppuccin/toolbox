@@ -18,8 +18,8 @@ jobs:
           command: manifest
         if: ${{ !env.ACT }}
     outputs:
-      catwalk_release: ${{ steps.release.outputs['packages/catwalk--release_created'] || env.ACT }}
-      catwalk_tag: ${{ steps.release.outputs['packages/catwalk--tag_name'] }}
+      catwalk_release: ${{ steps.release.outputs['catwalk--release_created'] || env.ACT }}
+      catwalk_tag: ${{ steps.release.outputs['catwalk--tag_name'] }}
 
   upload-catwalk:
     name: Upload Catwalk for ${{ matrix.os }}
