@@ -10,9 +10,11 @@ use color_eyre::{
     Result,
 };
 
-use whiskers::frontmatter;
-use whiskers::postprocess::postprocess;
-use whiskers::template::{self, helpers};
+use catppuccin_whiskers::{
+    frontmatter,
+    postprocess::postprocess,
+    template::{self, helpers},
+};
 
 #[derive(clap::ValueEnum, Clone, Debug)]
 enum Flavor {
@@ -158,4 +160,3 @@ fn list_helpers() {
         }
     }
 }
-

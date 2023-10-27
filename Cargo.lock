@@ -157,6 +157,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "catppuccin-whiskers"
+version = "0.5.0"
+dependencies = [
+ "base64",
+ "catppuccin",
+ "clap",
+ "clap-stdin",
+ "color-eyre",
+ "css-colors",
+ "handlebars",
+ "regex",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "thiserror",
+ "titlecase",
+]
+
+[[package]]
 name = "cc"
 version = "1.0.83"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -859,25 +878,6 @@ checksum = "9b85cbef8c220a6abc02aefd892dfc0fc23afb1c6a426316ec33253a3877249b"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
-]
-
-[[package]]
-name = "whiskers"
-version = "0.5.0"
-dependencies = [
- "base64",
- "catppuccin",
- "clap",
- "clap-stdin",
- "color-eyre",
- "css-colors",
- "handlebars",
- "regex",
- "serde",
- "serde_json",
- "serde_yaml",
- "thiserror",
- "titlecase",
 ]
 
 [[package]]

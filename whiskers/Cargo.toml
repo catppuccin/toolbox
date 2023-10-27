@@ -1,5 +1,5 @@
 [package]
-name = "whiskers"
+name = "catppuccin-whiskers"
 version = "0.5.0"
 authors = ["backwardspy <backwardspy@pigeon.life>"]
 edition = "2021"
@@ -8,6 +8,10 @@ readme = "README.md"
 homepage = "https://github.com/catppuccin/toolbox/tree/main/whiskers"
 repository = "https://github.com/catppuccin/toolbox"
 license = "MIT"
+
+[[bin]]
+name = "whiskers"
+path = "src/main.rs"
 
 [dependencies]
 base64 = "0.21.4"
