@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
-import {variants, labels} from '@catppuccin/palette'
+import { variants, labels } from '@catppuccin/palette'
 import clipboard from 'clipboardy'
 import chalk from 'chalk'
 
-const BLACK = variants["latte"]["text"]["hex"]
-const WHITE = variants["latte"]["base"]["hex"]
+const BLACK = variants['latte']['text']['hex']
+const WHITE = variants['latte']['base']['hex']
 let no_copy = false
-let final_colors = ""
-let format = "hex"
-const argv = process.argv.slice(2);
+let final_colors = ''
+let format = 'hex'
+const argv = process.argv.slice(2)
 const HELP = `InkCat is a minimal and versatile solution for displaying colors from each one of Catppuccin's
 flavours in your terminal. This program also allows you to copy them to your clipboard.
 
@@ -26,14 +26,14 @@ Flags:
 	-n,--no-copy\t\tDon't copy the colors to the clipboard
 	-f,--format\t\tSpecify format (hex, hsl, rgb)
 
-Exmaples:
+Examples:
 	#1: inkcat frappe,latte peach,rosewater,lavender
 	#2: inkcat macchiato base,yellow --no-copy
 	#3: inkcat mocha
 	#4: inkcat mocha maroon --format rgb`
 
 function append(str) {
-	final_colors = final_colors + "," + str
+    final_colors = final_colors + ',' + str
 }
 
 function write(msg) {
@@ -41,71 +41,76 @@ function write(msg) {
 }
 
 function abort(msg) {
-	console.error(msg)
-	process.exit(1)
+    console.error(msg)
+    process.exit(1)
 }
 
 let argv_cp = argv.map((x) => x)
 for (let arg in argv_cp) {
-	switch (argv_cp[arg]) {
-		case "--help":
-		case "-h":
-			write(HELP + "\n")
-			process.exit(0)
-		case "--no-copy":
-		case "-n":
-			no_copy = true
-			argv.splice(arg,1)
-			break;
-		case "--format":
-		case "-f":
-			format = argv_cp[parseInt(arg)+1]
-			if (format == undefined) {
-				abort("You must provide a color format after the `--format` flag")
-			}
+    switch (argv_cp[arg]) {
+        case '--help':
+        case '-h':
+            write(HELP + '\n')
+            process.exit(0)
+        case '--no-copy':
+        case '-n':
+            no_copy = true
+            argv.splice(arg, 1)
+            break
+        case '--format':
+        case '-f':
+            format = argv_cp[parseInt(arg) + 1]
+            if (format == undefined) {
+                abort(
+                    'You must provide a color format after the `--format` flag'
+                )
+            }
 
-			if (!(["hex","hsl","rgb"].includes(format))) {
-				abort("The format '" + format + "' was not recognized! Check `--help`")
-			}
-			argv.splice(arg,1)
-			argv.splice(arg + 1,1)
-			break;
-		default:
-			break;
-	}
+            if (!['hex', 'hsl', 'rgb'].includes(format)) {
+                abort(
+                    "The format '" +
+                        format +
+                        "' was not recognized! Check `--help`"
+                )
+            }
+            argv.splice(arg, 1)
+            argv.splice(arg + 1, 1)
+            break
+        default:
+            break
+    }
 }
 
 let picked_palettes
 let picked_colors
 
 function parse_args(args) {
-	if (args != undefined) {
-		return args.split(",")
-	}
+    if (args != undefined) {
+        return args.split(',')
+    }
 }
 
 function assert_inclusion(test_arr, original_arr) {
-	for (let element in test_arr) {
-		if (test_arr[element] == "") {
-			test_arr.splice(element,1)
-		} else {
-			if (!(test_arr[element] in original_arr)) {
-				abort("'" + test_arr[element] + "' was not recognized")
-			}
-		}
-	}
+    for (let element in test_arr) {
+        if (test_arr[element] == '') {
+            test_arr.splice(element, 1)
+        } else {
+            if (!(test_arr[element] in original_arr)) {
+                abort("'" + test_arr[element] + "' was not recognized")
+            }
+        }
+    }
 }
 
 if (argv[0] != undefined) {
-	picked_palettes = parse_args(argv[0])
-	picked_colors = parse_args(argv[1])
+    picked_palettes = parse_args(argv[0])
+    picked_colors = parse_args(argv[1])
 } else {
-	abort("You must pass at least one flavour name!")
+    abort('You must pass at least one flavour name!')
 }
 
 assert_inclusion(picked_palettes, variants)
 assert_inclusion(picked_colors, labels)
-
 
 function get_tabs(str) {
     if (str.length > 6) {
@@ -116,7 +121,7 @@ function get_tabs(str) {
 
 // https://stackoverflow.com/questions/1026069/how-do-i-make-the-first-letter-of-a-string-uppercase-in-javascript
 function capitalize(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
+    return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
 function get_rgb(c) {
@@ -163,29 +168,39 @@ function get_text_color(bg_color, preferred_white, preffered_black) {
 }
 
 if (picked_colors == undefined) {
-	for (let palette in picked_palettes) {
-		print_color(capitalize(picked_palettes[palette]) + "\t\t", WHITE, BLACK, BLACK)
-	}
-	write("\n\n")
+    for (let palette in picked_palettes) {
+        print_color(
+            capitalize(picked_palettes[palette]) + '\t\t',
+            WHITE,
+            BLACK,
+            BLACK
+        )
+    }
+    write('\n\n')
 
-	for (let label in labels) {
-		for (let palette in picked_palettes) {
-			print_color(label + get_tabs(label), variants[picked_palettes[palette]][label][format])
-		}
-		write("\n")
-	}
+    for (let label in labels) {
+        for (let palette in picked_palettes) {
+            print_color(
+                label + get_tabs(label),
+                variants[picked_palettes[palette]][label][format]
+            )
+        }
+        write('\n')
+    }
 } else {
-	for (let palette in picked_palettes) {
-		for (let color in picked_colors) {
-			append(labels[picked_colors[color]][picked_palettes[palette]][format])
-		}
-	}
+    for (let palette in picked_palettes) {
+        for (let color in picked_colors) {
+            append(
+                labels[picked_colors[color]][picked_palettes[palette]][format]
+            )
+        }
+    }
 
-	final_colors = final_colors.replace(/(^,)|(,$)/g, '')
+    final_colors = final_colors.replace(/(^,)|(,$)/g, '')
 
-	if (no_copy == true) {
-		write(final_colors)
-		process.exit(0)
-	}
-	clipboard.writeSync(final_colors)
+    if (no_copy == true) {
+        write(final_colors)
+        process.exit(0)
+    }
+    clipboard.writeSync(final_colors)
 }

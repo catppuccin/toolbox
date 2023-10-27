@@ -1,6 +1,4 @@
-__pycache__/
-**/*.gif
-**/*.jpeg
-**/*.jpg
-**/*.png
-**/*.webp
+# ignore the NPM package
+pkg/*
+# keep deno for esm
+!pkg/deno
