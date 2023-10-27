@@ -20,7 +20,7 @@ jobs:
       release_catwalk: ${{ steps.release.outputs['packages/catwalk--release_created'] || env.ACT }}
 
   upload-catwalk:
-    name: Upload ${{ matrix.member }} for ${{ matrix.os }}
+    name: Upload Catwalk for ${{ matrix.os }}
     needs: release-please
     runs-on: ${{ matrix.os }}
     if: ${{ needs.release-please.outputs.release_catwalk }}
