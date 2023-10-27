@@ -18,7 +18,7 @@ jobs:
           command: manifest
     outputs:
       catwalk_release: ${{ steps.release.outputs['packages/catwalk--release_created'] || env.ACT }}
-      catwalk_name: ${{ steps.release.outputs['packages/catwalk--release_name'] }}
+      catwalk_tag: ${{ steps.release.outputs['packages/catwalk--tag_name'] }}
 
   upload-catwalk:
     name: Upload Catwalk for ${{ matrix.os }}
@@ -44,21 +44,20 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('./Cargo.lock') }}
       - name: Build
+        id: build
         run: |
           cargo build --release --locked -p ${MEMBER}
           cargo test --release --locked -p ${MEMBER}
-      - name: Rename the binary
-        id: rename
-        run: |
-          export TRIPLE="$(rustc --version --verbose | grep host | cut -d ' ' -f 2)"
-          mv target/release/${EXECUTABLE}${EXE_SUFFIX} "./${EXECUTABLE}-${TRIPLE}"
-          echo "::set-output name=binary::${EXECUTABLE}-${TRIPLE}"
+
+          export BINARY_NAME="${EXECUTABLE}-$(rustc --version --verbose | grep host | cut -d ' ' -f 2)"
+          mv "target/release/${EXECUTABLE}${EXE_SUFFIX}" "./${BINARY_NAME}"
+          echo "::set-output name=binary::${BINARY_NAME}"
       - name: Upload to release
-        run: gh release upload "${{ needs.release-please.outputs.catwalk_name }}" ${{ steps.rename.outputs.binary  }}
+        run: gh release upload "${{ needs.release-please.outputs.catwalk_tag }}" ${{ steps.build.outputs.binary  }}
         if: ${{ !env.ACT }}
       - name: Upload to artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{steps.rename.outputs.binary}}
-          path: ${{steps.rename.outputs.binary}}
+          name: ${{steps.build.outputs.binary}}
+          path: ${{steps.build.outputs.binary}}
         if: ${{ env.ACT }}
