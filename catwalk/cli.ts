@@ -14,7 +14,7 @@ import {
 
 const { args, options } = await new Command()
   .name("catwalk")
-  .version("0.1.0")
+  .version("1.0.0")
   .description(
     "A sweet program that takes in four showcase images and displays them all at once. (JS port)",
   )
