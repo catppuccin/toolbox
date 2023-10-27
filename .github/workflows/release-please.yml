@@ -1,0 +1,42 @@
+name: release-please
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          command: manifest
+        if: ${{ !env.ACT }}
+    outputs:
+      catwalk_release: ${{ steps.release.outputs['catwalk--release_created'] || env.ACT }}
+      catwalk_tag: ${{ steps.release.outputs['catwalk--tag_name'] }}
+      puccinier_release: ${{ steps.release.outputs['puccinier--release_created'] || env.ACT }}
+      puccinier_tag: ${{ steps.release.outputs['puccinier--tag_name'] }}
+
+  upload-catwalk:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.catwalk_release }}
+    uses: ./.github/workflows/upload-rust.yml
+    with:
+      tag: ${{ needs.release-please.outputs.catwalk_tag }}
+      executable: catwalk
+      member: catppuccin-catwalk
+
+  upload-puccinier:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.puccinier_release }}
+    uses: ./.github/workflows/upload-rust.yml
+    with:
+      tag: ${{ needs.release-please.outputs.puccinier_tag }}
+      executable: puccinier
+      member: puccinier
