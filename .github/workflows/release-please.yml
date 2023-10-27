@@ -1,3 +1,5 @@
+name: release-please
+
 on:
   push:
     branches: [main]
@@ -6,8 +8,6 @@ permissions:
   contents: write
   pull-requests: write
 
-name: release-please
-
 jobs:
   release-please:
     runs-on: ubuntu-latest
@@ -15,3 +15,32 @@ jobs:
       - uses: google-github-actions/release-please-action@v3
         with:
           command: manifest
+
+  upload:
+    name: Upload ${{ matrix.member }} for ${{ matrix.os }}
+    needs: release-please
+    runs-on: ${{ matrix.os }}
+    if: ${{ steps.release.outputs['packages/catwalk--release_created'] }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+        member: ["catppuccin-catwalk"]
+    env:
+      EXECUTABLE: ${{ matrix.member }}${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: "Cache Cargo intermediate products"
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('./Cargo.lock') }}
+      - run: |
+          cargo build -r --locked -p ${{matrix.member}}
+          cargo test -r --locked -p ${{matrix.member}}
+      - name: Upload to release
+        run: gh release upload "${{ steps.release.outputs['packages/catwalk--release_tag'] }}" "target/release/$EXECUTABLE"
