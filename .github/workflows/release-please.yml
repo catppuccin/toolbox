@@ -33,6 +33,7 @@ jobs:
       tag: ${{ needs.release-please.outputs.catwalk_tag }}
       executable: catwalk
       member: catppuccin-catwalk
+    secrets: inherit
 
   upload-puccinier:
     needs: release-please
@@ -42,6 +43,7 @@ jobs:
       tag: ${{ needs.release-please.outputs.puccinier_tag }}
       executable: puccinier
       member: puccinier
+    secrets: inherit
 
   upload-whiskers:
     needs: release-please
@@ -51,3 +53,4 @@ jobs:
       tag: ${{ needs.release-please.outputs.whiskers_tag }}
       executable: whiskers
       member: catppuccin-whiskers
+    secrets: inherit
