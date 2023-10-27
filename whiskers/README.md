@@ -1,7 +1,7 @@
 <h3 align="center">
   <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/logos/exports/1544x1544_circle.png" width="100" alt="Logo"/><br/>
   <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
-  Whiskers
+  Catppuccin Whiskers
   <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
 </h3>
 
@@ -17,7 +17,7 @@ A templating tool to simplify the creation of Catppuccin ports.
 
 ## Installation
 
-[Compiled binaries are available for Windows, macOS, and Linux.](https://github.com/catppuccin/toolbox/releases/latest)
+[Compiled binaries are available for Windows, macOS, and Linux.](https://github.com/catppuccin/toolbox/releases)
 Download the correct file for your system and place it somewhere in your executable path.
 
 ### Build from source
@@ -25,7 +25,12 @@ Download the correct file for your system and place it somewhere in your executa
 If you have a rust toolchain installed, you can build and install Whiskers with cargo:
 
 ```console
-cargo install catppuccin-whiskers
+# latest crates.io release:
+$ cargo install catppuccin-whiskers
+# to install from source:
+$ cargo install --git https://github.com/catppuccin/toolbox whiskers
+# there's also a Nix flake:
+$ nix run github:catppuccin/toolbox#whiskers -- <images> <flags>
 ```
 
 ### Nix flake
@@ -33,7 +38,7 @@ cargo install catppuccin-whiskers
 If you use Nix, you can use Whiskers' flake:
 
 ```console
-nix run github:catppuccin/toolbox#whiskers -- <template> <flavor>
+$ nix run github:catppuccin/toolbox#whiskers -- <template> <flavor>
 ```
 
 ## Usage
