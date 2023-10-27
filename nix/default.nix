@@ -83,6 +83,7 @@
     }
     {
       pname = "whiskers";
+      membername = "catppuccin-whiskers";
       description = "Soothing port creation tool for the high-spirited!";
     }
   ];
