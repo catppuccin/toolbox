@@ -18,19 +18,23 @@ A templating tool to simplify the creation of Catppuccin ports.
 ## Installation
 
 [Compiled binaries are available for Windows, macOS, and Linux.](https://github.com/catppuccin/toolbox/releases)
+
 Download the correct file for your system and place it somewhere in your executable path.
 
 ### Build from source
 
-If you have a rust toolchain installed, you can build and install Whiskers with cargo:
+If you have a rust toolchain installed, you can build and install Whiskers with cargo.
+
+Install the latest crates.io release:
 
 ```console
-# latest crates.io release:
 $ cargo install catppuccin-whiskers
-# to install from source:
+```
+
+Or the latest source from git:
+
+```console
 $ cargo install --git https://github.com/catppuccin/toolbox whiskers
-# there's also a Nix flake:
-$ nix run github:catppuccin/toolbox#whiskers -- <images> <flags>
 ```
 
 ### Nix flake
@@ -212,6 +216,29 @@ Finally, we can override both values by passing two overrides. If we invoke whis
 bg = "#000000"
 fg = "#f9e2af"
 ```
+
+## Check Mode
+
+You can use Whiskers as a linter with *check mode*. To do so, pass the `--check` option with a file containing the expected output. Whiskers will render your template as per usual, but then instead of printing the result it will check it against the expected output and fail with exit code 1 if they differ.
+
+Set the `DIFFTOOL` environment variable to make Whiskers use that instead of its internal diff.
+
+```console
+$ whiskers theme.hbs latte --check themes/latte.cfg
+# no output, exit code 0
+
+$ whiskers theme.hbs latte --check themes/latte.cfg
+Templating would result in changes:
+ flavor: Latte
+ 
+ parent is default
++accent is #ea76cb
+-accent is #40a02b
+
+# exit code 1
+```
+
+This is especially useful in CI pipelines to ensure that the generated files are not changed without a corresponding change to the templates.
 
 ## Further Reading
 

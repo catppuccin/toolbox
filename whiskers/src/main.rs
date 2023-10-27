@@ -1,8 +1,14 @@
 #![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::unwrap_used)]
-#![allow(clippy::cast_possible_truncation)]
-use std::clone::Clone;
-
 // we like truncating u32s into u8s around here
+#![allow(clippy::cast_possible_truncation)]
+use std::{
+    clone::Clone,
+    env, fs,
+    io::Write,
+    path::{Path, PathBuf},
+    process,
+};
+
 use clap::Parser;
 use clap_stdin::FileOrStdin;
 use color_eyre::{
@@ -65,6 +71,14 @@ struct Args {
     /// The overrides to apply to the template in key=value format
     #[arg(long("override"), value_parser(parse_override))]
     overrides: Vec<Override>,
+
+    /// Path to write to instead of stdout
+    #[arg(short, long)]
+    output_path: Option<PathBuf>,
+
+    /// Instead of printing a result just check if anything would change
+    #[arg(long)]
+    check: Option<PathBuf>,
 
     /// List all template helpers in markdown format
     #[arg(short, long)]
@@ -143,9 +157,54 @@ fn main() -> Result<()> {
         .render_template(content, &ctx)
         .wrap_err("Failed to render template")?;
     let result = postprocess(&result);
-    println!("{result}");
+
+    if let Some(expected_path) = args.check {
+        let expected = fs::read_to_string(&expected_path)?;
+        if result != expected {
+            eprintln!("Templating would result in changes:");
+            if let Ok(tool) = env::var("DIFFTOOL") {
+                invoke_difftool(&tool, &result, &expected_path)?;
+            } else {
+                print_diffs(&result, &expected);
+            }
+            process::exit(1);
+        }
+    } else if let Some(output_path) = args.output_path {
+        fs::write(output_path, result)?;
+    } else {
+        print!("{result}");
+    }
 
     Ok(())
+}
+
+fn invoke_difftool(
+    tool: &str,
+    actual: &str,
+    expected_path: &Path,
+) -> Result<(), color_eyre::eyre::Error> {
+    let mut actual_file = tempfile::NamedTempFile::new()?;
+    write!(&mut actual_file, "{actual}")?;
+    std::process::Command::new(tool)
+        .args([actual_file.path(), &expected_path])
+        .spawn()?
+        .wait()?;
+    Ok(())
+}
+
+fn print_diffs(actual: &str, expected: &str) {
+    let diffs = diff::lines(actual, expected);
+    for diff in diffs {
+        match diff {
+            diff::Result::Left(l) => {
+                eprintln!("{}", ansiterm::Colour::Green.paint(format!("+{l}")));
+            }
+            diff::Result::Both(l, _) => eprintln!(" {l}"),
+            diff::Result::Right(r) => {
+                eprintln!("{}", ansiterm::Colour::Red.paint(format!("-{r}")));
+            }
+        }
+    }
 }
 
 fn list_helpers() {
