@@ -459,7 +459,7 @@ dependencies = [
 
 [[package]]
 name = "puccinier"
-version = "0.1.2"
+version = "0.1.4"
 dependencies = [
  "clap 3.2.25",
  "lazy_static",
