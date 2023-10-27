@@ -13,8 +13,6 @@ on:
     secrets:
       CARGO_REGISTRY_TOKEN:
         required: true
-      GITHUB_TOKEN:
-        required: true
 
 jobs:
   upload:
