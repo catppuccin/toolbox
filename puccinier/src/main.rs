@@ -65,8 +65,7 @@ fn main() -> io::Result<()> {
         .collect();
     let mut writers = writers?;
 
-    let regex =
-        regex::Regex::new(r"#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})|rgba?\(.+\)|hsla?\(.+\)").unwrap();
+    let regex = regex::Regex::new(r"[a-fA-F0-9]{6}|rgba?\(.+\)|hsla?\(.+\)").unwrap();
     for line in BufReader::new(&source_file).lines() {
         let line = line?;
 
