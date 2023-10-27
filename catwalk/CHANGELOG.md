@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/catppuccin/toolbox/compare/catwalk-v1.0.1...catwalk-v1.0.2) (2023-10-27)
+
+
+### Miscellaneous Chores
+
+* **catwalk:** release as 1.0.2 ([78834c6](https://github.com/catppuccin/toolbox/commit/78834c684ae565fc139fc307ad61f106b626e0f5))
+
 ## [1.0.1](https://github.com/catppuccin/toolbox/compare/catwalk-v1.0.0...catwalk-v1.0.1) (2023-10-27)
 
 

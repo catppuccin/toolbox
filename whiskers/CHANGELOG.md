@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/catppuccin/toolbox/compare/whiskers-v1.0.1...whiskers-v1.0.2) (2023-10-27)
+
+
+### Miscellaneous Chores
+
+* **whiskers:** release as 1.0.2 ([d20e4b6](https://github.com/catppuccin/toolbox/commit/d20e4b6be08d85c26ea5896767d6b10988185e22))
+
 ## [1.0.1](https://github.com/catppuccin/toolbox/compare/whiskers-v1.0.0...whiskers-v1.0.1) (2023-10-27)
 
 
