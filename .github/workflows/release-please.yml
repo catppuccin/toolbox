@@ -13,9 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: google-github-actions/release-please-action@v3
-        if: ${{ !env.ACT }}
+        id: release
         with:
           command: manifest
+        if: ${{ !env.ACT }}
     outputs:
       catwalk_release: ${{ steps.release.outputs['packages/catwalk--release_created'] || env.ACT }}
       catwalk_tag: ${{ steps.release.outputs['packages/catwalk--tag_name'] }}
