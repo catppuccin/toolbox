@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/catppuccin/toolbox/compare/puccinier-v1.0.0...puccinier-v1.0.1) (2023-10-27)
+
+
+### Miscellaneous Chores
+
+* **puccinier:** release as 1.0.1 ([06fb1f9](https://github.com/catppuccin/toolbox/commit/06fb1f9200228dd3591e14e4edb8196a45a01bbb))
+
 ## [1.0.0](https://github.com/catppuccin/toolbox/compare/puccinier-v0.2.0...puccinier-v1.0.0) (2023-10-27)
 
 
