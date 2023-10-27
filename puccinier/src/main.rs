@@ -15,10 +15,15 @@ fn main() -> io::Result<()> {
             required source: PathBuf
             /// Set the themes to generate from the source file (one of 'latte', 'frappe', 'macchiato', or 'mocha')
             repeated -o, --output type: String
+			/// Disable showing which parts of the file were replaced
+			optional -s, --silent
         }
     };
 
     let mut flags = Puccinier::from_env_or_exit();
+	if !atty::is(atty::Stream::Stdout) {
+		flags.silent = true;
+	}
     flags.output.sort_unstable();
     flags.output.dedup();
     flags.output.retain(|theme| {
@@ -66,8 +71,13 @@ fn main() -> io::Result<()> {
 
         for (theme, writer) in flags.output.iter().zip(&mut writers) {
             let mut copy = line.clone();
+			let mut end_index: usize = 0;
 
             for item in regex.find_iter(&line) {
+				if !flags.silent {
+					print!("{}\x1b[1;31m{}\x1b[m", &line[end_index..item.start()], &line[item.range()]);
+				}
+				end_index = item.end();
                 let lookup = match variant_from_color.get(item.as_str().to_lowercase().as_str()) {
                     Some(it) => it,
                     None => continue,
@@ -78,6 +88,9 @@ fn main() -> io::Result<()> {
 
                 copy.replace_range(item.range(), color_value);
             }
+			if !flags.silent {
+				println!("{}", &line[end_index..]);
+			}
             writeln!(writer, "{}", copy)?;
         }
     }
