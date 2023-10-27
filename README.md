@@ -16,38 +16,12 @@
 ### Catppuccin's development tools 
 A set of software tools by Catppuccin developers, for Catppuccin developers.
 
-- [Catwalk](#catwalk)
+- [Catwalk](https://github.com/catppuccin/toolbox/tree/main/catwalk#readme)
 - [Puccinier](#puccinier)
 - [InkCat](#inkcat)
 - [DocPuccin](#docpuccin)
 - [Contrast Test](#contrast-test)
 - [️Nix usage notes](#nix)
-
-&nbsp;
-
-#### Catwalk
-
-A sweet program that takes in four showcase images and displays them all at once.
-
-Installation with Cargo or Nix:
-
-```bash
-$ cargo install --git https://github.com/catppuccin/toolbox catwalk
-$ catwalk <images> <flags>
-# There's also a flake option
-$ nix run github:catppuccin/toolbox#catwalk -- <images> <flags>
-```
-
-To install from source, you can use cargo:
-
-| Parameter      | Description                                                                                      |
-| -------------- | -------------------------------------------------------------------------------------------------|
-| `images[4]`    | 4 images to merge into one. **REQUIRED**. *All other parameters are optional.*                   |
-| `--layout`     | Style of the showcase image. Available options are `composite` (default), `grid`, and `stacked`. |
-| `--gap`        | Gap size for the `grid` layout.                                                                  |
-| `--radius`     | Radius of rounded corners.                                                                       |
-| `--output`     | Output file (defaults to `./result.webp`)                                                        |
-| `--help`       | A summary of the available parameters.                                                           |
 
 &nbsp;
 

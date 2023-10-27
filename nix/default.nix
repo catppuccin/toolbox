@@ -27,6 +27,7 @@
 
   mkRustPkg = {
     pname,
+    membername ? pname,
     description,
     ...
   } @ args:
@@ -35,7 +36,7 @@
         src = pkgs.nix-gitignore.gitignoreSourcePure [../.gitignore] ../.;
 
         cargoLock.lockFile = ../Cargo.lock;
-        cargoBuildFlags = "-p ${pname}";
+        cargoBuildFlags = "-p ${membername}";
 
         meta = with pkgs.lib; {
           inherit description;
@@ -68,15 +69,16 @@
     }
     rec {
       pname = "catwalk";
+      membername = "catppuccin-catwalk";
       description = "Generate a preview as a single composite screenshot for the four flavors";
 
       nativeBuildInputs = [pkgs.installShellFiles];
 
       postInstall = ''
-        installShellCompletion --cmd catwalk \
-          --bash <($out/bin/catwalk completion bash) \
-          --fish <($out/bin/catwalk completion fish) \
-          --zsh <($out/bin/catwalk completion zsh)
+        installShellCompletion --cmd ${pname} \
+          --bash <($out/bin/${pname} completion bash) \
+          --fish <($out/bin/${pname} completion fish) \
+          --zsh <($out/bin/${pname} completion zsh)
       '';
     }
   ];
