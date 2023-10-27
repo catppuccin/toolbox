@@ -12,8 +12,7 @@
     },
     "whiskers": {
       "package-name": "whiskers",
-      "release-type": "rust",
-      "release-as": "1.0.0"
+      "release-type": "rust"
     }
   },
   "plugins": ["cargo-workspace"]
