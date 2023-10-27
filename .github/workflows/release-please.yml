@@ -57,11 +57,11 @@ jobs:
           mv "target/release/${EXECUTABLE}${EXE_SUFFIX}" "./${BINARY_NAME}"
           echo "::set-output name=binary::${BINARY_NAME}"
       - name: Upload to release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload "${{ needs.release-please.outputs.catwalk_tag }}" ${{ steps.build.outputs.binary  }}
         if: ${{ !env.ACT }}
       - name: Upload to artifact
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         uses: actions/upload-artifact@v2
         with:
           name: ${{steps.build.outputs.binary}}
