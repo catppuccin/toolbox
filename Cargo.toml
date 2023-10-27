@@ -1,5 +1,5 @@
 [package]
-name = "catwalk"
+name = "catppuccin-catwalk"
 description = "A sweet program that takes in four showcase images and displays them all at once."
 authors = ["Catppuccin Org <releases@catppuccin.com>"]
 repository = "https://github.com/catppuccin/toolbox"

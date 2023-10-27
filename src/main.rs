@@ -1,7 +1,7 @@
 #![cfg(not(target_family = "wasm"))]
 mod cli;
 
-use catwalk::Catwalk;
+use catppuccin_catwalk::Catwalk;
 use clap::CommandFactory;
 use cli::{get_cli_arguments, print_completions, Cli, Commands};
 use color_eyre::{
