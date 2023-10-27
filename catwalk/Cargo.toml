@@ -4,7 +4,7 @@ description = "A sweet program that takes in four showcase images and displays t
 authors = ["Catppuccin Org <releases@catppuccin.com>"]
 repository = "https://github.com/catppuccin/toolbox"
 license = "MIT"
-version = "0.1.1"
+version = "0.1.1-gh"
 edition = "2021"
 
 [[bin]]
