@@ -1,0 +1,63 @@
+on:
+  workflow_call:
+    inputs:
+      executable:
+        required: true
+        type: string
+      member:
+        required: true
+        type: string
+      tag:
+        required: true
+        type: string
+
+jobs:
+  upload:
+    name: Upload ${{ inputs.executable }} for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+
+    defaults:
+      run:
+        shell: bash
+
+    env:
+      EXE_SUFFIX: ${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('./Cargo.lock') }}-${{ inputs.member }}
+
+      - name: Build
+        id: build
+        run: |
+          cargo build --release --locked -p ${{ inputs.member }}
+          cargo test --release --locked -p ${{ inputs.member }}
+
+          export BINARY_NAME="${{ inputs.executable }}-$(rustc --version --verbose | grep host | cut -d ' ' -f 2)${EXE_SUFFIX}"
+          mv "target/release/${{ inputs.executable }}${EXE_SUFFIX}" "./${BINARY_NAME}"
+          echo "{binary}={${BINARY_NAME}}" >> $GITHUB_OUTPUT
+
+      - name: Upload to release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "${{ inputs.tag }}" ${{ steps.build.outputs.binary  }}
+        if: ${{ !env.ACT }}
+
+      - name: Upload to artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{steps.build.outputs.binary}}
+          path: ${{steps.build.outputs.binary}}
+        if: ${{ env.ACT }}

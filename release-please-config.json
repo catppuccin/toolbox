@@ -4,6 +4,9 @@
   "packages": {
     "catwalk": {
       "release-type": "rust"
+    },
+    "puccinier": {
+      "release-type": "rust"
     }
   },
   "plugins": ["cargo-workspace"]

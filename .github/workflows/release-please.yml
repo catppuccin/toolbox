@@ -20,50 +20,23 @@ jobs:
     outputs:
       catwalk_release: ${{ steps.release.outputs['catwalk--release_created'] || env.ACT }}
       catwalk_tag: ${{ steps.release.outputs['catwalk--tag_name'] }}
+      puccinier_release: ${{ steps.release.outputs['puccinier--release_created'] || env.ACT }}
+      puccinier_tag: ${{ steps.release.outputs['puccinier--tag_name'] }}
 
   upload-catwalk:
-    name: Upload Catwalk for ${{ matrix.os }}
     needs: release-please
-    runs-on: ${{ matrix.os }}
     if: ${{ needs.release-please.outputs.catwalk_release }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-    defaults:
-      run:
-        shell: bash
-    env:
-      MEMBER: catppuccin-catwalk
-      EXECUTABLE: catwalk
-      EXE_SUFFIX: ${{ matrix.os == 'windows-latest' && '.exe' || '' }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('./Cargo.lock') }}
-      - name: Build
-        id: build
-        run: |
-          cargo build --release --locked -p ${MEMBER}
-          cargo test --release --locked -p ${MEMBER}
+    uses: ./.github/workflows/upload-rust.yml
+    with:
+      tag: ${{ needs.release-please.outputs.catwalk_tag }}
+      executable: catwalk
+      member: catppuccin-catwalk
 
-          export BINARY_NAME="${EXECUTABLE}-$(rustc --version --verbose | grep host | cut -d ' ' -f 2)"
-          mv "target/release/${EXECUTABLE}${EXE_SUFFIX}" "./${BINARY_NAME}"
-          echo "::set-output name=binary::${BINARY_NAME}"
-      - name: Upload to release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload "${{ needs.release-please.outputs.catwalk_tag }}" ${{ steps.build.outputs.binary  }}
-        if: ${{ !env.ACT }}
-      - name: Upload to artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{steps.build.outputs.binary}}
-          path: ${{steps.build.outputs.binary}}
-        if: ${{ env.ACT }}
+  upload-puccinier:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.puccinier_release }}
+    uses: ./.github/workflows/upload-rust.yml
+    with:
+      tag: ${{ needs.release-please.outputs.puccinier_tag }}
+      executable: puccinier
+      member: puccinier
