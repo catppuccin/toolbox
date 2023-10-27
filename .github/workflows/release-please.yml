@@ -17,33 +17,48 @@ jobs:
         with:
           command: manifest
     outputs:
-      release_catwalk: ${{ steps.release.outputs['packages/catwalk--release_created'] || env.ACT }}
+      catwalk_release: ${{ steps.release.outputs['packages/catwalk--release_created'] || env.ACT }}
+      catwalk_name: ${{ steps.release.outputs['packages/catwalk--release_name'] }}
 
   upload-catwalk:
     name: Upload Catwalk for ${{ matrix.os }}
     needs: release-please
     runs-on: ${{ matrix.os }}
-    if: ${{ needs.release-please.outputs.release_catwalk }}
+    if: ${{ needs.release-please.outputs.catwalk_release }}
     strategy:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        member: ["catppuccin-catwalk"]
     env:
-      EXECUTABLE: ${{ matrix.member }}${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+      MEMBER: catppuccin-catwalk
+      EXECUTABLE: catwalk
+      EXE_SUFFIX: ${{ matrix.os == 'windows-latest' && '.exe' || '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      - name: "Cache Cargo intermediate products"
-        uses: actions/cache@v3
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('./Cargo.lock') }}
-      - run: |
-          cargo build -r --locked -p ${{matrix.member}}
-          cargo test -r --locked -p ${{matrix.member}}
+      - name: Build
+        run: |
+          cargo build --release --locked -p ${MEMBER}
+          cargo test --release --locked -p ${MEMBER}
+      - name: Rename the binary
+        id: rename
+        run: |
+          export TRIPLE="$(rustc --version --verbose | grep host | cut -d ' ' -f 2)"
+          mv target/release/${EXECUTABLE}${EXE_SUFFIX} "./${EXECUTABLE}-${TRIPLE}"
+          echo "::set-output name=binary::${EXECUTABLE}-${TRIPLE}"
       - name: Upload to release
-        run: gh release upload "${{ steps.release.outputs['packages/catwalk--release_tag'] }}" "target/release/$EXECUTABLE"
+        run: gh release upload "${{ needs.release-please.outputs.catwalk_name }}" ${{ steps.rename.outputs.binary  }}
+        if: ${{ !env.ACT }}
+      - name: Upload to artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{steps.rename.outputs.binary}}
+          path: ${{steps.rename.outputs.binary}}
+        if: ${{ env.ACT }}
