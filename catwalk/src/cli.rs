@@ -1,4 +1,4 @@
-use catwalk::Layout;
+use catppuccin_catwalk::Layout;
 use clap::{Args, Command, Parser, Subcommand};
 use clap_complete::{generate, Generator, Shell};
 use std::path::PathBuf;

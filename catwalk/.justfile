@@ -8,16 +8,17 @@ wasm-pack-build *args:
 
 build-wasm:
   @echo "Building npm package..."
-  @rm -rf ./pkg || true
-  @mkdir -p ./pkg
+  rm -rf ./pkg || true
+  mkdir -p ./pkg
   @just wasm-pack-build \
     --target bundler \
     --out-dir ./pkg \
-    .
+    --out-name catwalk
   @just wasm-pack-build \
     --target deno \
     --out-dir ./pkg/deno \
-    .
+    --out-name catwalk
+  rm ./pkg/.gitignore || true
   rm ./pkg/deno/.gitignore || true
 
 check:
