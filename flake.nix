@@ -9,66 +9,49 @@
     rust-overlay.inputs.flake-utils.follows = "flake-utils";
   };
 
-  outputs = {nixpkgs, ...} @ inputs: let
+  outputs = {
+    self,
+    nixpkgs,
+    ...
+  } @ inputs: let
     systems = ["aarch64-darwin" "aarch64-linux" "x86_64-darwin" "x86_64-linux"];
-    forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
+    overlays = [(import inputs.rust-overlay)];
+    forEachSystem = fn: nixpkgs.lib.genAttrs systems (system: fn (import nixpkgs {inherit overlays system;}));
+    version = builtins.substring 0 8 self.lastModifiedDate;
   in rec {
-    packages = forAllSystems (system: let
-      pkgs = nixpkgs.legacyPackages.${system};
-      derivs = pkgs.callPackage ./nix {
-        inherit system;
-        version = builtins.substring 0 8 inputs.self.lastModifiedDate;
-      };
-    in
-      builtins.listToAttrs (builtins.map (name: {
-        inherit name;
-        value = derivs.${name};
-      }) ["puccinier" "catwalk" "inkcat" "docpuccin" "contrast_test" "palette_builder"]));
+    packages = forEachSystem (pkgs: let
+      derivs = pkgs.callPackage ./nix {inherit version;};
+    in (builtins.listToAttrs (builtins.map (name: {
+      inherit name;
+      value = derivs.${name};
+    }) ["catwalk" "contrast_test" "docpuccin" "inkcat" "puccinier"])));
 
-    apps = forAllSystems (
-      system:
-        builtins.listToAttrs (builtins.map (name: {
-            inherit name;
-            value = {
-              type = "app";
-              program = "${packages.${system}.${name}}/bin/${name}";
-            };
-          })
-          (builtins.attrNames packages.${system}))
-    );
-
-    devShells = forAllSystems (system: let
-      overlays = [(import inputs.rust-overlay)];
-      pkgs = import nixpkgs {inherit system overlays;};
-    in {
-      catwalk = pkgs.mkShell {
+    devShells = forEachSystem (pkgs: rec {
+      default = pkgs.mkShell {
         buildInputs = with pkgs; [
-          (rust-bin.stable.latest.default.override {
-            targets = ["wasm32-unknown-unknown"];
-          })
-          binaryen
-          wasm-pack
-          (
-            # waiting on https://github.com/NixOS/nixpkgs/pull/244334
-            wasm-bindgen-cli.overrideAttrs (old: rec {
-              pname = "wasm-bindgen-cli";
-              version = "0.2.87";
-              src = pkgs.fetchCrate {
-                inherit pname version;
-                sha256 = "sha256-0u9bl+FkXEK2b54n7/l9JOCtKo+pb42GF9E1EnAUQa0=";
-              };
-              cargoDeps = old.cargoDeps.overrideAttrs (lib.const {
-                name = "${pname}-${version}-vendor.tar.gz";
-                inherit src;
-                outputHash = "sha256-AsZBtE2qHJqQtuCt/wCAgOoxYMfvDh8IzBPAOkYSYko=";
-              });
-              doCheck = false;
-            })
-          )
+          node2nix
+          self.formatter.${pkgs.system}
         ];
+      };
+      catwalk = pkgs.mkShell {
+        buildInputs = with pkgs;
+          [
+            (rust-bin.stable.latest.default.override {
+              extensions = ["rust-src"];
+              targets = ["wasm32-unknown-unknown"];
+            })
+            rust-analyzer
+
+            binaryen
+            deno
+            nodejs
+            wasm-bindgen-cli
+            wasm-pack
+          ]
+          ++ default.buildInputs;
       };
     });
 
-    formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
+    formatter = forEachSystem (pkgs: pkgs.alejandra);
   };
 }

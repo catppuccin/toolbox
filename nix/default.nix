@@ -1,18 +1,20 @@
 {
   pkgs,
-  system,
   version,
 }: let
   mkNodePkg = {
     pname,
     description,
-    npmDepsHash,
     ...
   } @ args:
     pkgs.buildNpmPackage ({
-        inherit pname version npmDepsHash;
+        inherit pname version;
         src = pkgs.nix-gitignore.gitignoreSourcePure [../.gitignore] ../${pname};
         dontNpmBuild = true;
+        prePatch = ''
+          cp -r ${../package-lock.json} ./package-lock.json
+        '';
+        npmDepsHash = "sha256-mxrzw1Y3c9/XuZBIsg3X026pj/quWm3WWLtyvT2jY0Q=";
 
         meta = with pkgs.lib; {
           inherit description;
@@ -25,6 +27,7 @@
 
   mkRustPkg = {
     pname,
+    membername ? pname,
     description,
     ...
   } @ args:
@@ -33,7 +36,7 @@
         src = pkgs.nix-gitignore.gitignoreSourcePure [../.gitignore] ../.;
 
         cargoLock.lockFile = ../Cargo.lock;
-        cargoBuildFlags = "-p ${pname}";
+        cargoBuildFlags = "-p ${membername}";
 
         meta = with pkgs.lib; {
           inherit description;
@@ -47,23 +50,15 @@
   nodePkgs = [
     {
       pname = "docpuccin";
-      npmDepsHash = "sha256-7/3wIis9c/P8zlQD3YbnRBPtpOcGDXchwcuC7/9fiWE=";
       description = "Fetch health files needed per project type";
     }
     {
       pname = "inkcat";
-      npmDepsHash = "sha256-LrAnfBrsuDLTiKcJEws6+Amv91xMVjt+xFzDfDD5B5c=";
       description = "Display Catppuccin flavors in your terminal";
     }
     {
       pname = "contrast_test";
-      npmDepsHash = "sha256-6tpPo7uNMVcSLUzcC7KZZmmaKWDWKkf6qWblY4qFrdU";
       description = "Test Catppuccin's flavors compliance with modern web contrast standards";
-    }
-    {
-      pname = "palette_builder";
-      npmDepsHash = "sha256-ynPXZycGJw9gF0dBmXBP0MqyMqYg64H7dDXi0E4fHzg=";
-      description = "Export Catppuccin flavors in various formats";
     }
   ];
 
@@ -74,14 +69,16 @@
     }
     rec {
       pname = "catwalk";
+      membername = "catppuccin-catwalk";
       description = "Generate a preview as a single composite screenshot for the four flavors";
 
       nativeBuildInputs = [pkgs.installShellFiles];
 
       postInstall = ''
-        installShellCompletion \
-          $releaseDir/build/${pname}-*/out/${pname}.{bash,fish} \
-          --zsh $releaseDir/build/${pname}-*/out/_${pname}
+        installShellCompletion --cmd ${pname} \
+          --bash <($out/bin/${pname} completion bash) \
+          --fish <($out/bin/${pname} completion fish) \
+          --zsh <($out/bin/${pname} completion zsh)
       '';
     }
   ];

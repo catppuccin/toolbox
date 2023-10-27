@@ -1,0 +1,28 @@
+{
+  "name": "@catppuccin/toolbox",
+  "version": "0.0.0",
+  "description": "Catppuccin's development tools",
+  "author": "Catppuccin Org <releases@catppuccin.com>",
+  "license": "MIT",
+  "workspaces": [
+    "contrast_test",
+    "docpuccin",
+    "inkcat",
+    "palette_builder"
+  ],
+  "scripts": {
+    "contrast_test": "node ./contrast_test/index.js",
+    "docpuccin": "node ./docpuccin/index.js",
+    "inkcat": "node ./inkcat/index.js",
+    "palette_builder": "node ./palette_builder/index.js"
+  },
+  "devDependencies": {
+    "prettier": "^3.0.0"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 4,
+    "semi": false,
+    "singleQuote": true
+  }
+}

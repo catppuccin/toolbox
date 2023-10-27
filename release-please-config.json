@@ -1,0 +1,10 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "last-release-sha": "0eb75a6e5b6b094b36ba8973c79b67346c1a1d57",
+  "packages": {
+    "catwalk": {
+      "release-type": "rust"
+    }
+  },
+  "plugins": ["cargo-workspace"]
+}

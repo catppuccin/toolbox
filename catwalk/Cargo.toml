@@ -1,11 +1,15 @@
 [package]
-name = "catwalk"
+name = "catppuccin-catwalk"
 description = "A sweet program that takes in four showcase images and displays them all at once."
 authors = ["Catppuccin Org <releases@catppuccin.com>"]
 repository = "https://github.com/catppuccin/toolbox"
 license = "MIT"
-version = "0.1.0"
+version = "0.1.4"
 edition = "2021"
+
+[[bin]]
+name = "catwalk"
+path = "src/main.rs"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
@@ -17,20 +21,17 @@ thiserror = "1"
 clap = { version = "4", features = ["derive"] }
 clap_complete = { version = "4" }
 color-eyre = { version = "0.6", default-features = false }
-ril = { version = "0", default-features = false, features = [
+ril = { version = "0.10", default-features = false, features = [
   "png",
   "resize",
   "webp",
 ] }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
-ril = { version = "0", default-features = false, features = ["resize"] }
+js-sys = "0.3"
+ril = { version = "0.10", default-features = false }
 wasm-bindgen = "0.2"
 web-sys = { version = "0.3", features = ["ImageData"] }
-
-[target.'cfg(not(target_family = "wasm"))'.build-dependencies]
-clap = { version = "4", features = ["derive"] }
-clap_complete = "4"
 
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = ['-O3']
