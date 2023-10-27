@@ -62,7 +62,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload "${{ inputs.tag }}" ${{ steps.build.outputs.binary  }}
-        if: ${{ !env.ACT || runner.os == 'ubuntu-latest' }}
+        if: ${{ runner.os == 'ubuntu-latest' && !env.ACT }}
 
       - name: Upload to artifact
         uses: actions/upload-artifact@v2
