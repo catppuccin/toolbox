@@ -3,9 +3,11 @@
   "last-release-sha": "0eb75a6e5b6b094b36ba8973c79b67346c1a1d57",
   "packages": {
     "catwalk": {
+      "package-name": "catwalk",
       "release-type": "rust"
     },
     "puccinier": {
+      "package-name": "puccinier",
       "release-type": "rust"
     }
   },
