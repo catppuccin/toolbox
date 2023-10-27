@@ -1,9 +1,6 @@
 #!/usr/bin/env -S deno run -A
 import { Catwalk, Layout } from "./pkg/deno/catwalk.js";
-import {
-  Command,
-  EnumType,
-} from "https://deno.land/x/cliffy@v1.0.0-rc.3/command/mod.ts";
+import { Command, EnumType } from "cliffy/command";
 import {
   ImageMagick,
   initialize,

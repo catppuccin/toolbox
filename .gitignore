@@ -118,3 +118,6 @@ catwalk/**/*.jpg
 catwalk/**/*.jpeg
 catwalk/**/*.png
 catwalk/**/*.webp
+
+# deno DNT
+npm/
