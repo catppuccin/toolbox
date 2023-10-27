@@ -1,119 +1,90 @@
-mod palette;
-
-use clap::{arg, builder::PossibleValuesParser, value_parser, ErrorKind};
-use regex::{Match, Regex};
 use std::{
+    collections::HashMap,
     fs::File,
-    io::{BufRead, BufReader, BufWriter, Write},
+    io::{self, BufRead, BufReader, BufWriter, Write},
     path::PathBuf,
 };
 
-use palette::{Color, Palette, COLOR_FROM_VARIANT, VARIANT_FROM_COLOR};
+mod palette;
 
-fn main() {
-    let mut cmd = clap::command!()
-        .arg( arg!(-s --source <FILE> "Set the source file to convert")
-			.value_parser(value_parser!(PathBuf))
-			.required(true))
-        .arg( arg!(-o --output <TYPES> "Set the themes (space-separated) to generate from the source file")
-			.value_parser(PossibleValuesParser::new(["latte", "frappe", "macchiato", "mocha"]))
-			.takes_value(true)
-			.multiple_values(true)
-			.required(true));
-
-    let matches = cmd.clone().get_matches();
-
-    let source_path: &PathBuf = match matches.get_one("source") {
-        Some(path) => path,
-        None => cmd
-            .error(ErrorKind::ValueValidation, "Failed to read source argument")
-            .exit(),
+fn main() -> io::Result<()> {
+    xflags::xflags! {
+        /// Generate the other Catppuccin flavours off a template file written in one of them
+        cmd puccinier {
+            /// The source file to convert
+            required source: PathBuf
+            /// Set the themes to generate from the source file (one of 'latte', 'frappe', 'macchiato', or 'mocha')
+            repeated -o, --output type: String
+        }
     };
 
-    let source_file = match File::options().read(true).write(true).open(source_path) {
-        Ok(file) => file,
-        Err(e) => cmd
-            .error(ErrorKind::Io, format!("Failed to open source file: {e}"))
-            .exit(),
-    };
-
-    let output_themes: Vec<&String> = match matches.get_many::<String>("output") {
-        Some(output_themes) => output_themes.collect(),
-        None => cmd
-            .error(ErrorKind::ValueValidation, "Failed to read output argument")
-            .exit(),
-    };
-
-    let mut writers: Vec<BufWriter<File>> = output_themes
-        .iter()
-        .map(|theme| {
-            let mut path = source_path.with_file_name(theme);
-            if let Some(extension) = source_path.extension() {
-                path = path.with_extension(extension);
-            }
-            BufWriter::new(
-                match File::create(path) {
-                    Ok(file) => file,
-                    Err(e) => cmd
-                        .error(ErrorKind::Io, format!("Failed to create output file: {e}"))
-                        .exit(),
-                },
-            )
-        })
-        .collect();
-
-    lazy_static::lazy_static! {
-        static ref HEX: Regex = Regex::new(r"(?i)#([A-F0-9]{6}|[A-F0-9]{3})").unwrap();
-        static ref RGB: Regex = Regex::new(r"(?i)rgba?\(.+\)").unwrap();
-        static ref HSL: Regex = Regex::new(r"(?i)hsla?\(.+\)").unwrap();
+    let mut flags = Puccinier::from_env_or_exit();
+    flags.output.sort_unstable();
+    flags.output.dedup();
+    flags.output.retain(|theme| {
+		if theme != "latte" && theme != "frappe" && theme != "macchiato" && theme != "mocha" {
+			eprintln!("Invalid output theme: {theme}. Must be one of 'latte', 'frappe', 'macchiato', or 'mocha'.");
+			eprintln!("Skipping.");
+			return false;
+		}
+		true
+	});
+    if flags.output.is_empty() {
+        eprintln!("Warning: no output themes");
+        return Ok(());
     }
 
-    for line in BufReader::new(&source_file).lines() {
-        let line = match line {
-            Ok(line) => line,
-            Err(e) => {
-                cmd.error(ErrorKind::Io, format!("Failed to read line: {e}"))
-                    .exit();
-            }
-        };
+    let color_from_variant = palette::palettes();
 
-        for (theme, writer) in output_themes.iter().zip(&mut writers) {
+    let mut variant_from_color: HashMap<&'static str, [&'static str; 3]> = HashMap::new();
+    for (variant, labels) in &color_from_variant {
+        for (label, colors) in labels.iter() {
+            for (format, value) in colors.iter() {
+                variant_from_color.insert(value, [variant, label, format]);
+            }
+        }
+    }
+
+    let source_file = File::open(&flags.source)?;
+
+    let writers: io::Result<Vec<BufWriter<File>>> = flags
+        .output
+        .iter()
+        .map(|theme| -> io::Result<BufWriter<File>> {
+            let mut path = flags.source.with_file_name(theme);
+            if let Some(extension) = flags.source.extension() {
+                path = path.with_extension(extension);
+            }
+            Ok(BufWriter::new(File::create(path)?))
+        })
+        .collect();
+    let mut writers = writers?;
+
+    let regex =
+        regex::Regex::new(r"#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})|rgba?\(.+\)|hsla?\(.+\)").unwrap();
+    for line in BufReader::new(&source_file).lines() {
+        let line = line?;
+
+        for (theme, writer) in flags.output.iter().zip(&mut writers) {
             let mut copy = line.clone();
 
-            HEX.find_iter(&line)
-                .chain(RGB.find_iter(&line))
-                .chain(HSL.find_iter(&line))
-                .filter_map(|item: Match| -> Option<([&String; 3], &str)> {
-                    let replacement: &str = item.as_str();
+            for item in regex.find_iter(&line) {
+                let lookup = match variant_from_color.get(item.as_str().to_lowercase().as_str()) {
+                    Some(it) => it,
+                    None => continue,
+                };
+                let label = color_from_variant.get(theme.as_str()).unwrap();
+                let color_format = label.get(&lookup[1]).unwrap();
+                let color_value = color_format.get(&lookup[2]).unwrap();
 
-                    VARIANT_FROM_COLOR
-                        .get(&replacement.to_lowercase())
-                        .cloned()
-                        .zip(Some(replacement))
-                })
-                .for_each(|(lookup, replacement)| {
-                    let label: &Palette = COLOR_FROM_VARIANT.get(theme.as_str()).unwrap();
-                    let color_format: &Color = label.get(lookup[1]).unwrap();
-                    let color_value: &String = color_format.get(lookup[2]).unwrap();
-
-                    copy = copy.replace(replacement, color_value);
-                });
-
-            if let Err(e) = writeln!(writer, "{}", copy) {
-                cmd.error(ErrorKind::Io, format!("Failed to write line: {e}"))
-                    .print()
-                    .unwrap();
+                copy.replace_range(item.range(), color_value);
             }
+            writeln!(writer, "{}", copy)?;
         }
     }
 
     for mut writer in writers {
-        if let Err(e) = writer.flush() {
-            cmd.error(
-                ErrorKind::Io,
-                format!("Failed to flush writer: {e}. Changes will be dropped."),
-            )
-            .exit();
-        }
+        writer.flush()?;
     }
+    Ok(())
 }
