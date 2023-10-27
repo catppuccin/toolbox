@@ -15,16 +15,18 @@
 
 A sweet program that takes in four showcase images and displays them all at once.
 
-Installation with Cargo or Nix:
+Installation with Cargo, Nix, or from source:
 
 ```bash
 $ cargo install catppuccin-catwalk
 $ catwalk <images> <flags>
-# There's also a Nix flake option
+# to install from source:
+$ cargo install --git https://github.com/catppuccin/toolbox catwalk
+# there's also a Nix flake:
 $ nix run github:catppuccin/toolbox#catwalk -- <images> <flags>
 ```
 
-To install from source, you can use cargo:
+Usage:
 
 | Parameter      | Description                                                                                      |
 | -------------- | -------------------------------------------------------------------------------------------------|
