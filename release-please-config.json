@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
-  "bootstrap-sha": "5b5b4a50dd9183b4182818528202f990de5bd422",
+  "last-release-sha": "0eb75a6e5b6b094b36ba8973c79b67346c1a1d57",
   "packages": {
     "catwalk": {
       "release-type": "rust"
