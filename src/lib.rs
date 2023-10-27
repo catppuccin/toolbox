@@ -186,17 +186,17 @@ impl Magic {
         let h = self.height as f32;
         // Use x/y to "ground" the point later on
         let inverse_slope = -w / (4.0 * h);
-        let mut masked: Vec<(Image<Rgba>, usize)> = self
+        let masked: Vec<Image<Rgba>> = self
             .images
             .iter()
             .enumerate()
-            .map(|(i, x)| (Self::gen_mask(w, i, 2, inverse_slope).mask(x), i))
+            .rev()
+            .map(|(i, x)| Self::gen_mask(w, i, 2, inverse_slope).mask(x))
             .collect();
-        masked.sort_by(|a, b| b.1.cmp(&a.1));
         let mut result = Image::new(self.width, self.height, Rgba::default())
             .with_overlay_mode(OverlayMode::Merge);
         for mask in masked.iter().as_ref() {
-            result.paste(0, 0, &mask.0);
+            result.paste(0, 0, mask);
         }
         self.rounding_mask.mask(&result)
     }
