@@ -1,6 +1,6 @@
 [package]
 name = "catppuccin-whiskers"
-version = "0.5.0"
+version = "1.0.0"
 authors = ["backwardspy <backwardspy@pigeon.life>"]
 edition = "2021"
 description = "Soothing port creation tool for the high-spirited!"
