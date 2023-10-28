@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/catppuccin/toolbox/compare/whiskers-v1.1.0...whiskers-v1.1.1) (2023-10-28)
+
+
+### Miscellaneous Chores
+
+* **whiskers:** release as 1.1.1 ([9033840](https://github.com/catppuccin/toolbox/commit/9033840c0b9cf591b7a35e5f595e044925f1cb2b))
+
 ## [1.1.0](https://github.com/catppuccin/toolbox/compare/whiskers-v1.0.3...whiskers-v1.1.0) (2023-10-28)
 
 Re-released as 1.1.1 because the CI to publish the binary/crate failed.
