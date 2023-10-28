@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/catppuccin/toolbox/compare/whiskers-v1.0.3...whiskers-v1.1.0) (2023-10-28)
+
+
+### Features
+
+* **whiskers:** add check mode with diff view ([6bb415e](https://github.com/catppuccin/toolbox/commit/6bb415e87921f8db1266edde15737ac7bb24bd90))
+* **whiskers:** add version flag ([6bb415e](https://github.com/catppuccin/toolbox/commit/6bb415e87921f8db1266edde15737ac7bb24bd90))
+
 ## [1.0.3](https://github.com/catppuccin/toolbox/compare/whiskers-v1.0.2...whiskers-v1.0.3) (2023-10-28)
 
 
