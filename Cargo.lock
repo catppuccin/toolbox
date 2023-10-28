@@ -596,7 +596,7 @@ dependencies = [
 
 [[package]]
 name = "puccinier"
-version = "1.0.2"
+version = "1.0.3"
 dependencies = [
  "atty",
  "regex",
