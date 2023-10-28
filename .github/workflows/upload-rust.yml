@@ -57,12 +57,13 @@ jobs:
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
         run: cargo publish -p ${{ inputs.member }} ${{ env.ACT && '--dry-run' }}
+        if: ${{ runner.os == 'ubuntu-latest' }}
 
       - name: Upload to release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload "${{ inputs.tag }}" ${{ steps.build.outputs.binary  }}
-        if: ${{ runner.os == 'ubuntu-latest' && !env.ACT }}
+        if: ${{ !env.ACT }}
 
       - name: Upload to artifact
         uses: actions/upload-artifact@v2
