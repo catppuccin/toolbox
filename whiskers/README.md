@@ -215,26 +215,25 @@ fg = "#f9e2af"
 
 ## Check Mode
 
-You can use Whiskers as a linter with *check mode*. To do so, pass the `--check` option with a file containing the expected output. Whiskers will render your template as per usual, but then instead of printing the result it will check it against the expected output and fail with exit code 1 if they differ.
+You can use Whiskers as a linter with *check mode*. To do so, set the `--check` option to a file containing the expected output. Whiskers will render your template as per usual, but then instead of printing the result it will check it against the expected output and fail with exit code 1 if they differ.
 
-Set the `DIFFTOOL` environment variable to make Whiskers use that instead of its internal diff.
+This is especially useful in CI pipelines to ensure that the generated files are not changed without a corresponding change to the templates.
+
+Whiskers will diff the output against the check file using the program set in the `DIFFTOOL` environment variable, falling back to `diff` if it's not set. The command will be invoked as `$DIFFTOOL <actual> <expected>`.
 
 ```console
 $ whiskers theme.hbs latte --check themes/latte.cfg
-# no output, exit code 0
+(no output, exit code 0)
 
 $ whiskers theme.hbs latte --check themes/latte.cfg
-Templating would result in changes:
- flavor: Latte
- 
- parent is default
-+accent is #ea76cb
--accent is #40a02b
+Templating would result in changes.
+4c4
+< accent is #ea76cb
+---
+> accent is #40a02b
 
-# exit code 1
+(exit code 1)
 ```
-
-This is especially useful in CI pipelines to ensure that the generated files are not changed without a corresponding change to the templates.
 
 ## Further Reading
 

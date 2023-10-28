@@ -162,12 +162,8 @@ fn main() -> Result<()> {
     if let Some(expected_path) = args.check {
         let expected = fs::read_to_string(&expected_path)?;
         if result != expected {
-            eprintln!("Templating would result in changes:");
-            if let Ok(tool) = env::var("DIFFTOOL") {
-                invoke_difftool(&tool, &result, &expected_path)?;
-            } else {
-                print_diffs(&result, &expected);
-            }
+            eprintln!("Templating would result in changes.");
+            invoke_difftool(&result, &expected_path)?;
             process::exit(1);
         }
     } else if let Some(output_path) = args.output_path {
@@ -179,53 +175,21 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn invoke_difftool(
-    tool: &str,
-    actual: &str,
-    expected_path: &Path,
-) -> Result<(), color_eyre::eyre::Error> {
+fn invoke_difftool(actual: &str, expected_path: &Path) -> Result<(), color_eyre::eyre::Error> {
+    let tool = env::var("DIFFTOOL").unwrap_or_else(|_| "diff".to_string());
+
     let mut actual_file = tempfile::NamedTempFile::new()?;
     write!(&mut actual_file, "{actual}")?;
-    std::process::Command::new(tool)
+    if let Ok(mut child) = std::process::Command::new(tool)
         .args([actual_file.path(), &expected_path])
-        .spawn()?
-        .wait()?;
+        .spawn()
+    {
+        child.wait()?;
+    } else {
+        eprintln!("warning: Can't display diff, try setting $DIFFTOOL.");
+    }
+
     Ok(())
-}
-
-fn print_diffs(actual: &str, expected: &str) {
-    fn maybe_paint(s: &str, c: ansiterm::Colour, tty: bool) {
-        if tty {
-            println!("{}", c.paint(s));
-        } else {
-            println!("{s}");
-        }
-    }
-
-    let tty = atty::is(atty::Stream::Stdout);
-    let sep = if tty { "│" } else { "|" };
-
-    let diffs = diff::lines(actual, expected);
-    let mut li = 0;
-    let mut ri = 0;
-
-    for diff in diffs {
-        match diff {
-            diff::Result::Left(l) => {
-                li += 1;
-                maybe_paint(&format!("{li:4}{sep}+{l}"), ansiterm::Colour::Green, tty);
-            }
-            diff::Result::Both(l, _) => {
-                li += 1;
-                ri += 1;
-                println!("{li:4}{sep} {l}");
-            }
-            diff::Result::Right(r) => {
-                ri += 1;
-                maybe_paint(&format!("{ri:4}{sep}-{r}"), ansiterm::Colour::Red, tty);
-            }
-        }
-    }
 }
 
 fn list_helpers() {

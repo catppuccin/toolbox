@@ -27,15 +27,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ansiterm"
-version = "0.12.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ab587f5395da16dd2e6939adf53dede583221b320cadfb94e02b5b7b9bf24cc"
-dependencies = [
- "winapi",
-]
-
-[[package]]
 name = "anstream"
 version = "0.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -175,15 +166,12 @@ dependencies = [
 name = "catppuccin-whiskers"
 version = "1.0.3"
 dependencies = [
- "ansiterm",
- "atty",
  "base64",
  "catppuccin",
  "clap",
  "clap-stdin",
  "color-eyre",
  "css-colors",
- "diff",
  "handlebars",
  "regex",
  "serde",
@@ -319,12 +307,6 @@ name = "css-colors"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "22c2bbfc5708f23437b074ba4e699b14fd6d7181a61695bccc8d944b78739236"
-
-[[package]]
-name = "diff"
-version = "0.1.13"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "56254986775e3233ffa9c4d7d3faaf6d36a2c09d30b20687e9f88bc8bafc16c8"
 
 [[package]]
 name = "digest"
