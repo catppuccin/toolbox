@@ -59,6 +59,7 @@ fn parse_override(s: &str) -> Result<Override> {
 }
 
 #[derive(clap::Parser, Debug)]
+#[command(author, version, about, long_about = None)]
 struct Args {
     /// Path to the template file to render, or `-` for stdin
     #[arg(required_unless_present = "list_helpers")]

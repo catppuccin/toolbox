@@ -21,27 +21,17 @@ A templating tool to simplify the creation of Catppuccin ports.
 
 Download the correct file for your system and place it somewhere in your executable path.
 
-### Build from source
-
-If you have a rust toolchain installed, you can build and install Whiskers with cargo.
-
-Install the latest crates.io release:
+Alternatively, you can install with Cargo, Nix, or from source:
 
 ```console
+# latest crates.io release:
 $ cargo install catppuccin-whiskers
-```
+$ whiskers <template> <flavor>
 
-Or the latest source from git:
-
-```console
+# to install from source:
 $ cargo install --git https://github.com/catppuccin/toolbox whiskers
-```
 
-### Nix flake
-
-If you use Nix, you can use Whiskers' flake:
-
-```console
+# there's also a Nix flake:
 $ nix run github:catppuccin/toolbox#whiskers -- <template> <flavor>
 ```
 
@@ -51,6 +41,8 @@ Make a template per file type that your port requires, then use the Whiskers CLI
 
 ```console
 $ whiskers --help
+Soothing port creation tool for the high-spirited!
+
 Usage: whiskers [OPTIONS] [TEMPLATE] [FLAVOR]
 
 Arguments:
@@ -58,8 +50,12 @@ Arguments:
   [FLAVOR]    Flavor to get colors from [possible values: latte, frappe, macchiato, mocha]
 
 Options:
-  -l, --list-helpers  List all template helpers in markdown format
-  -h, --help          Print help
+      --override <OVERRIDES>       The overrides to apply to the template in key=value format
+  -o, --output-path <OUTPUT_PATH>  Path to write to instead of stdout
+      --check <CHECK>              Instead of printing a result just check if anything would change
+  -l, --list-helpers               List all template helpers in markdown format
+  -h, --help                       Print help
+  -V, --version                    Print version
 ```
 
 ## Template Syntax
