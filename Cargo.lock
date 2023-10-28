@@ -176,6 +176,7 @@ name = "catppuccin-whiskers"
 version = "1.0.3"
 dependencies = [
  "ansiterm",
+ "atty",
  "base64",
  "catppuccin",
  "clap",

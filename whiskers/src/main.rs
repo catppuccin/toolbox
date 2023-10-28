@@ -194,15 +194,35 @@ fn invoke_difftool(
 }
 
 fn print_diffs(actual: &str, expected: &str) {
+    fn maybe_paint(s: &str, c: ansiterm::Colour, tty: bool) {
+        if tty {
+            println!("{}", c.paint(s));
+        } else {
+            println!("{s}");
+        }
+    }
+
+    let tty = atty::is(atty::Stream::Stdout);
+    let sep = if tty { "│" } else { "|" };
+
     let diffs = diff::lines(actual, expected);
+    let mut li = 0;
+    let mut ri = 0;
+
     for diff in diffs {
         match diff {
             diff::Result::Left(l) => {
-                eprintln!("{}", ansiterm::Colour::Green.paint(format!("+{l}")));
+                li += 1;
+                maybe_paint(&format!("{li:4}{sep}+{l}"), ansiterm::Colour::Green, tty);
             }
-            diff::Result::Both(l, _) => eprintln!(" {l}"),
+            diff::Result::Both(l, _) => {
+                li += 1;
+                ri += 1;
+                println!("{li:4}{sep} {l}");
+            }
             diff::Result::Right(r) => {
-                eprintln!("{}", ansiterm::Colour::Red.paint(format!("-{r}")));
+                ri += 1;
+                maybe_paint(&format!("{ri:4}{sep}-{r}"), ansiterm::Colour::Red, tty);
             }
         }
     }
