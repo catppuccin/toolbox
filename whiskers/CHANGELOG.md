@@ -2,6 +2,7 @@
 
 ## [1.1.0](https://github.com/catppuccin/toolbox/compare/whiskers-v1.0.3...whiskers-v1.1.0) (2023-10-28)
 
+Re-released as 1.1.1 because the CI to publish the binary/crate failed.
 
 ### Features
 
