@@ -1,8 +1,14 @@
 #![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::unwrap_used)]
-#![allow(clippy::cast_possible_truncation)]
-use std::clone::Clone;
-
 // we like truncating u32s into u8s around here
+#![allow(clippy::cast_possible_truncation)]
+use std::{
+    clone::Clone,
+    env, fs,
+    io::Write,
+    path::{Path, PathBuf},
+    process,
+};
+
 use clap::Parser;
 use clap_stdin::FileOrStdin;
 use color_eyre::{
@@ -53,6 +59,7 @@ fn parse_override(s: &str) -> Result<Override> {
 }
 
 #[derive(clap::Parser, Debug)]
+#[command(author, version, about, long_about = None)]
 struct Args {
     /// Path to the template file to render, or `-` for stdin
     #[arg(required_unless_present = "list_helpers")]
@@ -65,6 +72,14 @@ struct Args {
     /// The overrides to apply to the template in key=value format
     #[arg(long("override"), value_parser(parse_override))]
     overrides: Vec<Override>,
+
+    /// Path to write to instead of stdout
+    #[arg(short, long)]
+    output_path: Option<PathBuf>,
+
+    /// Instead of printing a result just check if anything would change
+    #[arg(long)]
+    check: Option<PathBuf>,
 
     /// List all template helpers in markdown format
     #[arg(short, long)]
@@ -143,7 +158,36 @@ fn main() -> Result<()> {
         .render_template(content, &ctx)
         .wrap_err("Failed to render template")?;
     let result = postprocess(&result);
-    println!("{result}");
+
+    if let Some(expected_path) = args.check {
+        let expected = fs::read_to_string(&expected_path)?;
+        if result != expected {
+            eprintln!("Templating would result in changes.");
+            invoke_difftool(&result, &expected_path)?;
+            process::exit(1);
+        }
+    } else if let Some(output_path) = args.output_path {
+        fs::write(output_path, result)?;
+    } else {
+        print!("{result}");
+    }
+
+    Ok(())
+}
+
+fn invoke_difftool(actual: &str, expected_path: &Path) -> Result<(), color_eyre::eyre::Error> {
+    let tool = env::var("DIFFTOOL").unwrap_or_else(|_| "diff".to_string());
+
+    let mut actual_file = tempfile::NamedTempFile::new()?;
+    write!(&mut actual_file, "{actual}")?;
+    if let Ok(mut child) = std::process::Command::new(tool)
+        .args([actual_file.path(), &expected_path])
+        .spawn()
+    {
+        child.wait()?;
+    } else {
+        eprintln!("warning: Can't display diff, try setting $DIFFTOOL.");
+    }
 
     Ok(())
 }

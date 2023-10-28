@@ -18,26 +18,20 @@ A templating tool to simplify the creation of Catppuccin ports.
 ## Installation
 
 [Compiled binaries are available for Windows, macOS, and Linux.](https://github.com/catppuccin/toolbox/releases)
+
 Download the correct file for your system and place it somewhere in your executable path.
 
-### Build from source
-
-If you have a rust toolchain installed, you can build and install Whiskers with cargo:
+Alternatively, you can install with Cargo, Nix, or from source:
 
 ```console
 # latest crates.io release:
 $ cargo install catppuccin-whiskers
+$ whiskers <template> <flavor>
+
 # to install from source:
 $ cargo install --git https://github.com/catppuccin/toolbox whiskers
+
 # there's also a Nix flake:
-$ nix run github:catppuccin/toolbox#whiskers -- <images> <flags>
-```
-
-### Nix flake
-
-If you use Nix, you can use Whiskers' flake:
-
-```console
 $ nix run github:catppuccin/toolbox#whiskers -- <template> <flavor>
 ```
 
@@ -47,6 +41,8 @@ Make a template per file type that your port requires, then use the Whiskers CLI
 
 ```console
 $ whiskers --help
+Soothing port creation tool for the high-spirited!
+
 Usage: whiskers [OPTIONS] [TEMPLATE] [FLAVOR]
 
 Arguments:
@@ -54,8 +50,12 @@ Arguments:
   [FLAVOR]    Flavor to get colors from [possible values: latte, frappe, macchiato, mocha]
 
 Options:
-  -l, --list-helpers  List all template helpers in markdown format
-  -h, --help          Print help
+      --override <OVERRIDES>       The overrides to apply to the template in key=value format
+  -o, --output-path <OUTPUT_PATH>  Path to write to instead of stdout
+      --check <CHECK>              Instead of printing a result just check if anything would change
+  -l, --list-helpers               List all template helpers in markdown format
+  -h, --help                       Print help
+  -V, --version                    Print version
 ```
 
 ## Template Syntax
@@ -211,6 +211,28 @@ Finally, we can override both values by passing two overrides. If we invoke whis
 ```ini
 bg = "#000000"
 fg = "#f9e2af"
+```
+
+## Check Mode
+
+You can use Whiskers as a linter with *check mode*. To do so, set the `--check` option to a file containing the expected output. Whiskers will render your template as per usual, but then instead of printing the result it will check it against the expected output and fail with exit code 1 if they differ.
+
+This is especially useful in CI pipelines to ensure that the generated files are not changed without a corresponding change to the templates.
+
+Whiskers will diff the output against the check file using the program set in the `DIFFTOOL` environment variable, falling back to `diff` if it's not set. The command will be invoked as `$DIFFTOOL <actual> <expected>`.
+
+```console
+$ whiskers theme.hbs latte --check themes/latte.cfg
+(no output, exit code 0)
+
+$ whiskers theme.hbs latte --check themes/latte.cfg
+Templating would result in changes.
+4c4
+< accent is #ea76cb
+---
+> accent is #40a02b
+
+(exit code 1)
 ```
 
 ## Further Reading
