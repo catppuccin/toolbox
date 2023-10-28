@@ -47,7 +47,7 @@ jobs:
 
   upload-whiskers:
     needs: release-please
-    if: ${{ needs.release-please.outputs.puccinier_release }}
+    if: ${{ needs.release-please.outputs.whiskers_release }}
     uses: ./.github/workflows/upload-rust.yml
     with:
       tag: ${{ needs.release-please.outputs.whiskers_tag }}
