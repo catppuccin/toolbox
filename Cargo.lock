@@ -144,7 +144,7 @@ dependencies = [
 
 [[package]]
 name = "catppuccin-catwalk"
-version = "1.0.2"
+version = "1.0.3"
 dependencies = [
  "clap",
  "clap_complete",
