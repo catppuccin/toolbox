@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/catppuccin/toolbox/compare/catwalk-v1.0.3...catwalk-v1.1.0) (2023-10-30)
+
+
+### Features
+
+* make input names optional, `-C` flag for directory, `--ext` for input file type ([#55](https://github.com/catppuccin/toolbox/issues/55)) ([b2ce59e](https://github.com/catppuccin/toolbox/commit/b2ce59e5d607f77ca3135b847c851465933d05e5))
+
 ## [1.0.3](https://github.com/catppuccin/toolbox/compare/catwalk-v1.0.2...catwalk-v1.0.3) (2023-10-28)
 
 
