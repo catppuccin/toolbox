@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/catppuccin/toolbox/compare/catwalk-v1.1.0...catwalk-v1.1.1) (2023-11-03)
+
+
+### Bug Fixes
+
+* custom antialiasing artifacts ([#57](https://github.com/catppuccin/toolbox/issues/57)) ([0f25654](https://github.com/catppuccin/toolbox/commit/0f256543b404533c3bf05cc9f9862d6ea7aa13ee))
+* explicit filename extension override ([#59](https://github.com/catppuccin/toolbox/issues/59)) ([e211ba8](https://github.com/catppuccin/toolbox/commit/e211ba8e9daeb3c0199394ed149bf81799391da8))
+
 ## [1.1.0](https://github.com/catppuccin/toolbox/compare/catwalk-v1.0.3...catwalk-v1.1.0) (2023-10-30)
 
 
