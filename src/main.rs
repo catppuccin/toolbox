@@ -13,12 +13,15 @@ macro_rules! open_image {
         let mut rel_path = $args.directory.clone().unwrap_or_default();
         let path = $path.unwrap_or_default();
         rel_path.push(path.clone());
-        match $args.extension {
-            Extension::Webp => {
-                rel_path.set_extension("webp");
-            }
-            Extension::Png => {
-                rel_path.set_extension("png");
+        // set the `--ext` file extension unless the filenames are explicitly given
+        if path == std::path::PathBuf::default() {
+            match $args.extension {
+                Extension::Webp => {
+                    rel_path.set_extension("webp");
+                }
+                Extension::Png => {
+                    rel_path.set_extension("png");
+                }
             }
         }
         Image::<Rgba>::open(&rel_path)
