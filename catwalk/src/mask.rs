@@ -46,7 +46,8 @@ impl RoundMask {
                     for diff in diffs {
                         if diff <= self.aa_level.pow(2) {
                             // Fraction of opacity
-                            let frac: f32 = 1.0 - (diff as f32 / self.aa_level.pow(2) as f32);
+                            let alpha = f32::from(image.pixel(x, y).alpha()) / 255.0;
+                            let frac: f32 = alpha - (diff as f32 / self.aa_level.pow(2) as f32);
                             return image.pixel(x, y).with_alpha((255.0 * frac) as u8);
                         }
                     }
@@ -88,7 +89,8 @@ impl TrapMask {
                         let diff: f32 = gpos - v;
                         if diff <= self.aa_level as f32 {
                             // Fraction of opacity
-                            let frac = 1.0 - (diff / (self.aa_level as f32));
+                            let alpha = f32::from(image.pixel(x, y).alpha()) / 255.0;
+                            let frac = alpha - (diff / (self.aa_level as f32));
                             return image.pixel(x, y).with_alpha((255.0 * frac) as u8);
                         }
                         Rgba::transparent()
