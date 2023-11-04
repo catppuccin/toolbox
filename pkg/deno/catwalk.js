@@ -47,10 +47,6 @@ function addHeapObject(obj) {
     return idx;
 }
 
-function isLikeNone(x) {
-    return x === undefined || x === null;
-}
-
 let cachedInt32Memory0 = null;
 
 function getInt32Memory0() {
@@ -72,6 +68,10 @@ function passArray8ToWasm0(arg, malloc) {
     getUint8Memory0().set(arg, ptr / 1);
     WASM_VECTOR_LEN = arg.length;
     return ptr;
+}
+
+function isLikeNone(x) {
+    return x === undefined || x === null;
 }
 
 let cachedUint8ClampedMemory0 = null;
@@ -97,7 +97,7 @@ function handleError(f, args) {
 }
 /**
 */
-export const Layout = Object.freeze({ Composite:0,"0":"Composite",Stacked:1,"1":"Stacked",Grid:2,"2":"Grid", });
+export const Layout = Object.freeze({ Composite:0,"0":"Composite",Stacked:1,"1":"Stacked",Grid:2,"2":"Grid",Row:3,"3":"Row", });
 /**
 */
 export class Catwalk {
@@ -120,56 +120,6 @@ export class Catwalk {
     free() {
         const ptr = this.__destroy_into_raw();
         wasm.__wbg_catwalk_free(ptr);
-    }
-    /**
-    * @param {number | undefined} aa_level
-    * @returns {Catwalk}
-    */
-    aa_level(aa_level) {
-        const ptr = this.__destroy_into_raw();
-        const ret = wasm.catwalk_aa_level(ptr, !isLikeNone(aa_level), isLikeNone(aa_level) ? 0 : aa_level);
-        return Catwalk.__wrap(ret);
-    }
-    /**
-    * @param {number | undefined} gap
-    * @returns {Catwalk}
-    */
-    gap(gap) {
-        const ptr = this.__destroy_into_raw();
-        const ret = wasm.catwalk_gap(ptr, !isLikeNone(gap), isLikeNone(gap) ? 0 : gap);
-        return Catwalk.__wrap(ret);
-    }
-    /**
-    * @param {number | undefined} layout
-    * @returns {Catwalk}
-    */
-    layout(layout) {
-        const ptr = this.__destroy_into_raw();
-        const ret = wasm.catwalk_layout(ptr, isLikeNone(layout) ? 3 : layout);
-        return Catwalk.__wrap(ret);
-    }
-    /**
-    * Sets the radius of the rounding mask.
-    * # Errors
-    * Returns an error if the height or width are not set (automatically inferred from the `new` method arguments)
-    * @param {number | undefined} radius
-    * @returns {Catwalk}
-    */
-    radius(radius) {
-        try {
-            const ptr = this.__destroy_into_raw();
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            wasm.catwalk_radius(retptr, ptr, !isLikeNone(radius), isLikeNone(radius) ? 0 : radius);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            var r2 = getInt32Memory0()[retptr / 4 + 2];
-            if (r2) {
-                throw takeObject(r1);
-            }
-            return Catwalk.__wrap(r0);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-        }
     }
     /**
     * Create a new Catwalk from 4 `web_sys::ImageData` objects
@@ -274,6 +224,76 @@ export class Catwalk {
                 throw takeObject(r1);
             }
             return CatwalkBuffer.__wrap(r0);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+        }
+    }
+    /**
+    * Returns the version of the Catwalk library.
+    * @returns {string}
+    */
+    static get version() {
+        let deferred1_0;
+        let deferred1_1;
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.catwalk_version(retptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            deferred1_0 = r0;
+            deferred1_1 = r1;
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+        }
+    }
+    /**
+    * @param {number | undefined} aa_level
+    * @returns {Catwalk}
+    */
+    aa_level(aa_level) {
+        const ptr = this.__destroy_into_raw();
+        const ret = wasm.catwalk_aa_level(ptr, !isLikeNone(aa_level), isLikeNone(aa_level) ? 0 : aa_level);
+        return Catwalk.__wrap(ret);
+    }
+    /**
+    * @param {number | undefined} gap
+    * @returns {Catwalk}
+    */
+    gap(gap) {
+        const ptr = this.__destroy_into_raw();
+        const ret = wasm.catwalk_gap(ptr, !isLikeNone(gap), isLikeNone(gap) ? 0 : gap);
+        return Catwalk.__wrap(ret);
+    }
+    /**
+    * @param {number | undefined} layout
+    * @returns {Catwalk}
+    */
+    layout(layout) {
+        const ptr = this.__destroy_into_raw();
+        const ret = wasm.catwalk_layout(ptr, isLikeNone(layout) ? 4 : layout);
+        return Catwalk.__wrap(ret);
+    }
+    /**
+    * Sets the radius of the rounding mask.
+    * # Errors
+    * Returns an error if the height or width are not set (automatically inferred from the `new` method arguments)
+    * @param {number | undefined} radius
+    * @returns {Catwalk}
+    */
+    radius(radius) {
+        try {
+            const ptr = this.__destroy_into_raw();
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.catwalk_radius(retptr, ptr, !isLikeNone(radius), isLikeNone(radius) ? 0 : radius);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            var r2 = getInt32Memory0()[retptr / 4 + 2];
+            if (r2) {
+                throw takeObject(r1);
+            }
+            return Catwalk.__wrap(r0);
         } finally {
             wasm.__wbindgen_add_to_stack_pointer(16);
         }
