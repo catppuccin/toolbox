@@ -20,8 +20,13 @@ Installation with Cargo, Nix, or from source:
 ```console
 $ cargo install catppuccin-catwalk
 $ catwalk <images> <flags>
+
 # to install from source:
 $ cargo install --git https://github.com/catppuccin/toolbox catwalk
+
+# if you're using Homebrew (or Linuxbrew):
+$ brew install catppuccin/tap/catwalk
+
 # there's also a Nix flake:
 $ nix run github:catppuccin/toolbox#catwalk -- <images> <flags>
 ```
