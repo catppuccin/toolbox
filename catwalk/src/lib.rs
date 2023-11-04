@@ -22,12 +22,12 @@ pub enum Layout {
     Composite,
     Stacked,
     Grid,
-    FourByOne,
+    Row,
 }
 
 enum GridLayouts {
-    TwoByTwo,
-    FourByOne,
+    Grid,
+    Row,
 }
 
 #[derive(thiserror::Error, Debug)]
@@ -237,12 +237,12 @@ impl Magic {
 
         // Create final
         let mut result = match layout {
-            GridLayouts::TwoByTwo => Image::new(
+            GridLayouts::Grid => Image::new(
                 (self.width * 2) + (gap * 3),
                 (self.height * 2) + (gap * 3),
                 Rgba::transparent(),
             ),
-            GridLayouts::FourByOne => Image::new(
+            GridLayouts::Row => Image::new(
                 (self.width * 4) + (gap * 5),
                 self.height + (gap * 2),
                 Rgba::transparent(),
@@ -252,12 +252,12 @@ impl Magic {
         // calculate the top left coordinates for each image, and paste
         rounded.iter().enumerate().for_each(|(i, img)| {
             let x = match layout {
-                GridLayouts::FourByOne => i % 4,
-                GridLayouts::TwoByTwo => i % 2,
+                GridLayouts::Row => i % 4,
+                GridLayouts::Grid => i % 2,
             };
             let y = match layout {
-                GridLayouts::FourByOne => 0,
-                GridLayouts::TwoByTwo => i / 2,
+                GridLayouts::Row => 0,
+                GridLayouts::Grid => i / 2,
             };
             result.paste(
                 gap + (self.width + gap) * x as u32,
@@ -286,8 +286,8 @@ impl Magic {
         match self.layout {
             Layout::Composite => self.gen_composite(),
             Layout::Stacked => self.gen_stacked(),
-            Layout::Grid => self.gen_grid(&GridLayouts::TwoByTwo),
-            Layout::FourByOne => self.gen_grid(&GridLayouts::FourByOne),
+            Layout::Grid => self.gen_grid(&GridLayouts::Grid),
+            Layout::Row => self.gen_grid(&GridLayouts::Row),
         }
     }
 
