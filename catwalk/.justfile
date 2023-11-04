@@ -11,9 +11,10 @@ build-wasm:
   rm -rf ./pkg || true
   mkdir -p ./pkg
   @just wasm-pack-build \
-    --target bundler \
+    --target nodejs \
     --out-dir ./pkg \
     --out-name catwalk
+  sed -i 's/@catppuccin\/catppuccin-catwalk/@catppuccin\/catwalk/g' ./pkg/package.json
   @just wasm-pack-build \
     --target deno \
     --out-dir ./pkg/deno \
