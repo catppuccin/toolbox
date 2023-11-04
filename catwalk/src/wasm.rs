@@ -131,6 +131,13 @@ impl Catwalk {
     pub fn build_buffer(self) -> Result<CatwalkBuffer, CatwalkError> {
         Ok(self.prepare()?.result_buffer())
     }
+
+    /// Returns the version of the Catwalk library.
+    #[must_use]
+    #[wasm_bindgen(getter)]
+    pub fn version() -> String {
+        env!("CARGO_PKG_VERSION").to_string()
+    }
 }
 
 impl Magic {
