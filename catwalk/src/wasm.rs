@@ -138,9 +138,9 @@ impl Magic {
     /// # Errors
     /// Returns an error if the `ImageData` cannot be created.
     pub fn result(self) -> Result<ImageData, JsValue> {
-        let width = self.width;
-        let data = self
-            .process()
+        let img = self.process();
+        let width = img.width();
+        let data = img
             .data
             .iter()
             .flat_map(|rgba| vec![rgba.r, rgba.g, rgba.b, rgba.a])
@@ -150,11 +150,11 @@ impl Magic {
 
     #[must_use]
     pub fn result_buffer(self) -> CatwalkBuffer {
-        let height = self.height;
-        let width = self.width;
+        let img = self.process();
+        let width = img.width();
+        let height = img.height();
         // collect a Vec<u8> from the rgba pixels
-        let data: Vec<u8> = self
-            .process()
+        let data: Vec<u8> = img
             .data
             .into_iter()
             .flat_map(|rgba| vec![rgba.r, rgba.g, rgba.b, rgba.a])
