@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.0](https://github.com/catppuccin/toolbox/compare/catwalk-v1.1.1...catwalk-v1.2.0) (2023-11-04)
+
+
+### Features
+
+* add `--layout row` ([#60](https://github.com/catppuccin/toolbox/issues/60)) ([00f26b5](https://github.com/catppuccin/toolbox/commit/00f26b56b77ba1aeb12f3070371efc19a6fb67ac)), closes [#20](https://github.com/catppuccin/toolbox/issues/20)
+* **wasm:** add `Catwalk.version` ([6833066](https://github.com/catppuccin/toolbox/commit/6833066b0f371aa6c8ccd3a0300aec7cc728f3a1))
+
+
+### Bug Fixes
+
+* **wasm:** result image size ([6833066](https://github.com/catppuccin/toolbox/commit/6833066b0f371aa6c8ccd3a0300aec7cc728f3a1))
+
 ## [1.1.1](https://github.com/catppuccin/toolbox/compare/catwalk-v1.1.0...catwalk-v1.1.1) (2023-11-03)
 
 
