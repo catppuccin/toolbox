@@ -22,34 +22,34 @@ pub enum Extension {
 #[derive(Parser)]
 #[command(author, version, about)]
 pub struct Cli {
-    /// Latte image
-    #[arg(default_value = "latte.webp")]
+    /// Path to Latte image.
+    #[arg(default_value = "./latte.webp")]
     pub latte: Option<PathBuf>,
-    /// Frappé image
-    #[arg(default_value = "frappe.webp")]
+    /// Path to Frappé image.
+    #[arg(default_value = "./frappe.webp")]
     pub frappe: Option<PathBuf>,
-    /// Macchiato image
-    #[arg(default_value = "macchiato.webp")]
+    /// Path to Macchiato image.
+    #[arg(default_value = "./macchiato.webp")]
     pub macchiato: Option<PathBuf>,
-    /// Mocha image
-    #[arg(default_value = "mocha.webp")]
+    /// Path to Mocha image.
+    #[arg(default_value = "./mocha.webp")]
     pub mocha: Option<PathBuf>,
-    /// Output file
-    #[arg(short, long, default_value = "preview.webp")]
+    /// Path to output file.
+    #[arg(short, long, default_value = "./preview.webp")]
     pub output: PathBuf,
-    /// Layout
+    /// Layout to use.
     #[arg(short, long, value_enum, default_value_t=Layout::Composite)]
     pub layout: Layout,
-    /// Sets the radius (percentage)
+    /// Radius of rounded corners (percentage).
     #[arg(short, long)]
     pub radius: Option<u32>,
-    /// Gap (grid layout)
+    /// Size of gaps between pictures for the `grid` layout.
     #[arg(short, long)]
     pub gap: Option<u32>,
-    /// Change to <DIRECTORY> before processing files
+    /// Change to <DIRECTORY> before processing files.
     #[arg(short = 'C', long, default_value = ".")]
     pub directory: Option<PathBuf>,
-    /// Extension to use when auto-detecting formats
+    /// File extension to use for input files, if they're not explicitly named.
     #[arg(long = "ext", value_enum, default_value_t = Extension::Webp)]
     pub extension: Extension,
 

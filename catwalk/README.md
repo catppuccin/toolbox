@@ -17,7 +17,7 @@ A sweet program that takes in four showcase images and displays them all at once
 
 Installation with Cargo, Nix, or from source:
 
-```bash
+```console
 $ cargo install catppuccin-catwalk
 $ catwalk <images> <flags>
 # to install from source:
@@ -28,14 +28,19 @@ $ nix run github:catppuccin/toolbox#catwalk -- <images> <flags>
 
 Usage:
 
-| Parameter      | Description                                                                                      |
-| -------------- | -------------------------------------------------------------------------------------------------|
-| `images[4]`    | 4 images to merge into one. **REQUIRED**. *All other parameters are optional.*                   |
-| `--layout`     | Style of the showcase image. Available options are `composite` (default), `grid`, `row`, and `stacked`. |
-| `--gap`        | Gap size for the `grid` layout.                                                                  |
-| `--radius`     | Radius of rounded corners.                                                                       |
-| `--output`     | Output file (defaults to `./result.webp`)                                                        |
-| `--help`       | A summary of the available parameters.                                                           |
+Parameter     | Description
+--------------| ------------------------------------------------------------------------------------------------------- 
+`[latte]`     | Path to Latte image (default: `./latte.webp`)
+`[frappe]`    | Path to Frappé image (default: `./frappe.webp`)
+`[macchiato]` | Path to Macchiato image (default: `./macchiato.webp`)
+`[mocha]`     | Path to Mocha image (default: `./mocha.webp`)
+`--output`    | Path to output file (default: `./preview.webp`)
+`--layout`    | Style of the showcase image. Available options are `composite` (default), `grid`, `row`, and `stacked`.
+`--radius`    | Radius of rounded corners (percentage).
+`--directory` | Change to `<DIRECTORY>` before processing files. (e.g. `catwalk -C ./assets/`)
+`--ext`       | File extension to use for input files, if they're not explicitly named. `webp` (default) or `png`.
+`--gap`       | Size of gaps between pictures for the `grid` layout.
+`--help`      | A summary of the available parameters.
 
 &nbsp;
 
