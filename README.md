@@ -31,6 +31,9 @@ $ whiskers <template> <flavor>
 # to install from source:
 $ cargo install --git https://github.com/catppuccin/toolbox whiskers
 
+# if you're using Homebrew (or Linuxbrew):
+$ brew install catppuccin/tap/whiskers
+
 # there's also a Nix flake:
 $ nix run github:catppuccin/toolbox#whiskers -- <template> <flavor>
 ```
