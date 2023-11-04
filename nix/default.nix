@@ -72,7 +72,8 @@
       membername = "catppuccin-catwalk";
       description = "Generate a preview as a single composite screenshot for the four flavors";
 
-      nativeBuildInputs = [pkgs.installShellFiles];
+      nativeBuildInputs = with pkgs; [installShellFiles pkg-config];
+      buildInputs = with pkgs; [libwebp];
 
       postInstall = ''
         installShellCompletion --cmd ${pname} \
