@@ -6,34 +6,12 @@ export enum Layout {
   Composite = 0,
   Stacked = 1,
   Grid = 2,
+  Row = 3,
 }
 /**
 */
 export class Catwalk {
   free(): void;
-/**
-* @param {number | undefined} aa_level
-* @returns {Catwalk}
-*/
-  aa_level(aa_level?: number): Catwalk;
-/**
-* @param {number | undefined} gap
-* @returns {Catwalk}
-*/
-  gap(gap?: number): Catwalk;
-/**
-* @param {number | undefined} layout
-* @returns {Catwalk}
-*/
-  layout(layout?: number): Catwalk;
-/**
-* Sets the radius of the rounding mask.
-* # Errors
-* Returns an error if the height or width are not set (automatically inferred from the `new` method arguments)
-* @param {number | undefined} radius
-* @returns {Catwalk}
-*/
-  radius(radius?: number): Catwalk;
 /**
 * Create a new Catwalk from 4 `web_sys::ImageData` objects
 * # Errors
@@ -75,6 +53,33 @@ export class Catwalk {
 * @returns {CatwalkBuffer}
 */
   build_buffer(): CatwalkBuffer;
+/**
+* @param {number | undefined} aa_level
+* @returns {Catwalk}
+*/
+  aa_level(aa_level?: number): Catwalk;
+/**
+* @param {number | undefined} gap
+* @returns {Catwalk}
+*/
+  gap(gap?: number): Catwalk;
+/**
+* @param {number | undefined} layout
+* @returns {Catwalk}
+*/
+  layout(layout?: number): Catwalk;
+/**
+* Sets the radius of the rounding mask.
+* # Errors
+* Returns an error if the height or width are not set (automatically inferred from the `new` method arguments)
+* @param {number | undefined} radius
+* @returns {Catwalk}
+*/
+  radius(radius?: number): Catwalk;
+/**
+* Returns the version of the Catwalk library.
+*/
+  static readonly version: string;
 }
 /**
 */
