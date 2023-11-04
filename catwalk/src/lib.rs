@@ -22,6 +22,12 @@ pub enum Layout {
     Composite,
     Stacked,
     Grid,
+    Row,
+}
+
+enum GridLayouts {
+    Grid,
+    Row,
 }
 
 #[derive(thiserror::Error, Debug)]
@@ -220,7 +226,7 @@ impl Magic {
     }
 
     /// Creates a grid image.
-    fn gen_grid(&self) -> Image<Rgba> {
+    fn gen_grid(&self, layout: &GridLayouts) -> Image<Rgba> {
         // Round images
         let gap = self.gap;
         let rounded: Vec<Image<Rgba>> = self
@@ -228,17 +234,31 @@ impl Magic {
             .iter()
             .map(|x| self.rounding_mask.mask(x))
             .collect();
+
         // Create final
-        let mut result = Image::new(
-            (self.width * 2) + (gap * 3),
-            (self.height * 2) + (gap * 3),
-            Rgba::transparent(),
-        )
+        let mut result = match layout {
+            GridLayouts::Grid => Image::new(
+                (self.width * 2) + (gap * 3),
+                (self.height * 2) + (gap * 3),
+                Rgba::transparent(),
+            ),
+            GridLayouts::Row => Image::new(
+                (self.width * 4) + (gap * 5),
+                self.height + (gap * 2),
+                Rgba::transparent(),
+            ),
+        }
         .with_overlay_mode(OverlayMode::Merge);
         // calculate the top left coordinates for each image, and paste
         rounded.iter().enumerate().for_each(|(i, img)| {
-            let x = i % 2;
-            let y = i / 2;
+            let x = match layout {
+                GridLayouts::Row => i % 4,
+                GridLayouts::Grid => i % 2,
+            };
+            let y = match layout {
+                GridLayouts::Row => 0,
+                GridLayouts::Grid => i / 2,
+            };
             result.paste(
                 gap + (self.width + gap) * x as u32,
                 gap + (self.height + gap) * y as u32,
@@ -266,7 +286,8 @@ impl Magic {
         match self.layout {
             Layout::Composite => self.gen_composite(),
             Layout::Stacked => self.gen_stacked(),
-            Layout::Grid => self.gen_grid(),
+            Layout::Grid => self.gen_grid(&GridLayouts::Grid),
+            Layout::Row => self.gen_grid(&GridLayouts::Row),
         }
     }
 

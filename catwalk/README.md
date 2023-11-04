@@ -31,7 +31,7 @@ Usage:
 | Parameter      | Description                                                                                      |
 | -------------- | -------------------------------------------------------------------------------------------------|
 | `images[4]`    | 4 images to merge into one. **REQUIRED**. *All other parameters are optional.*                   |
-| `--layout`     | Style of the showcase image. Available options are `composite` (default), `grid`, and `stacked`. |
+| `--layout`     | Style of the showcase image. Available options are `composite` (default), `grid`, `row`, and `stacked`. |
 | `--gap`        | Gap size for the `grid` layout.                                                                  |
 | `--radius`     | Radius of rounded corners.                                                                       |
 | `--output`     | Output file (defaults to `./result.webp`)                                                        |
