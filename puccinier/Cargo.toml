@@ -1,6 +1,6 @@
 [package]
 name = "puccinier"
-version = "0.1.2"
+version = "1.0.3"
 edition = "2021"
 readme = "README.md"
 authors = ["ap-1 <anishp0828@gmail.com>"]
@@ -14,9 +14,3 @@ categories = ["command-line-utilities", "template-engine"]
 xflags = "0.3"
 regex = { version = "1.6", default-features = false, features = ["std"] }
 atty = "0.2"
-
-[profile.release]
-opt-level = "z"
-codegen-units = 1
-lto = true
-strip = true

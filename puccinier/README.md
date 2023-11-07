@@ -1,7 +1,7 @@
 <h3 align="center">
   <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/logos/exports/1544x1544_circle.png" width="100" alt="Logo"/><br/>
   <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
-  Catppuccin Catwalk
+  Catppuccin Puccinier
   <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
 </h3>
 
@@ -13,39 +13,26 @@
 
 &nbsp;
 
-A sweet program that takes in four showcase images and displays them all at once.
+If you wrote a v1 or v2 Catppuccin theme, you may use Puccinier to automatically create the rest of the v2 themes. Puccinier supports the conversion of properly formatted hex, rgb, and hsl colors (case insensitive).
 
 Installation with Cargo, Nix, or from source:
 
-```console
-$ cargo install catppuccin-catwalk
-$ catwalk <images> <flags>
-
+```bash
+$ cargo install puccinier
 # to install from source:
-$ cargo install --git https://github.com/catppuccin/toolbox catwalk
-
-# if you're using Homebrew (or Linuxbrew):
-$ brew install catppuccin/tap/catwalk
-
+$ cargo install --git https://github.com/catppuccin/toolbox puccinier
 # there's also a Nix flake:
-$ nix run github:catppuccin/toolbox#catwalk -- <images> <flags>
+$ nix run github:catppuccin/toolbox#puccinier -- <source> --flags
 ```
 
 Usage:
 
-Parameter     | Description
---------------| ------------------------------------------------------------------------------------------------------- 
-`[latte]`     | Path to Latte image (default: `./latte.webp`)
-`[frappe]`    | Path to Frappé image (default: `./frappe.webp`)
-`[macchiato]` | Path to Macchiato image (default: `./macchiato.webp`)
-`[mocha]`     | Path to Mocha image (default: `./mocha.webp`)
-`--output`    | Path to output file (default: `./preview.webp`)
-`--layout`    | Style of the showcase image. Available options are `composite` (default), `grid`, `row`, and `stacked`.
-`--radius`    | Radius of rounded corners (percentage).
-`--directory` | Change to `<DIRECTORY>` before processing files. (e.g. `catwalk -C ./assets/`)
-`--ext`       | File extension to use for input files, if they're not explicitly named. `webp` (default) or `png`.
-`--gap`       | Size of gaps between pictures for the `grid` layout.
-`--help`      | A summary of the available parameters.
+| Parameter  | Description                                                                                       |
+|------------|---------------------------------------------------------------------------------------------------|
+| `source`   | The source file to convert                                                                        |
+| `--output` | Set the themes to generate from the source file (one of `latte`, `frappe`, `macchiato`, `mocha`). |
+| `--silent` | Disable showing which parts of the file were replaced.                                            |
+| `--help`   | Prints help information.                                                                          |
 
 &nbsp;
 

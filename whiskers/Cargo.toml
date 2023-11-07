@@ -1,0 +1,30 @@
+[package]
+name = "catppuccin-whiskers"
+version = "1.1.1"
+authors = ["backwardspy <backwardspy@pigeon.life>"]
+edition = "2021"
+description = "Soothing port creation tool for the high-spirited!"
+readme = "README.md"
+homepage = "https://github.com/catppuccin/toolbox/tree/main/whiskers"
+repository = "https://github.com/catppuccin/toolbox"
+license = "MIT"
+
+[[bin]]
+name = "whiskers"
+path = "src/main.rs"
+
+[dependencies]
+base64 = "0.21.4"
+catppuccin = { version = "1.3.0", features = ["css"] }
+clap = { version = "4.4.6", features = ["derive"] }
+clap-stdin = "0.2.1"
+color-eyre = { version = "0.6.2", default-features = false }
+css-colors = "1.0.1"
+handlebars = "4.4.0"
+regex = "1.10.2"
+serde = { version = "1.0.189", features = ["derive"] }
+serde_json = "1.0.107"
+serde_yaml = "0.9.25"
+tempfile = "3.8.1"
+thiserror = "1.0.50"
+titlecase = "2.2.1"

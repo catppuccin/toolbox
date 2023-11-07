@@ -18,13 +18,10 @@
     overlays = [(import inputs.rust-overlay)];
     forEachSystem = fn: nixpkgs.lib.genAttrs systems (system: fn (import nixpkgs {inherit overlays system;}));
     version = builtins.substring 0 8 self.lastModifiedDate;
-  in rec {
-    packages = forEachSystem (pkgs: let
-      derivs = pkgs.callPackage ./nix {inherit version;};
-    in (builtins.listToAttrs (builtins.map (name: {
-      inherit name;
-      value = derivs.${name};
-    }) ["catwalk" "contrast_test" "docpuccin" "inkcat" "puccinier"])));
+  in {
+    checks = forEachSystem (pkgs: self.packages.${pkgs.system});
+
+    packages = forEachSystem (pkgs: builtins.removeAttrs (pkgs.callPackage ./nix {inherit version;}) ["override" "overrideDerivation"]);
 
     devShells = forEachSystem (pkgs: rec {
       default = pkgs.mkShell {
@@ -33,7 +30,7 @@
           self.formatter.${pkgs.system}
         ];
       };
-      catwalk = pkgs.mkShell {
+      rust = pkgs.mkShell {
         buildInputs = with pkgs;
           [
             (rust-bin.stable.latest.default.override {
@@ -53,5 +50,10 @@
     });
 
     formatter = forEachSystem (pkgs: pkgs.alejandra);
+  };
+
+  nixConfig = {
+    extra-substituters = ["https://catppuccin.cachix.org"];
+    extra-trusted-public-keys = ["catppuccin.cachix.org-1:noG/4HkbhJb+lUAdKrph6LaozJvAeEEZj4N732IysmU="];
   };
 }

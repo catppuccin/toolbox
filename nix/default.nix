@@ -1,6 +1,6 @@
 {
   pkgs,
-  version,
+  version ? "dirty",
 }: let
   mkNodePkg = {
     pname,
@@ -27,7 +27,6 @@
 
   mkRustPkg = {
     pname,
-    membername ? pname,
     description,
     ...
   } @ args:
@@ -36,7 +35,7 @@
         src = pkgs.nix-gitignore.gitignoreSourcePure [../.gitignore] ../.;
 
         cargoLock.lockFile = ../Cargo.lock;
-        cargoBuildFlags = "-p ${membername}";
+        buildAndTestSubdir = pname;
 
         meta = with pkgs.lib; {
           inherit description;
@@ -69,10 +68,10 @@
     }
     rec {
       pname = "catwalk";
-      membername = "catppuccin-catwalk";
       description = "Generate a preview as a single composite screenshot for the four flavors";
 
-      nativeBuildInputs = [pkgs.installShellFiles];
+      nativeBuildInputs = with pkgs; [installShellFiles pkg-config];
+      buildInputs = with pkgs; [libwebp];
 
       postInstall = ''
         installShellCompletion --cmd ${pname} \
@@ -80,6 +79,10 @@
           --fish <($out/bin/${pname} completion fish) \
           --zsh <($out/bin/${pname} completion zsh)
       '';
+    }
+    {
+      pname = "whiskers";
+      description = "Soothing port creation tool for the high-spirited!";
     }
   ];
 in

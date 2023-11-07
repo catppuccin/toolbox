@@ -9,6 +9,10 @@
     "puccinier": {
       "package-name": "puccinier",
       "release-type": "rust"
+    },
+    "whiskers": {
+      "package-name": "whiskers",
+      "release-type": "rust"
     }
   },
   "plugins": ["cargo-workspace"]

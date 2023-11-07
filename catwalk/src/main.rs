@@ -1,18 +1,32 @@
-#![cfg(not(target_family = "wasm"))]
+#![deny(clippy::perf, clippy::nursery, clippy::pedantic)]
 mod cli;
 
 use catppuccin_catwalk::Catwalk;
 use clap::CommandFactory;
-use cli::{get_cli_arguments, print_completions, Cli, Commands};
-use color_eyre::{
-    eyre::{eyre, Context},
-    Result,
-};
+use cli::{get_cli_arguments, print_completions, Cli, Commands, Extension};
+use color_eyre::{eyre::eyre, Result};
 use ril::prelude::*;
-use std::{io::Cursor, path::Path};
+use std::io::Cursor;
 
-fn open_rgba_image(path: &Path) -> Result<Image<Rgba>> {
-    Image::<Rgba>::open(path).map_or(Err(eyre!("Failed to open image")), Ok)
+macro_rules! open_image {
+    ($path:expr, $args:expr) => {{
+        let mut rel_path = $args.directory.clone().unwrap_or_default();
+        let path = $path.unwrap_or_default();
+        rel_path.push(path.clone());
+        // set the `--ext` file extension unless the filenames are explicitly given
+        if path == std::path::PathBuf::default() {
+            match $args.extension {
+                Extension::Webp => {
+                    rel_path.set_extension("webp");
+                }
+                Extension::Png => {
+                    rel_path.set_extension("png");
+                }
+            }
+        }
+        Image::<Rgba>::open(&rel_path)
+            .map_or(Err(eyre!("Failed to open `{}`", &rel_path.display())), Ok)?
+    }};
 }
 
 fn main() -> Result<()> {
@@ -37,16 +51,14 @@ fn main() -> Result<()> {
         };
     }
 
-    let images = args.images.ok_or_else(|| eyre!("No images provided"))?;
-
     let catwalk = Catwalk::new([
-        open_rgba_image(&images.latte).context("Failed to open Latte image")?,
-        open_rgba_image(&images.frappe).context("Failed to open Frappé image")?,
-        open_rgba_image(&images.macchiato).context("Failed to open Macchiato image")?,
-        open_rgba_image(&images.mocha).context("Failed to open Mocha image")?,
+        open_image!(args.latte, args),
+        open_image!(args.frappe, args),
+        open_image!(args.macchiato, args),
+        open_image!(args.mocha, args),
     ])?
     .gap(args.gap)
-    .layout(args.layout)
+    .layout(Some(args.layout))
     .radius(args.radius)?
     .build()?;
 
@@ -71,6 +83,17 @@ fn main() -> Result<()> {
         },
     }
 
-    std::fs::write(args.output, writebuf.get_ref())
-        .map_err(|e| eyre!("Failed to write image: {}", e))
+    let output = if args.directory.is_some() {
+        let mut path = args.directory.clone().unwrap_or_default();
+        if args.output.is_absolute() {
+            args.output
+        } else {
+            path.push(args.output);
+            path
+        }
+    } else {
+        args.output
+    };
+
+    std::fs::write(output, writebuf.get_ref()).map_err(|e| eyre!("Failed to write image: {}", e))
 }
