@@ -18,7 +18,9 @@
     overlays = [(import inputs.rust-overlay)];
     forEachSystem = fn: nixpkgs.lib.genAttrs systems (system: fn (import nixpkgs {inherit overlays system;}));
     version = builtins.substring 0 8 self.lastModifiedDate;
-  in rec {
+  in {
+    checks = forEachSystem (pkgs: self.packages.${pkgs.system});
+
     packages = forEachSystem (pkgs: builtins.removeAttrs (pkgs.callPackage ./nix {inherit version;}) ["override" "overrideDerivation"]);
 
     devShells = forEachSystem (pkgs: rec {
