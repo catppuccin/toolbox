@@ -5,23 +5,17 @@
   "author": "Catppuccin Org <releases@catppuccin.com>",
   "license": "MIT",
   "workspaces": [
-    "contrast_test",
-    "docpuccin",
-    "inkcat",
-    "palette_builder"
+    "inkcat"
   ],
   "scripts": {
-    "contrast_test": "node ./contrast_test/index.js",
-    "docpuccin": "node ./docpuccin/index.js",
-    "inkcat": "node ./inkcat/index.js",
-    "palette_builder": "node ./palette_builder/index.js"
+    "inkcat": "node ./inkcat/index.js"
   },
   "devDependencies": {
     "prettier": "^3.0.0"
   },
   "prettier": {
     "trailingComma": "es5",
-    "tabWidth": 4,
+    "tabWidth": 2,
     "semi": false,
     "singleQuote": true
   }
