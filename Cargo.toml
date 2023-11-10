@@ -20,7 +20,7 @@ clap = { version = "4.4.7", features = ["derive"] }
 clap-stdin = "0.2.1"
 color-eyre = { version = "0.6.2", default-features = false }
 css-colors = "1.0.1"
-handlebars = "4.4.0"
+handlebars = "4.5.0"
 regex = "1.10.2"
 serde = { version = "1.0.192", features = ["derive"] }
 serde_json = "1.0.108"
