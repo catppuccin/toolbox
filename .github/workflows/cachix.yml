@@ -28,6 +28,7 @@ jobs:
         with:
           name: "catppuccin"
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          skipPush: ${{ github.ref != 'refs/heads/main' }}
 
       - name: Flake check
         run: nix flake check
