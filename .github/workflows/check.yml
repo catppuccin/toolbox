@@ -1,7 +1,9 @@
 on:
   pull_request:
+    paths: ["**.rs", "**.toml", "**.lock"]
   push:
     branches: [main]
+    paths: ["**.rs", "**.toml", "**.lock"]
 
 jobs:
   rust:
