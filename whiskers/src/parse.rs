@@ -58,4 +58,3 @@ impl HSLAExt for HSLA {
 
 #[cfg(test)]
 mod tests {}
-
