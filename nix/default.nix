@@ -2,29 +2,6 @@
   pkgs,
   version ? "dirty",
 }: let
-  mkNodePkg = {
-    pname,
-    description,
-    ...
-  } @ args:
-    pkgs.buildNpmPackage ({
-        inherit pname version;
-        src = pkgs.nix-gitignore.gitignoreSourcePure [../.gitignore] ../${pname};
-        dontNpmBuild = true;
-        prePatch = ''
-          cp -r ${../package-lock.json} ./package-lock.json
-        '';
-        npmDepsHash = "sha256-mxrzw1Y3c9/XuZBIsg3X026pj/quWm3WWLtyvT2jY0Q=";
-
-        meta = with pkgs.lib; {
-          inherit description;
-          homepage = "https://github.com/catppuccin/toolbox/tree/main/${pname}";
-          license = licenses.mit;
-          maintainers = with maintainers; [rubyowo];
-        };
-      }
-      // args);
-
   mkRustPkg = {
     pname,
     description,
@@ -87,11 +64,6 @@
   ];
 in
   builtins.listToAttrs (builtins.map ({...} @ args: {
-      name = args.pname;
-      value = mkNodePkg args;
-    })
-    nodePkgs)
-  // builtins.listToAttrs (builtins.map ({...} @ args: {
       name = args.pname;
       value = mkRustPkg args;
     })
