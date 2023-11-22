@@ -34,4 +34,4 @@ jobs:
         run: nix flake check -Lv
 
       - name: Build packages
-        run: nix build -L .#catwalk .#contrast_test .#docpuccin .#inkcat .#puccinier .#whiskers
+        run: nix build -L .#catwalk .#puccinier .#whiskers
