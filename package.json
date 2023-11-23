@@ -5,14 +5,9 @@
   "author": "Catppuccin Org <releases@catppuccin.com>",
   "license": "MIT",
   "workspaces": [
-    "contrast_test",
-    "docpuccin",
-    "inkcat",
-    "palette_builder"
+    "inkcat"
   ],
   "scripts": {
-    "contrast_test": "node ./contrast_test/index.js",
-    "docpuccin": "node ./docpuccin/index.js",
     "inkcat": "node ./inkcat/index.js"
   }
 }
