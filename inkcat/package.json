@@ -29,7 +29,7 @@
 	},
 	"homepage": "https://github.com/catppuccin/toolbox/tree/main/inkcat",
 	"dependencies": {
-		"@catppuccin/palette": "^0.1.2",
+		"@catppuccin/palette": "^0.2.0",
 		"chalk": "^5.0.1",
 		"clipboardy": "^3.0.0"
 	}
