@@ -26,7 +26,7 @@
 	},
 	"homepage": "https://github.com/catppuccin/toolbox/tree/main/contrast_test",
 	"dependencies": {
-		"@catppuccin/palette": "^0.1.2",
+		"@catppuccin/palette": "^0.2.0",
 		"chalk": "^5.0.1",
 		"color-contrast-checker": "^2.1.0"
 	}
