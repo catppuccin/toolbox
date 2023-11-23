@@ -31,6 +31,6 @@
 	"dependencies": {
 		"@catppuccin/palette": "^0.1.2",
 		"chalk": "^5.0.1",
-		"clipboardy": "^3.0.0"
+		"clipboardy": "^4.0.0"
 	}
 }
