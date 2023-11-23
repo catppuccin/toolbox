@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/catppuccin/toolbox/compare/puccinier-v1.0.3...puccinier-v1.0.4) (2023-11-23)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate regex to 1.10 ([#80](https://github.com/catppuccin/toolbox/issues/80)) ([08baef9](https://github.com/catppuccin/toolbox/commit/08baef927460fbd654c863763fb48a8d46da394b))
+
 ## [1.0.3](https://github.com/catppuccin/toolbox/compare/puccinier-v1.0.2...puccinier-v1.0.3) (2023-10-28)
 
 

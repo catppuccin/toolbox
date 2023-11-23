@@ -164,7 +164,7 @@ dependencies = [
 
 [[package]]
 name = "catppuccin-whiskers"
-version = "1.1.1"
+version = "1.1.2"
 dependencies = [
  "base64",
  "catppuccin",
@@ -625,7 +625,7 @@ dependencies = [
 
 [[package]]
 name = "puccinier"
-version = "1.0.3"
+version = "1.0.4"
 dependencies = [
  "atty",
  "regex",

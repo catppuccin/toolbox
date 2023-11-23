@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.1.2](https://github.com/catppuccin/toolbox/compare/whiskers-v1.1.1...whiskers-v1.1.2) (2023-11-23)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate base64 to 0.21.5 ([#70](https://github.com/catppuccin/toolbox/issues/70)) ([be92614](https://github.com/catppuccin/toolbox/commit/be9261407e181a3cbf2bb88be871727ebd88dc3e))
+* **deps:** update rust crate clap to 4.4.7 ([#71](https://github.com/catppuccin/toolbox/issues/71)) ([21cdc5d](https://github.com/catppuccin/toolbox/commit/21cdc5d1e51f2145758c49e8fff83a426ee72cee))
+* **deps:** update rust crate clap to 4.4.8 ([#84](https://github.com/catppuccin/toolbox/issues/84)) ([efac5e3](https://github.com/catppuccin/toolbox/commit/efac5e3548521d5bdcaa83f49c8775bfab20dda2))
+* **deps:** update rust crate handlebars to 4.5.0 ([#79](https://github.com/catppuccin/toolbox/issues/79)) ([cbd1cb7](https://github.com/catppuccin/toolbox/commit/cbd1cb7fdebb9e7f7deb57ed2cae9055a5623e56))
+* **deps:** update rust crate serde to 1.0.192 ([#74](https://github.com/catppuccin/toolbox/issues/74)) ([02676a9](https://github.com/catppuccin/toolbox/commit/02676a91c57123b8b77b92a4f15fe9c4b2925b22))
+* **deps:** update rust crate serde to 1.0.193 ([#86](https://github.com/catppuccin/toolbox/issues/86)) ([020f291](https://github.com/catppuccin/toolbox/commit/020f2910ade722dfa3d3a358f8e6baa7feacd29a))
+* **deps:** update rust crate serde_json to 1.0.108 ([#75](https://github.com/catppuccin/toolbox/issues/75)) ([e9effd0](https://github.com/catppuccin/toolbox/commit/e9effd05376c041ac0605fde6bdc0e8f614de558))
+* **deps:** update rust crate serde_yaml to 0.9.27 ([#76](https://github.com/catppuccin/toolbox/issues/76)) ([9eb5470](https://github.com/catppuccin/toolbox/commit/9eb54703ff49c9ee06b8be63396dddfca6a60f2c))
+
 ## [1.1.1](https://github.com/catppuccin/toolbox/compare/whiskers-v1.1.0...whiskers-v1.1.1) (2023-10-28)
 
 
