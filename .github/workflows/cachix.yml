@@ -3,9 +3,9 @@ name: Build and populate cache
 on:
   push:
     branches: [main]
-    paths: ["**.nix", "**.js", "**.ts", "**.rs", "Cargo.lock", "package.json", "package-lock.json"]
+    paths: ["**.nix", "**.rs", "Cargo.lock"]
   pull_request:
-    paths: ["**.nix", "**.js", "**.ts", "**.rs", "Cargo.lock", "package.json", "package-lock.json"]
+    paths: ["**.nix", "**.rs", "Cargo.lock"]
   workflow_dispatch:
 
 jobs:

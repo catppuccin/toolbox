@@ -1,0 +1,29 @@
+name: Deno Check
+
+on:
+  push:
+    branches: [main]
+    paths: ["**/*.ts", "deno.*"]
+  pull_request:
+    branches: [main]
+    paths: ["**/*.ts", "deno.*"]
+
+jobs:
+  deno-check:
+    name: Check Deno code
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: nekowinston/setup-deno@v1
+        with:
+          directory: deno-lib
+
+      - name: Check
+        run: |
+          shopt -s globstar
+          deno lint
+          deno check deno-lib/**/*.ts
+          deno fmt --check deno-lib/**/*.ts
