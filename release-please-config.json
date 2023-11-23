@@ -1,6 +1,5 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
-  "bootstrap-sha": "e13db262ccc5c524a6d9ece3b2c84a405cb89f97",
   "packages": {
     "catwalk": {
       "package-name": "catwalk",
@@ -13,6 +12,11 @@
     "whiskers": {
       "package-name": "whiskers",
       "release-type": "rust"
+    },
+    "deno-lib": {
+      "package-name": "deno-lib",
+      "release-type": "simple",
+      "release-as": "1.0.0"
     }
   },
   "plugins": ["cargo-workspace"]

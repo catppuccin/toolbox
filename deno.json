@@ -1,0 +1,11 @@
+{
+  "fmt": {
+    "include": ["deno-lib/"]
+  },
+  "lint": {
+    "include": ["deno-lib/"]
+  },
+  "test": {
+    "include": ["deno-lib/"]
+  }
+}
