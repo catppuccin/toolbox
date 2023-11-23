@@ -9,14 +9,5 @@
   ],
   "scripts": {
     "inkcat": "node ./inkcat/index.js"
-  },
-  "devDependencies": {
-    "prettier": "^3.0.0"
-  },
-  "prettier": {
-    "trailingComma": "es5",
-    "tabWidth": 2,
-    "semi": false,
-    "singleQuote": true
   }
 }
