@@ -15,9 +15,9 @@
     },
     "deno-lib": {
       "package-name": "deno-lib",
-      "release-type": "simple",
-      "release-as": "1.0.0"
+      "release-type": "simple"
     }
   },
-  "plugins": ["cargo-workspace"]
+  "plugins": ["cargo-workspace"],
+  "separate-pull-requests": true
 }
