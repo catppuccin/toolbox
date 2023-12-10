@@ -12,8 +12,8 @@ pub enum Error {
     ParseInt(ParseIntError),
 }
 
-pub trait HSLAExt {
-    fn from_hex(hex: &str) -> Result<HSLA, Error>;
+pub trait ColorExt<T: Color> {
+    fn from_hex(hex: &str) -> Result<T, Error>;
     fn to_hex(&self) -> String;
 }
 
@@ -24,7 +24,7 @@ fn hex_to_u8s(hex: &str) -> Result<Vec<u8>, ParseIntError> {
         .collect()
 }
 
-impl HSLAExt for HSLA {
+impl ColorExt<Self> for RGBA {
     fn from_hex(hex: &str) -> Result<Self, Error> {
         if hex.len() != 6 && hex.len() != 8 {
             return Err(Error::InvalidLength(hex.len()));
@@ -36,7 +36,7 @@ impl HSLAExt for HSLA {
             .expect("guaranteed to have at least 3 elements");
         let alpha = components.get(3).copied().unwrap_or(255);
 
-        Ok(rgba(red, green, blue, Ratio::from_u8(alpha).as_f32()).to_hsla())
+        Ok(rgba(red, green, blue, Ratio::from_u8(alpha).as_f32()))
     }
 
     fn to_hex(&self) -> String {
@@ -44,7 +44,7 @@ impl HSLAExt for HSLA {
             let RGB { r, g, b } = self.to_rgb();
             format!("{:02x}{:02x}{:02x}", r.as_u8(), g.as_u8(), b.as_u8())
         } else {
-            let RGBA { r, g, b, a } = self.to_rgba();
+            let Self { r, g, b, a } = self;
             format!(
                 "{:02x}{:02x}{:02x}{:02x}",
                 r.as_u8(),
@@ -53,6 +53,16 @@ impl HSLAExt for HSLA {
                 a.as_u8()
             )
         }
+    }
+}
+
+impl ColorExt<Self> for HSLA {
+    fn from_hex(hex: &str) -> Result<Self, Error> {
+        Ok(RGBA::from_hex(hex)?.to_hsla())
+    }
+
+    fn to_hex(&self) -> String {
+        self.to_rgba().to_hex()
     }
 }
 
