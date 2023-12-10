@@ -1,5 +1,5 @@
 use base64::Engine;
-use css_colors::{Color, Ratio, HSLA};
+use css_colors::{Color, Ratio, HSLA, RGBA};
 use handlebars::{
     handlebars_helper, Context, Handlebars, Helper, HelperResult, Output, RenderContext,
     RenderError,
@@ -8,7 +8,7 @@ use handlebars::{
 use ::titlecase::titlecase as titlecase_ext;
 use serde_json::Value;
 
-use crate::parse::HSLAExt;
+use crate::parse::ColorExt;
 
 impl From<crate::parse::Error> for RenderError {
     fn from(value: crate::parse::Error) -> Self {
@@ -33,10 +33,10 @@ handlebars_helper!(opacity: |color: String, amount: f32| {
     HSLA::from_hex(&color)?.fade(Ratio::from_f32(amount)).to_hex()
 });
 handlebars_helper!(rgb: |color: String| {
-    HSLA::from_hex(&color)?.to_rgb().to_string()
+    RGBA::from_hex(&color)?.to_rgb().to_string()
 });
 handlebars_helper!(rgba: |color: String| {
-    HSLA::from_hex(&color)?.to_rgba().to_string()
+    RGBA::from_hex(&color)?.to_string()
 });
 handlebars_helper!(hsl: |color: String| {
     HSLA::from_hex(&color)?.to_hsl().to_string()
@@ -45,28 +45,28 @@ handlebars_helper!(hsla: |color: String| {
     HSLA::from_hex(&color)?.to_string()
 });
 handlebars_helper!(red_i: |color: String| {
-    HSLA::from_hex(&color)?.to_rgba().r.as_u8()
+    RGBA::from_hex(&color)?.r.as_u8()
 });
 handlebars_helper!(green_i: |color: String| {
-    HSLA::from_hex(&color)?.to_rgba().g.as_u8()
+    RGBA::from_hex(&color)?.g.as_u8()
 });
 handlebars_helper!(blue_i: |color: String| {
-    HSLA::from_hex(&color)?.to_rgba().b.as_u8()
+    RGBA::from_hex(&color)?.b.as_u8()
 });
 handlebars_helper!(alpha_i: |color: String| {
-    HSLA::from_hex(&color)?.to_rgba().a.as_u8()
+    RGBA::from_hex(&color)?.a.as_u8()
 });
 handlebars_helper!(red_f: |color: String| {
-    HSLA::from_hex(&color)?.to_rgba().r.as_f32()
+    RGBA::from_hex(&color)?.r.as_f32()
 });
 handlebars_helper!(green_f: |color: String| {
-    HSLA::from_hex(&color)?.to_rgba().g.as_f32()
+    RGBA::from_hex(&color)?.g.as_f32()
 });
 handlebars_helper!(blue_f: |color: String| {
-    HSLA::from_hex(&color)?.to_rgba().b.as_f32()
+    RGBA::from_hex(&color)?.b.as_f32()
 });
 handlebars_helper!(alpha_f: |color: String| {
-    HSLA::from_hex(&color)?.to_rgba().a.as_f32()
+    RGBA::from_hex(&color)?.a.as_f32()
 });
 
 pub fn darklight(
