@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/catppuccin/toolbox/compare/whiskers-v1.1.2...whiskers-v1.1.3) (2023-12-10)
+
+
+### Bug Fixes
+
+* use hex -&gt; rgb(a) without hsla where possible ([#95](https://github.com/catppuccin/toolbox/issues/95)) ([c7c095f](https://github.com/catppuccin/toolbox/commit/c7c095ff7d14d4b43065b4a81c45e9e5354c87c6))
+
 ## [1.1.2](https://github.com/catppuccin/toolbox/compare/whiskers-v1.1.1...whiskers-v1.1.2) (2023-11-23)
 
 
