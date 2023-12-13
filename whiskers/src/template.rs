@@ -193,11 +193,13 @@ pub fn make_context(flavor: catppuccin::Flavour) -> serde_json::Value {
         .collect();
 
     let mut context =
-        serde_json::to_value(color_map).expect("color names & hexcodes can be serialized");
+        serde_json::to_value(color_map.clone()).expect("color names & hexcodes can be serialized");
 
     context["flavor"] = flavor.name().into();
     context["isLight"] = (flavor == catppuccin::Flavour::Latte).into();
     context["isDark"] = (flavor != catppuccin::Flavour::Latte).into();
+    context["colors"] =
+        serde_json::to_value(color_map).expect("color names & hexcodes can be serialized");
 
     context
 }
