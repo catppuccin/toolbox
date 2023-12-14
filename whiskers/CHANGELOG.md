@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/catppuccin/toolbox/compare/whiskers-v1.1.4...whiskers-v1.2.0) (2023-12-14)
+
+
+### Features
+
+* **whiskers:** add colors object in context ([#104](https://github.com/catppuccin/toolbox/issues/104)) ([0f08acc](https://github.com/catppuccin/toolbox/commit/0f08acc98b77fb8ef2c62cf6d1e842afcc0265bf))
+
 ## [1.1.4](https://github.com/catppuccin/toolbox/compare/whiskers-v1.1.3...whiskers-v1.1.4) (2023-12-10)
 
 
