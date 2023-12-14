@@ -1,23 +1,19 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "rust",
   "packages": {
     "catwalk": {
-      "package-name": "catwalk",
-      "release-type": "rust"
+      "package-name": "catwalk"
     },
     "puccinier": {
-      "package-name": "puccinier",
-      "release-type": "rust"
+      "package-name": "puccinier"
     },
     "whiskers": {
-      "package-name": "whiskers",
-      "release-type": "rust"
+      "package-name": "whiskers"
     },
     "deno-lib": {
       "package-name": "deno-lib",
       "release-type": "simple"
     }
-  },
-  "plugins": ["cargo-workspace"],
-  "separate-pull-requests": true
+  }
 }
