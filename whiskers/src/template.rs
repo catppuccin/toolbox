@@ -1,6 +1,6 @@
-use std::collections::HashMap;
-
-use handlebars::{Handlebars, HelperDef};
+use handlebars::Handlebars;
+use handlebars::HelperDef;
+use indexmap::IndexMap;
 
 use crate::helper;
 
@@ -182,14 +182,59 @@ pub fn make_registry() -> Handlebars<'static> {
     reg
 }
 
+fn flavor_priority(flavor: &str) -> u32 {
+    match flavor {
+        "latte" => 1,
+        "frappe" => 2,
+        "macchiato" => 3,
+        "mocha" => 4,
+        _ => unreachable!(),
+    }
+}
+
+fn color_priority(color: &str) -> u32 {
+    match color {
+        "rosewater" => 1,
+        "flamingo" => 2,
+        "pink" => 3,
+        "mauve" => 4,
+        "red" => 5,
+        "maroon" => 6,
+        "peach" => 7,
+        "yellow" => 8,
+        "green" => 9,
+        "teal" => 10,
+        "sky" => 11,
+        "sapphire" => 12,
+        "blue" => 13,
+        "lavender" => 14,
+        "text" => 15,
+        "subtext1" => 16,
+        "subtext0" => 17,
+        "overlay2" => 18,
+        "overlay1" => 19,
+        "overlay0" => 20,
+        "surface2" => 21,
+        "surface1" => 22,
+        "surface0" => 23,
+        "base" => 24,
+        "mantle" => 25,
+        "crust" => 26,
+        _ => unreachable!(),
+    }
+}
+
 #[must_use]
 #[allow(clippy::missing_panics_doc)] // panic here implies an internal issue
 pub fn make_context_all() -> serde_json::Value {
-    let flavours: HashMap<&str, serde_json::Value> = catppuccin::Flavour::into_iter()
+    let mut flavours: IndexMap<&str, serde_json::Value> = catppuccin::Flavour::into_iter()
         .map(|f| (f.name(), make_context(f)))
         .collect();
-    let flavours_map = HashMap::from([("flavors", flavours)]);
-    serde_json::to_value(flavours_map).expect("flavours can be serialized")
+    flavours.sort_by(|a, _, b, _| flavor_priority(a).cmp(&flavor_priority(b)));
+
+    let context = IndexMap::from([("flavors", flavours)]);
+
+    serde_json::to_value(context).expect("flavours can be serialized")
 }
 
 #[must_use]
@@ -197,10 +242,11 @@ pub fn make_context_all() -> serde_json::Value {
 pub fn make_context(flavor: catppuccin::Flavour) -> serde_json::Value {
     let colors = flavor.colours();
 
-    let color_map: HashMap<String, String> = colors
+    let mut color_map: IndexMap<String, String> = colors
         .into_fields_iter()
         .map(|(name, c)| (name.to_string(), c.hex().to_ascii_lowercase()))
         .collect();
+    color_map.sort_by(|a, _, b, _| color_priority(a).cmp(&color_priority(b)));
 
     let mut context =
         serde_json::to_value(color_map.clone()).expect("color names & hexcodes can be serialized");

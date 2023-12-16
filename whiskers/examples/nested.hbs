@@ -1,11 +1,13 @@
 ---
-accent: {{mauve}}
+accent: {{flavors.frappe.mauve}}
 ---
 
 How do we want to handle frontmatter?
 It makes sense when a single flavour is being rendered, but not when multiple are... at the minute anyways.
 
-{{ #each flavors as | flavor flavour | }}
-## {{titlecase flavour}}
-Base: {{base}}
+{{#each flavors as | flavor flavour | }}
+- **{{flavour}}**
+  {{ #each colors as | color colorName | }}
+  - **{{colorName}}**
+  {{/each}}
 {{/each}}
