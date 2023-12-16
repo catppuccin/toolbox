@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use handlebars::Handlebars;
 use handlebars::HelperDef;
 use indexmap::IndexMap;
@@ -227,12 +229,12 @@ fn color_priority(color: &str) -> u32 {
 #[must_use]
 #[allow(clippy::missing_panics_doc)] // panic here implies an internal issue
 pub fn make_context_all() -> serde_json::Value {
-    let mut flavours: IndexMap<&str, serde_json::Value> = catppuccin::Flavour::into_iter()
+    let mut flavors: IndexMap<&str, serde_json::Value> = catppuccin::Flavour::into_iter()
         .map(|f| (f.name(), make_context(f)))
         .collect();
-    flavours.sort_by(|a, _, b, _| flavor_priority(a).cmp(&flavor_priority(b)));
+    flavors.sort_by(|a, _, b, _| flavor_priority(a).cmp(&flavor_priority(b)));
 
-    let context = IndexMap::from([("flavors", flavours)]);
+    let context = HashMap::from([("flavors", flavors)]);
 
     serde_json::to_value(context).expect("flavours can be serialized")
 }

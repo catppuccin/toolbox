@@ -31,6 +31,7 @@ enum Flavor {
     All,
 }
 
+#[allow(clippy::fallible_impl_from)]
 impl From<Flavor> for catppuccin::Flavour {
     fn from(value: Flavor) -> Self {
         match value {
@@ -38,8 +39,8 @@ impl From<Flavor> for catppuccin::Flavour {
             Flavor::Frappe => Self::Frappe,
             Flavor::Macchiato => Self::Macchiato,
             Flavor::Mocha => Self::Mocha,
-            // Yeah not sure how to add "all" as a valid arg without refactoring everything.
-            Flavor::All => unimplemented!(),
+            // This should never be called, but it's here to satisfy the compiler.
+            Flavor::All => panic!(),
         }
     }
 }
