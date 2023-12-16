@@ -184,6 +184,16 @@ pub fn make_registry() -> Handlebars<'static> {
 
 #[must_use]
 #[allow(clippy::missing_panics_doc)] // panic here implies an internal issue
+pub fn make_context_all() -> serde_json::Value {
+    let flavours: HashMap<&str, serde_json::Value> = catppuccin::Flavour::into_iter()
+        .map(|f| (f.name(), make_context(f)))
+        .collect();
+    let flavours_map = HashMap::from([("flavors", flavours)]);
+    serde_json::to_value(flavours_map).expect("flavours can be serialized")
+}
+
+#[must_use]
+#[allow(clippy::missing_panics_doc)] // panic here implies an internal issue
 pub fn make_context(flavor: catppuccin::Flavour) -> serde_json::Value {
     let colors = flavor.colours();
 

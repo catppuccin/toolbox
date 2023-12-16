@@ -1,0 +1,11 @@
+---
+accent: {{mauve}}
+---
+
+How do we want to handle frontmatter?
+It makes sense when a single flavour is being rendered, but not when multiple are... at the minute anyways.
+
+{{ #each flavors as | flavor flavour | }}
+## {{titlecase flavour}}
+Base: {{base}}
+{{/each}}

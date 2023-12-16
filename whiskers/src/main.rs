@@ -28,6 +28,7 @@ enum Flavor {
     Frappe,
     Macchiato,
     Mocha,
+    All,
 }
 
 impl From<Flavor> for catppuccin::Flavour {
@@ -37,6 +38,8 @@ impl From<Flavor> for catppuccin::Flavour {
             Flavor::Frappe => Self::Frappe,
             Flavor::Macchiato => Self::Macchiato,
             Flavor::Mocha => Self::Mocha,
+            // Yeah not sure how to add "all" as a valid arg without refactoring everything.
+            Flavor::All => unimplemented!(),
         }
     }
 }
@@ -149,7 +152,11 @@ fn main() -> Result<()> {
 
     let reg = template::make_registry();
 
-    let ctx = template::make_context(flavor.into());
+    let ctx = if matches!(flavor, Flavor::All) {
+        template::make_context_all()
+    } else {
+        template::make_context(flavor.into())
+    };
     let (content, frontmatter) = frontmatter::render_and_parse(template, &reg, &ctx);
 
     let ctx = merge_contexts(ctx, frontmatter, args.overrides);
