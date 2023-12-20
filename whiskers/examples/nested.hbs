@@ -1,16 +1,15 @@
 ---
 # You can define custom variables for each flavor here
 accent: "{{mauve}}"
-# Root context
-parent: "shouldn't require a flavour"
+# Normal variables can be defined to be used everywhere
+parent: "default"
 ---
 
-# This doesn't currently work when it _should_
 Parent: {{parent}}
 
 {{#each flavors as | flavor flavour | }}
 # {{titlecase flavour}}
-  - Parent: {{../parent}}
+  - Parent Works Here Too: {{../parent}}
   - Chosen Accent: **{{accent}}**
   - Every Color:
     {{ #each colors as | color colorName | }}

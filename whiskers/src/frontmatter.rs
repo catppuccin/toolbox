@@ -1,5 +1,8 @@
 use handlebars::Handlebars;
-use serde_json::Value;
+use serde_json::{Map, Value};
+
+pub type FlavorContexts = Vec<Option<Value>>;
+pub type RootContext = Option<Map<String, Value>>;
 
 fn split(template: &str) -> Option<(&str, &str)> {
     // we consider a template to possibly have frontmatter iff:
@@ -22,19 +25,33 @@ pub fn render_and_parse_all<'a>(
     template: &'a str,
     reg: &Handlebars,
     ctx: &Value,
-) -> (&'a str, Vec<Option<Value>>) {
-    let (_, content) = split(template).unwrap_or(("", template));
+) -> (&'a str, FlavorContexts, RootContext) {
+    let Some((frontmatter, content)) = split(template) else {
+        return (template, vec![None], None);
+    };
+
+    let parsed_frontmatter = match serde_yaml::from_str::<Map<_, _>>(frontmatter) {
+        Ok(frontmatter) => frontmatter,
+        Err(e) => {
+            eprintln!("warning: Failed to parse frontmatter as YAML ({e}). Proceeding without it");
+            return (content, vec![None], None);
+        }
+    };
+
+    let pattern = regex::Regex::new(r"\{\{.*?\}\}").expect("regex is valid");
+    let root_context_frontmatter = parsed_frontmatter
+        .into_iter()
+        .filter(|(_, v)| !pattern.is_match(v.to_string().as_str()))
+        .collect::<Map<String, Value>>();
 
     let frontmatter = ctx
         .as_object()
         .expect("context is an object")
         .values()
         .map(|v| render_and_parse(template, reg, v).1)
-        .collect();
+        .collect::<Vec<_>>();
 
-    dbg!(&frontmatter);
-
-    (content, frontmatter)
+    (content, frontmatter, Some(root_context_frontmatter))
 }
 
 #[must_use]

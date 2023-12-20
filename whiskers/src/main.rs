@@ -16,10 +16,11 @@ use color_eyre::{
 };
 
 use catppuccin_whiskers::{
-    frontmatter,
+    frontmatter::{self, FlavorContexts, RootContext},
     postprocess::postprocess,
     template::{self, helpers},
 };
+use serde_json::json;
 
 #[derive(clap::ValueEnum, Clone, Debug)]
 enum Flavor {
@@ -109,7 +110,8 @@ fn overrides_to_map(overrides: Vec<Override>) -> serde_json::Map<String, serde_j
 
 fn merge_contexts_all(
     ctx: &serde_json::Value,
-    frontmatter: Vec<Option<serde_json::Value>>,
+    frontmatter: FlavorContexts,
+    root_frontmatter: RootContext,
     overrides: &[Override],
 ) -> serde_json::Value {
     let ctx = ctx.as_object().expect("ctx is an object").clone();
@@ -124,10 +126,14 @@ fn merge_contexts_all(
         })
         .collect();
 
-    // TODO: The biggest problem is that the entire frontmatter is rendered under each flavor,
-    // which means that you can't define any variables in the root context.
-    // Try running the `nested.hbs` file with flavor `all` to see what I mean.
-    let merged = serde_json::json!({ "flavors": flavors });
+    let mut merged = json!({ "flavors": flavors });
+
+    if let Some(root) = root_frontmatter {
+        merged
+            .as_object_mut()
+            .expect("flavors is an object")
+            .extend(root);
+    }
 
     serde_json::to_value(merged).expect("merged context is serializable")
 }
@@ -181,8 +187,9 @@ fn main() -> Result<()> {
 
     let (content, ctx) = if is_flavor_all {
         let ctx = template::make_context_all();
-        let (content, frontmatter) = frontmatter::render_and_parse_all(template, &reg, &ctx);
-        let merged_ctx = merge_contexts_all(&ctx, frontmatter, &args.overrides);
+        let (content, frontmatter, root_frontmatter) =
+            frontmatter::render_and_parse_all(template, &reg, &ctx);
+        let merged_ctx = merge_contexts_all(&ctx, frontmatter, root_frontmatter, &args.overrides);
         (content, merged_ctx)
     } else {
         let ctx = template::make_context(flavor.into());
