@@ -2,7 +2,6 @@
 // we like truncating u32s into u8s around here
 #![allow(clippy::cast_possible_truncation)]
 use std::{
-    clone::Clone,
     env, fs,
     io::Write,
     path::{Path, PathBuf},
@@ -50,6 +49,8 @@ struct Override {
     pub key: String,
     pub value: serde_json::Value,
 }
+
+type Map = serde_json::Map<String, serde_json::Value>;
 
 fn parse_override(s: &str) -> Result<Override> {
     let kvpair = s.split_once('=');
@@ -106,12 +107,36 @@ fn overrides_to_map(overrides: Vec<Override>) -> serde_json::Map<String, serde_j
     overrides.into_iter().map(|o| (o.key, o.value)).collect()
 }
 
+fn merge_contexts_all(
+    ctx: &serde_json::Value,
+    frontmatter: Vec<Option<serde_json::Value>>,
+    overrides: &[Override],
+) -> serde_json::Value {
+    let ctx = ctx.as_object().expect("ctx is an object").clone();
+
+    let flavors: Map = ctx
+        .into_iter()
+        .zip(frontmatter)
+        .map(|((name, ctx), frontmatter)| {
+            // TODO: How do we handle command line overrides for all flavors?
+            let merged_ctx = merge_contexts(ctx, frontmatter, overrides.into());
+            (name, merged_ctx)
+        })
+        .collect();
+
+    // TODO: The biggest problem is that the entire frontmatter is rendered under each flavor,
+    // which means that you can't define any variables in the root context.
+    // Try running the `nested.hbs` file with flavor `all` to see what I mean.
+    let merged = serde_json::json!({ "flavors": flavors });
+
+    serde_json::to_value(merged).expect("merged context is serializable")
+}
+
 fn merge_contexts(
     ctx: serde_json::Value,
     frontmatter: Option<serde_json::Value>,
     overrides: Vec<Override>,
 ) -> serde_json::Value {
-    type Map = serde_json::Map<String, serde_json::Value>;
     let mut merged = Map::new();
 
     let overrides = contextualize_overrides(overrides, &ctx);
@@ -150,17 +175,21 @@ fn main() -> Result<()> {
         .expect("template_path is guaranteed to be set");
 
     let flavor = args.flavor.expect("flavor is guaranteed to be set");
+    let is_flavor_all = matches!(flavor, Flavor::All);
 
     let reg = template::make_registry();
 
-    let ctx = if matches!(flavor, Flavor::All) {
-        template::make_context_all()
+    let (content, ctx) = if is_flavor_all {
+        let ctx = template::make_context_all();
+        let (content, frontmatter) = frontmatter::render_and_parse_all(template, &reg, &ctx);
+        let merged_ctx = merge_contexts_all(&ctx, frontmatter, &args.overrides);
+        (content, merged_ctx)
     } else {
-        template::make_context(flavor.into())
+        let ctx = template::make_context(flavor.into());
+        let (content, frontmatter) = frontmatter::render_and_parse(template, &reg, &ctx);
+        let merged_ctx = merge_contexts(ctx, frontmatter, args.overrides);
+        (content, merged_ctx)
     };
-    let (content, frontmatter) = frontmatter::render_and_parse(template, &reg, &ctx);
-
-    let ctx = merge_contexts(ctx, frontmatter, args.overrides);
 
     let result = reg
         .render_template(content, &ctx)

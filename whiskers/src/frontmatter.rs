@@ -17,6 +17,27 @@ fn split(template: &str) -> Option<(&str, &str)> {
 }
 
 #[must_use]
+#[allow(clippy::missing_panics_doc)] // panic here implies an internal issue
+pub fn render_and_parse_all<'a>(
+    template: &'a str,
+    reg: &Handlebars,
+    ctx: &Value,
+) -> (&'a str, Vec<Option<Value>>) {
+    let (_, content) = split(template).unwrap_or(("", template));
+
+    let frontmatter = ctx
+        .as_object()
+        .expect("context is an object")
+        .values()
+        .map(|v| render_and_parse(template, reg, v).1)
+        .collect();
+
+    dbg!(&frontmatter);
+
+    (content, frontmatter)
+}
+
+#[must_use]
 pub fn render_and_parse<'a>(
     template: &'a str,
     reg: &Handlebars,

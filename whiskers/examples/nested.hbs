@@ -1,13 +1,19 @@
 ---
-accent: {{flavors.frappe.mauve}}
+# You can define custom variables for each flavor here
+accent: "{{mauve}}"
+# Root context
+parent: "shouldn't require a flavour"
 ---
 
-How do we want to handle frontmatter?
-It makes sense when a single flavour is being rendered, but not when multiple are... at the minute anyways.
+# This doesn't currently work when it _should_
+Parent: {{parent}}
 
 {{#each flavors as | flavor flavour | }}
-- **{{flavour}}**
-  {{ #each colors as | color colorName | }}
-  - **{{colorName}}**
-  {{/each}}
+# {{titlecase flavour}}
+  - Parent: {{../parent}}
+  - Chosen Accent: **{{accent}}**
+  - Every Color:
+    {{ #each colors as | color colorName | }}
+    - **{{colorName}}**
+    {{/each}}
 {{/each}}
