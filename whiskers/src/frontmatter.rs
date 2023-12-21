@@ -51,6 +51,29 @@ pub fn render_and_parse_all<'a>(
         .map(|v| render_and_parse(template, reg, v).1)
         .collect::<Vec<_>>();
 
+    // Remove variables defined in the root context from each flavor
+    let frontmatter = frontmatter
+        .iter()
+        .map(|value| {
+            value.as_ref().map_or_else(
+                || None,
+                |frontmatter| {
+                    let frontmatter_without_root = frontmatter
+                        .as_object()
+                        .expect("frontmatter is an object")
+                        .clone()
+                        .into_iter()
+                        .filter(|(k, _)| !root_context_frontmatter.contains_key(k.as_str()))
+                        .collect::<Map<_, _>>();
+                    Some(
+                        serde_json::to_value(frontmatter_without_root)
+                            .expect("frontmatter is serializable"),
+                    )
+                },
+            )
+        })
+        .collect::<Vec<_>>();
+
     (content, frontmatter, Some(root_context_frontmatter))
 }
 
@@ -127,6 +150,17 @@ mod tests {
     }
 
     #[test]
+    fn parse_root_context_frontmatter_when_flavor_all() {
+        let content = "---\na: b\nc: d\n---\na: b\nc: d\n";
+        let expected =
+            serde_json::from_str::<Map<_, _>>(r#"{"a":"b","c":"d"}"#).expect("valid json fixture");
+        let reg = Handlebars::new();
+        let ctx = Value::Object(serde_json::Map::new());
+        let result = render_and_parse_all(content, &reg, &ctx);
+        assert_eq!(result, ("a: b\nc: d", vec![], Some(expected)));
+    }
+
+    #[test]
     fn render_frontmatter() {
         let content = "---\na: {{var}}\nc: d\n---\na: b\nc: d\n";
         let expected =
@@ -135,5 +169,22 @@ mod tests {
         let ctx = serde_json::from_str::<Value>(r#"{"var":"b"}"#).expect("valid json fixture");
         let result = render_and_parse(content, &reg, &ctx);
         assert_eq!(result, ("a: b\nc: d", Some(expected)));
+    }
+
+    #[test]
+    fn render_frontmatter_when_flavor_all() {
+        let content = "---\na: '{{num}}'\nc: d\n---\na: b\nc: d\n";
+        let expected: Vec<Option<Value>> = vec![
+            Some(serde_json::json!({"a": "1"})),
+            Some(serde_json::json!({"a": "2"})),
+            Some(serde_json::json!({"a": "3"})),
+            Some(serde_json::json!({"a": "4"})),
+        ];
+        let expected_root: Option<Map<String, Value>> =
+            serde_json::json!({"c": "d"}).as_object().cloned();
+        let reg = Handlebars::new();
+        let ctx = serde_json::from_str::<Value>(r#"{"latte":{"num": 1}, "frappe": {"num": 2}, "macchiato": {"num": 3}, "mocha": {"num": 4}}"#).expect("valid json fixture");
+        let result = render_and_parse_all(content, &reg, &ctx);
+        assert_eq!(result, ("a: b\nc: d", expected, expected_root));
     }
 }
