@@ -121,7 +121,7 @@ fn merge_contexts_all(
         .zip(frontmatter)
         .map(|((name, ctx), frontmatter)| {
             // TODO: How do we handle command line overrides for all flavors?
-            let merged_ctx = merge_contexts(ctx, frontmatter, overrides.into());
+            let merged_ctx = merge_contexts(ctx, frontmatter, vec![]);
             (name, merged_ctx)
         })
         .collect();
@@ -129,10 +129,9 @@ fn merge_contexts_all(
     let mut merged = json!({ "flavors": flavors });
 
     if let Some(root) = root_frontmatter {
-        merged
-            .as_object_mut()
-            .expect("flavors is an object")
-            .extend(root);
+        let obj = merged.as_object_mut().expect("flavors is an object");
+        obj.extend(root);
+        obj.extend(overrides_to_map(overrides.into()));
     }
 
     serde_json::to_value(merged).expect("merged context is serializable")
