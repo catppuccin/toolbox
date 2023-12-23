@@ -2,7 +2,7 @@ use handlebars::Handlebars;
 use json_patch::merge;
 use serde_json::Value;
 
-use crate::{COLOR_NAMES, Map};
+use crate::{Map, COLOR_NAMES};
 
 pub type FlavorContexts = Vec<Option<Value>>;
 

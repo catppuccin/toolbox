@@ -12,7 +12,7 @@ use std::{
 use clap::Parser;
 use clap_stdin::FileOrStdin;
 use color_eyre::{
-    eyre::{Context, eyre},
+    eyre::{eyre, Context},
     Result,
 };
 use json_patch::merge;
@@ -20,9 +20,9 @@ use serde_json::{json, Value};
 
 use catppuccin_whiskers::{
     frontmatter,
-    Map,
     postprocess::postprocess,
     template::{self, helpers},
+    Map,
 };
 
 #[derive(clap::ValueEnum, Clone, Debug)]
