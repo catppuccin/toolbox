@@ -1,7 +1,8 @@
-use assert_cmd::prelude::*; // Add methods on commands
-use predicates::prelude::*; // Used for writing assertions
 use std::fs;
-use std::process::Command; // Run programs
+use std::process::Command;
+
+use assert_cmd::prelude::*;
+use predicates::prelude::*;
 
 #[test]
 fn should_error_when_nonexistent_template() -> Result<(), Box<dyn std::error::Error>> {
@@ -27,9 +28,9 @@ fn should_error_when_invalid_flavor() -> Result<(), Box<dyn std::error::Error>> 
 fn should_error_when_template_contains_invalid_syntax() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("whiskers")?;
     cmd.arg("examples/errors.hbs").arg("mocha");
-    cmd.assert().failure().stderr(predicate::str::contains(
-        "Failed to render template",
-    ));
+    cmd.assert()
+        .failure()
+        .stderr(predicate::str::contains("Failed to render template"));
     Ok(())
 }
 
