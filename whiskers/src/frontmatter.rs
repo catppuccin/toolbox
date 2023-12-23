@@ -2,7 +2,7 @@ use handlebars::Handlebars;
 use json_patch::merge;
 use serde_json::Value;
 
-use crate::{Map, COLOR_NAMES};
+use crate::{Map, COLOR_NAMES, FLAVOR_NAMES};
 
 pub type FlavorContexts = Vec<Option<Value>>;
 
@@ -29,60 +29,49 @@ fn split(template: &str) -> Option<(&str, &str)> {
 /// 2. The `"overrides": "all"` frontmatter block.
 /// 3. The `"overrides": ("latte" | "frappe" | "macchiato" | "mocha")` frontmatter block(s)
 ///
-fn merge_overrides(
-    cli_overrides: Option<Value>,
-    frontmatter: Option<Value>,
-    flavor: &str,
-) -> String {
-    if let Some(fm) = frontmatter {
-        // applying cli overrides
-        let mut merged = cli_overrides.map_or(fm.clone(), |cli| {
-            let mut merged = fm;
-            merge(&mut merged, &cli);
-            merged
-        });
+fn merge_overrides(cli_overrides: Option<Value>, frontmatter: Value, flavor: &str) -> Value {
+    let mut merged_mut = frontmatter.clone();
 
-        if let Some(yaml) = merged.get("overrides").cloned() {
-            // hoisting "all" overrides to root context
-            if let Some(all) = yaml.get("all") {
-                merge(&mut merged, all);
-            }
-            // hosting current flavor overrides to root context
-            if let Some(flavor) = yaml.get(flavor) {
-                merge(&mut merged, flavor);
-            }
+    // applying cli overrides
+    let mut merged = cli_overrides.map_or(frontmatter.clone(), |cli| {
+        let mut merged = frontmatter;
+        merge(&mut merged, &cli);
+        merged
+    });
+
+    if let Some(yaml) = merged.get("overrides").cloned() {
+        // hoisting "all" overrides to root context
+        if let Some(all) = yaml.get("all") {
+            merge(&mut merged, all);
         }
-
-        let merged_mut = merged
-            .as_object_mut()
-            .expect("merged can be converted to a map");
-
-        // Don't need the "overrides" block anymore since we've hoisted everything up
-        // and therefore removing it, but we could keep it in.
-        merged_mut.remove("overrides");
-
-        // I suppose I also have to do the ugly thing of checking if the variable
-        // is a colour from our palette so that we can also insert it into the
-        // ["colors"] handlebars iterator?
-        let colours = merged_mut
-            .clone()
-            .into_iter()
-            .filter(|(k, _)| COLOR_NAMES.iter().any(|s| s == k))
-            .collect::<Map>();
-        if !colours.is_empty() {
-            merged_mut.insert("colors".to_string(), Value::from(colours));
+        // hosting current flavor overrides to root context
+        if let Some(flavor) = yaml.get(flavor) {
+            merge(&mut merged, flavor);
         }
-
-        // Also, this code isn't performing any validation to check if the override
-        // variables exist beforehand, suppose we need to decide if that's a feature
-        // or bug?
-
-        serde_json::to_string(merged_mut).expect("merged can be serialized to a string")
-    } else {
-        cli_overrides
-            .expect("cli overrides can be serialized to a string")
-            .to_string()
     }
+
+    let merged_mut = merged
+        .as_object_mut()
+        .expect("merged can be converted to a mutable map");
+
+    // Don't need the "overrides" block anymore since we've hoisted everything up
+    merged_mut.remove("overrides");
+
+    // Propagate overridden palette colors to inside ["colors] handlebars iterator
+    let colours = merged_mut
+        .clone()
+        .into_iter()
+        .filter(|(k, _)| COLOR_NAMES.iter().any(|s| s == k))
+        .collect::<Map>();
+    if !colours.is_empty() {
+        merged_mut.insert("colors".to_string(), Value::from(colours));
+    }
+
+    // Also, this code isn't performing any validation to check if the override
+    // variables exist beforehand, suppose we need to decide if that's a feature
+    // or bug?
+
+    serde_json::to_value(merged_mut).expect("overridden frontmatter can be serialized")
 }
 
 #[must_use]
@@ -96,15 +85,10 @@ pub fn render_and_parse_all<'a>(
     let Some((_, content)) = split(template) else {
         return (
             template,
-            [
-                ("latte".to_string(), Value::Null),
-                ("frappe".to_string(), Value::Null),
-                ("macchiato".to_string(), Value::Null),
-                ("mocha".to_string(), Value::Null),
-            ]
-            .iter()
-            .cloned()
-            .collect::<Map>(),
+            FLAVOR_NAMES
+                .map(|v| (v.into(), Value::Null))
+                .into_iter()
+                .collect::<Map>(),
         );
     };
 
@@ -133,7 +117,7 @@ pub fn render_and_parse<'a>(
         return (template, Value::Null);
     };
 
-    let frontmatter_parsed = match serde_yaml::from_str(frontmatter) {
+    let parsed: Value = match serde_yaml::from_str(frontmatter) {
         Ok(frontmatter) => frontmatter,
         Err(e) => {
             eprintln!("warning: Failed to parse YAML frontmatter ({e}). Proceeding without it.");
@@ -141,9 +125,9 @@ pub fn render_and_parse<'a>(
         }
     };
 
-    let frontmatter_with_overrides = merge_overrides(overrides, frontmatter_parsed, flavor);
+    let overridden = merge_overrides(overrides, parsed, flavor);
 
-    let frontmatter_rendered = match reg.render_template(&frontmatter_with_overrides, ctx) {
+    let rendered = match reg.render_template(&overridden.to_string(), ctx) {
         Ok(frontmatter) => frontmatter,
         Err(e) => {
             eprintln!(
@@ -153,7 +137,7 @@ pub fn render_and_parse<'a>(
         }
     };
 
-    match serde_yaml::from_str(&frontmatter_rendered) {
+    match serde_yaml::from_str(&rendered) {
         Ok(frontmatter) => (content, frontmatter),
         Err(e) => {
             eprintln!("warning: Failed to parse YAML frontmatter ({e}). Proceeding without it.");
@@ -232,6 +216,158 @@ mod tests {
         let overrides = Some(Value::Object(Map::new()));
         let result = render_and_parse(content, overrides, "mocha", &reg, &ctx);
         assert_eq!(result, ("a: b\nc: d", expected));
+    }
+
+    mod merge_overrides {
+        use crate::frontmatter::merge_overrides;
+        use serde_json::{json, Value};
+
+        macro_rules! yaml {
+            ($yaml:expr) => {{
+                serde_yaml::from_str::<Value>($yaml).expect("yaml can be parsed")
+            }};
+        }
+
+        #[test]
+        fn frontmatter_with_no_overrides() {
+            let frontmatter = yaml!(
+                r#"
+                    accent: "{{ mauve }}"
+                    primary: true
+            "#
+            );
+            let actual = merge_overrides(None, frontmatter.clone(), "mocha");
+            assert_eq!(actual, frontmatter);
+        }
+
+        #[test]
+        fn frontmatter_with_single_flavor_override_and_is_current_flavor() {
+            let frontmatter = yaml!(
+                r#"
+                    accent: "{{ mauve }}"
+                    primary: true
+                    overrides:
+                        mocha:
+                            accent: "{{ blue }}"
+            "#
+            );
+            let expected = yaml!(
+                r#"
+                    accent: "{{ blue }}"
+                    primary: true
+            "#
+            );
+            let actual = merge_overrides(None, frontmatter, "mocha");
+            assert_eq!(actual, expected);
+        }
+
+        #[test]
+        fn frontmatter_with_single_flavor_override_and_is_not_current_flavor() {
+            let frontmatter = yaml!(
+                r#"
+                    accent: "{{ mauve }}"
+                    primary: true
+                    overrides:
+                        mocha:
+                            accent: "{{ blue }}"
+            "#
+            );
+            let expected = yaml!(
+                r#"
+                    accent: "{{ mauve }}"
+                    primary: true
+            "#
+            );
+            let actual = merge_overrides(None, frontmatter, "latte");
+            assert_eq!(actual, expected);
+        }
+
+        #[test]
+        fn frontmatter_with_all_flavors_override() {
+            let frontmatter = yaml!(
+                r#"
+                    accent: "{{ mauve }}"
+                    primary: true
+                    overrides:
+                        all:
+                            accent: "{{ blue }}"
+            "#
+            );
+            let expected = yaml!(
+                r#"
+                    accent: "{{ blue }}"
+                    primary: true
+            "#
+            );
+            let actual = merge_overrides(None, frontmatter, "mocha");
+            assert_eq!(actual, expected);
+        }
+
+        #[test]
+        fn frontmatter_with_palette_colours() {
+            let frontmatter = yaml!(
+                r#"
+                    accent: "{{ mauve }}"
+                    primary: true
+                    overrides:
+                        mocha:
+                            accent: "{{ blue }}"
+                            base: "020202"
+                            mantle: "010101"
+                            crust: "000000"
+            "#
+            );
+            let expected = yaml!(
+                r#"
+                    accent: "{{ blue }}"
+                    base: "020202"
+                    mantle: "010101"
+                    crust: "000000"
+                    primary: true
+                    colors:
+                        base: "020202"
+                        mantle: "010101"
+                        crust: "000000"
+            "#
+            );
+            let actual = merge_overrides(None, frontmatter, "mocha");
+            assert_eq!(actual, expected);
+        }
+
+        #[test]
+        fn cli() {
+            let frontmatter = yaml!(r#"accent: "{{ mauve }}""#);
+            let overrides = Some(json!({
+                "accent": "{{ pink }}"
+            }));
+            let actual = merge_overrides(overrides.clone(), frontmatter, "mocha");
+            assert_eq!(Some(actual), overrides);
+        }
+
+        #[test]
+        fn cli_overriding_frontmatter() {
+            let frontmatter = yaml!(
+                r#"
+                    accent: "{{ mauve }}"
+                    user: "sgoudham"
+                    overrides:
+                        mocha:
+                            accent: "{{ blue }}"
+
+            "#
+            );
+            let overrides = Some(json!({
+                "accent": "{{ pink }}"
+            }));
+            let expected = yaml!(
+                r#"
+                    accent: "{{ pink }}"
+                    user: "sgoudham"
+            "#
+            );
+            let actual = merge_overrides(overrides, frontmatter, "mocha");
+            assert_eq!(actual, expected);
+        }
     }
 
     #[test]
