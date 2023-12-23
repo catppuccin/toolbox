@@ -2,7 +2,7 @@
 
 {{#each flavors}}
 <details open>
-<summary>{{titlecase name}}</summary>
+<summary>{{titlecase flavor}}</summary>
 <table>
 	<tr>
 		<th></th>
@@ -13,7 +13,7 @@
 	</tr>
     {{#each colors as | color colorName |}}
     <tr>
-        <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/{{../name}}_{{colorName}}.png" height="23" width="23"/></td>
+        <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/{{../flavor}}_{{colorName}}.png" height="23" width="23"/></td>
         <td>{{titlecase colorName}}</td>
         <td><code>#{{color}}</code></td>
         <td><code>{{rgb color}}</code></td>

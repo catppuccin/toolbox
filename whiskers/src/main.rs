@@ -12,7 +12,7 @@ use std::{
 use clap::Parser;
 use clap_stdin::FileOrStdin;
 use color_eyre::{
-    eyre::{eyre, Context},
+    eyre::{Context, eyre},
     Result,
 };
 use json_patch::merge;
@@ -20,9 +20,9 @@ use serde_json::{json, Value};
 
 use catppuccin_whiskers::{
     frontmatter,
+    Map,
     postprocess::postprocess,
     template::{self, helpers},
-    Map,
 };
 
 #[derive(clap::ValueEnum, Clone, Debug)]
@@ -175,12 +175,9 @@ fn main() -> Result<()> {
 
     let (content, ctx) = if matches!(flavor, Flavor::All) {
         let ctx = template::make_context_all();
-        dbg!(&ctx);
         let (content, frontmatter) =
             frontmatter::render_and_parse_all(template, &args.overrides, &reg, &ctx);
-        dbg!(&frontmatter);
         let merged_ctx = merge_contexts_all(&ctx, &frontmatter);
-        dbg!(&merged_ctx);
         (content, merged_ctx)
     } else {
         let ctx = template::make_context(&flavor.into());

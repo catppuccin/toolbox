@@ -6,10 +6,10 @@ user: "@sgoudham"
 overrides:
   # And you can override variables for specific flavors
   frappe:
-    name: "frappé"
+    flavor: "frappé"
     accent: "{{blue}}"
   mocha: # Turning Mocha into OLED
-    name: "OLEDppuccin"
+    flavor: "OLEDppuccin"
     base: "020202"
     mantle: "010101"
     crust: "000000"
@@ -17,7 +17,7 @@ overrides:
 ---
 
 {{#each flavors}}
-# {{titlecase name}}
+# {{titlecase flavor}}
   - {{user}} loves the accent #{{accent}}"
   - Every Color:
     {{#each colors as | color colorName |}}

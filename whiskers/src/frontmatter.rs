@@ -2,7 +2,7 @@ use handlebars::Handlebars;
 use json_patch::merge;
 use serde_json::Value;
 
-use crate::{Map, COLOR_NAMES};
+use crate::{COLOR_NAMES, Map};
 
 pub type FlavorContexts = Vec<Option<Value>>;
 
@@ -164,6 +164,8 @@ pub fn render_and_parse<'a>(
 
 #[cfg(test)]
 mod tests {
+    use serde_json::json;
+
     use crate::Map;
 
     use super::*;
@@ -204,48 +206,62 @@ mod tests {
         let reg = Handlebars::new();
         let ctx = Value::Object(Map::new());
         let overrides = Some(Value::Object(Map::new()));
-        let result = render_and_parse(content, overrides, &reg, &ctx);
-        assert_eq!(result, ("a: b\nc: d", Some(expected)));
+        let result = render_and_parse(content, overrides, "mocha", &reg, &ctx);
+        assert_eq!(result, ("a: b\nc: d", expected));
     }
 
-    // #[test]
-    // fn parse_root_context_frontmatter_when_flavor_all() {
-    //     let content = "---\na: b\nc: d\n---\na: b\nc: d\n";
-    //     let expected =
-    //         serde_json::from_str::<Map<_, _>>(r#"{"a":"b","c":"d"}"#).expect("valid json fixture");
-    //     let reg = Handlebars::new();
-    //     let ctx = Value::Object(serde_json::Map::new());
-    //     let result = render_and_parse_all(content, &reg, &ctx);
-    //     assert_eq!(result, ("a: b\nc: d", vec![], Some(expected)));
-    // }
-    //
+    #[test]
+    fn parse_frontmatter_with_cli_overrides() {
+        let content = "---\na: b\nc: d\n---\na: b\nc: d\n";
+        let expected = serde_json::from_str::<Value>(r#"{"a":"override","c":"d"}"#)
+            .expect("valid json fixture");
+        let reg = Handlebars::new();
+        let ctx = Value::Object(Map::new());
+        let overrides = Some(json!({"a": "override"}));
+        let result = render_and_parse(content, overrides, "mocha", &reg, &ctx);
+        assert_eq!(result, ("a: b\nc: d", expected));
+    }
+
+    #[test]
+    fn parse_frontmatter_with_override_block() {
+        let content = "---\na: b\nc: d\noverrides:\n  mocha:\n    a: 'override'\n---\na: b\nc: d\n";
+        let expected = serde_json::from_str::<Value>(r#"{"a":"override","c":"d"}"#)
+            .expect("valid json fixture");
+        let reg = Handlebars::new();
+        let ctx = Value::Object(Map::new());
+        let overrides = Some(Value::Object(Map::new()));
+        let result = render_and_parse(content, overrides, "mocha", &reg, &ctx);
+        assert_eq!(result, ("a: b\nc: d", expected));
+    }
+
     #[test]
     fn render_frontmatter() {
-        let content = "---\na: {{var}}\nc: d\n---\na: b\nc: d\n";
+        let content = "---\na: '{{var}}'\nc: d\n---\n{{a}}\nc: d\n";
         let expected =
             serde_json::from_str::<Value>(r#"{"a":"b","c":"d"}"#).expect("valid json fixture");
         let reg = Handlebars::new();
         let ctx = serde_json::from_str::<Value>(r#"{"var":"b"}"#).expect("valid json fixture");
         let overrides = Some(Value::Object(Map::new()));
-        let result = render_and_parse(content, overrides, &reg, &ctx);
-        assert_eq!(result, ("a: b\nc: d", Some(expected)));
+        let result = render_and_parse(content, overrides, "mocha", &reg, &ctx);
+        assert_eq!(result, ("{{a}}\nc: d", expected));
     }
 
-    // #[test]
-    // fn render_frontmatter_when_flavor_all() {
-    //     let content = "---\na: '{{num}}'\nc: d\n---\na: b\nc: d\n";
-    //     let expected: Vec<Option<Value>> = vec![
-    //         Some(serde_json::json!({"a": "1"})),
-    //         Some(serde_json::json!({"a": "2"})),
-    //         Some(serde_json::json!({"a": "3"})),
-    //         Some(serde_json::json!({"a": "4"})),
-    //     ];
-    //     let expected_root: Option<Map<String, Value>> =
-    //         serde_json::json!({"c": "d"}).as_object().cloned();
-    //     let reg = Handlebars::new();
-    //     let ctx = serde_json::from_str::<Value>(r#"{"latte":{"num": 1}, "frappe": {"num": 2}, "macchiato": {"num": 3}, "mocha": {"num": 4}}"#).expect("valid json fixture");
-    //     let result = render_and_parse_all(content, &reg, &ctx);
-    //     assert_eq!(result, ("a: b\nc: d", expected, expected_root));
-    // }
-    //
+    #[test]
+    fn render_frontmatter_when_flavor_all() {
+        let content = "---\na: '{{num}}'\nc: d\n---\n{{a}}\nc: d\n";
+        let expected = json!({
+            "latte": {"a": "1","c": "d"},
+            "frappe": {"a": "2","c": "d"},
+            "macchiato": {"a": "3","c": "d"},
+            "mocha": {"a": "4","c": "d"}
+        })
+        .as_object()
+        .expect("expected is valid json")
+        .clone();
+        let reg = Handlebars::new();
+        let ctx = serde_json::from_str::<Value>(r#"{"latte":{"num": 1}, "frappe": {"num": 2}, "macchiato": {"num": 3}, "mocha": {"num": 4}}"#).expect("valid json fixture");
+        let overrides = Some(Value::Object(Map::new()));
+        let result = render_and_parse_all(content, &overrides, &reg, &ctx);
+        assert_eq!(result, ("{{a}}\nc: d", expected));
+    }
 }

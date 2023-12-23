@@ -1,9 +1,9 @@
 #![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::unwrap_used)]
+// we like truncating u32s into u8s around here
 #![allow(clippy::cast_possible_truncation)]
 
 use serde_json::Value;
 
-// we like truncating u32s into u8s around here
 pub mod frontmatter;
 mod helper;
 mod parse;
@@ -41,9 +41,4 @@ const COLOR_NAMES: [&str; 26] = [
     "crust",
 ];
 
-const FLAVOR_NAMES: [&str; 4] = [
-    "latte",
-    "frappe",
-    "macchiato",
-    "mocha"
-];
+const FLAVOR_NAMES: [&str; 4] = ["latte", "frappe", "macchiato", "mocha"];
