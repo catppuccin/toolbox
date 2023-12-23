@@ -6,13 +6,13 @@
 
 ## 🪴 Frappé
 
-@sgoudham's favourite hex code is #8caaee
+@nullishamy's favourite hex code is #8caaee
 
 ## 🌺 Macchiato
 
 @sgoudham's favourite hex code is #c6a0f6
 
-## 🌿 OLEDppuccin
+## 🌿 Mocha
 
-@nekowinston's favourite hex code is #cba6f7
+@nekowinston's favourite hex code is #89dceb
 
