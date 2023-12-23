@@ -43,7 +43,7 @@ fn merge_overrides(cli_overrides: Option<Value>, frontmatter: Value, flavor: &st
         }
     }
 
-    // Applying CLI overrides
+    // applying CLI overrides
     if let Some(overrides) = cli_overrides {
         merge(&mut merged, &overrides);
     }
@@ -52,10 +52,10 @@ fn merge_overrides(cli_overrides: Option<Value>, frontmatter: Value, flavor: &st
         .as_object_mut()
         .expect("merged can be converted to a mutable map");
 
-    // Don't need the "overrides" block anymore since we've hoisted everything up
+    // don't need the "overrides" block anymore since we've hoisted everything up
     merged_map.remove("overrides");
 
-    // Propagate overridden palette colors to inside ["colors] handlebars iterator
+    // propagate overridden palette colors inside the ["colors"] handlebars iterator
     let colours = merged_map
         .clone()
         .into_iter()
@@ -64,10 +64,6 @@ fn merge_overrides(cli_overrides: Option<Value>, frontmatter: Value, flavor: &st
     if !colours.is_empty() {
         merged_map.insert("colors".to_string(), Value::from(colours));
     }
-
-    // Also, this code isn't performing any validation to check if the override
-    // variables exist beforehand, suppose we need to decide if that's a feature
-    // or bug?
 
     serde_json::to_value(merged_map).expect("overridden frontmatter can be serialized")
 }

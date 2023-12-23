@@ -113,31 +113,6 @@ fn merge_contexts_all(ctx: &Value, frontmatter: &Map) -> Value {
 
     let merged = json!({ "flavors": flavors });
 
-    // QUESTION:
-    // Do we want to allow root context variables when running in single file mode?
-    // E.g.
-
-    // ---
-    // title: "Catppuccin For <Port>" <--- This currently gets duplicated for each flavor --->
-    // ---
-    //
-    // {{title}} <--- Do we want to allow this even though it's outside of the {{#each}} loop --->
-    //
-    // {{each ...}}
-    // ...
-    // {{/each}}
-
-    // It's quite annoying to differentiate as it would involve using something like
-    // regex to detect if a variable contains "{{ }}" and hold that in a separate
-    // object to extend the "merged" map with here, but it would mean that we
-    // could define variables that can be used outside the "each" loop.
-
-    // if let Some(root) = root_frontmatter {
-    //     let obj = merged.as_object_mut().expect("flavors is an object");
-    //     obj.extend(root);
-    //     obj.extend(overrides_to_map(overrides.into()));
-    // }
-
     serde_json::to_value(merged).expect("merged context is serializable")
 }
 

@@ -1,6 +1,7 @@
 use handlebars::Handlebars;
 use handlebars::HelperDef;
 use indexmap::IndexMap;
+use serde_json::Value;
 
 use crate::{helper, COLOR_NAMES, FLAVOR_NAMES};
 
@@ -198,8 +199,8 @@ fn color_priority(color: &str) -> Option<u32> {
 
 #[must_use]
 #[allow(clippy::missing_panics_doc)] // panic here implies an internal issue
-pub fn make_context_all() -> serde_json::Value {
-    let mut ctx: IndexMap<String, serde_json::Value> = catppuccin::Flavour::into_iter()
+pub fn make_context_all() -> Value {
+    let mut ctx: IndexMap<String, Value> = catppuccin::Flavour::into_iter()
         .map(|f| (f.name().into(), make_context(&f)))
         .collect();
     ctx.sort_by(|a, _, b, _| flavor_priority(a).cmp(&flavor_priority(b)));
@@ -208,7 +209,7 @@ pub fn make_context_all() -> serde_json::Value {
 
 #[must_use]
 #[allow(clippy::missing_panics_doc)] // panic here implies an internal issue
-pub fn make_context(flavor: &catppuccin::Flavour) -> serde_json::Value {
+pub fn make_context(flavor: &catppuccin::Flavour) -> Value {
     let colors = flavor.colours();
 
     let mut color_map: IndexMap<String, String> = colors
