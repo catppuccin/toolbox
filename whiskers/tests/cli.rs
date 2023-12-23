@@ -6,13 +6,12 @@ mod happy_path {
     use std::fs;
     use std::process::Command;
 
-    // wanted to use the `test-case` crate to parameterize the test, but it's nightly only
     #[test]
     fn example_file_has_flavor_mocha() -> Result<(), Box<dyn std::error::Error>> {
         let mut cmd = Command::cargo_bin("whiskers")?;
-        let expected = fs::read_to_string("examples/example/output/mocha.md")
+        let expected = fs::read_to_string("examples/demo/output/mocha.md")
             .expect("expected file is readable");
-        cmd.arg("examples/example/input.hbs").arg("mocha");
+        cmd.arg("examples/demo/input.hbs").arg("mocha");
         cmd.assert()
             .success()
             .stdout(predicate::str::diff(expected));
@@ -22,9 +21,9 @@ mod happy_path {
     #[test]
     fn single_file_has_flavor_all() -> Result<(), Box<dyn std::error::Error>> {
         let mut cmd = Command::cargo_bin("whiskers")?;
-        let expected = fs::read_to_string("examples/single-file/output.md")
+        let expected = fs::read_to_string("examples/single-file/simple/output.md")
             .expect("expected file is readable");
-        cmd.arg("examples/single-file/input.hbs").arg("all");
+        cmd.arg("examples/single-file/simple/input.hbs").arg("all");
         cmd.assert()
             .success()
             .stdout(predicate::str::diff(expected));
@@ -52,7 +51,7 @@ mod sad_path {
     #[test]
     fn invalid_flavor() -> Result<(), Box<dyn std::error::Error>> {
         let mut cmd = Command::cargo_bin("whiskers")?;
-        cmd.arg("examples/example/input.hbs").arg("invalid");
+        cmd.arg("examples/demo/input.hbs").arg("invalid");
         cmd.assert().failure().stderr(predicate::str::contains(
             "error: invalid value 'invalid' for '[FLAVOR]'",
         ));

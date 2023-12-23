@@ -1,4 +1,4 @@
-## Example
+## Demo
 
 **flavor:** Latte
 

@@ -1,0 +1,4 @@
+theme:
+  activeBorderColor:
+    - '#24273a'
+  primary: false

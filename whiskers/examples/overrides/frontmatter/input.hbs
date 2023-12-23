@@ -1,0 +1,11 @@
+---
+accent: "{{ mauve }}" # this is essentially ignored
+overrides:
+    latte: # applies to latte
+        accent: "{{pink}}"
+    all: # applies to frappe, macchiato and mocha
+        accent: "{{blue}}"
+---
+theme:
+  activeBorderColor:
+    - '#{{ accent }}'
