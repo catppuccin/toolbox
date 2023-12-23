@@ -174,6 +174,7 @@ dependencies = [
  "css-colors",
  "handlebars",
  "indexmap",
+ "json-patch",
  "regex",
  "serde",
  "serde_json",
@@ -210,9 +211,9 @@ dependencies = [
 
 [[package]]
 name = "clap-stdin"
-version = "0.2.1"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fff8959de58e45555040f38e374db860b2ffbfecacef4f353c6ef6e5347dff01"
+checksum = "1b2273396940ab439c58cd300e1e93a07768fce6e7a578f24089aab40b3a9d00"
 dependencies = [
  "thiserror",
 ]
@@ -467,6 +468,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c5f195fe497f702db0f318b07fdd68edb16955aed830df8363d837542f8f935a"
 dependencies = [
  "wasm-bindgen",
+]
+
+[[package]]
+name = "json-patch"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "55ff1e1486799e3f64129f8ccad108b38290df9cd7015cd31bed17239f0789d6"
+dependencies = [
+ "serde",
+ "serde_json",
+ "thiserror",
+ "treediff",
 ]
 
 [[package]]
@@ -839,6 +852,15 @@ dependencies = [
  "joinery",
  "lazy_static",
  "regex",
+]
+
+[[package]]
+name = "treediff"
+version = "4.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "52984d277bdf2a751072b5df30ec0377febdb02f7696d64c2d7d54630bac4303"
+dependencies = [
+ "serde_json",
 ]
 
 [[package]]

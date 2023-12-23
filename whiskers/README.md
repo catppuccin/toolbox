@@ -240,7 +240,7 @@ Templating would result in changes.
 
 ## Further Reading
 
-- [The example template](examples/example.hbs) demonstrates the template syntax and usage of some of the helpers.
+- [The example template](examples/example/input.hbs) demonstrates the template syntax and usage of some of the helpers.
 - Some real ports that use Whiskers:
   - [Qt Creator](https://github.com/catppuccin/qtcreator)
   - [Dwarf Fortress](https://github.com/catppuccin/dwarf-fortress)

@@ -1,0 +1,26 @@
+---
+# Set default accent color
+accent: "{{mauve}}"
+# Set custom variables
+user: "@sgoudham"
+overrides:
+  # And you can override variables for specific flavors
+  frappe:
+    name: "frappé"
+    accent: "{{blue}}"
+  mocha: # Turning Mocha into OLED
+    name: "OLEDppuccin"
+    base: "020202"
+    mantle: "010101"
+    crust: "000000"
+    user: "@nekowinston"
+---
+
+{{#each flavors}}
+# {{titlecase name}}
+  - {{user}} loves the accent #{{accent}}"
+  - Every Color:
+    {{#each colors as | color colorName |}}
+    - **{{colorName}}**: #{{color}}
+    {{/each}}
+{{/each}}

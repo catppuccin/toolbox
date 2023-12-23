@@ -1,6 +1,17 @@
-flavor: {{ titlecase flavor }}
+---
+# like jetbrains
+parent: "{{ darklight 'darcula' 'default' }}"
+# alternative built-in method
+accent: "{{ #if isLight }}{{ pink }}{{ ^ }}{{ mauve }}{{ /if }}"
+---
+flavor: {{ titlecase name }}
+
+parent is {{ parent }}
+accent is #{{ accent }}
 
 red:                #{{ red }} / {{ rgb red }} / {{ hsl red }}
+components:         r: {{ red_i red }} / {{ trunc (red_f red) 2 }}, g: {{ green_i red }} / {{ trunc (green_f red) 2 }}, b: {{ blue_i red }} / {{ trunc (blue_f red) 2 }}
+alpha:              {{ alpha_i (opacity red 0.6) }} / {{ trunc (alpha_f (opacity red 0.6)) 2 }}
 10% lighter:        #{{ lighten red 0.1 }} / {{ rgb (lighten red 0.1) }} / {{ hsl (lighten red 0.1) }}
 10% darker:         #{{ darken red 0.1 }} / {{ rgb (darken red 0.1) }} / {{ hsl (darken red 0.1) }}
 {{ #with (mix red base 0.3) as | red | }}

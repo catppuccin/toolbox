@@ -2,7 +2,7 @@ use handlebars::Handlebars;
 use handlebars::HelperDef;
 use indexmap::IndexMap;
 
-use crate::helper;
+use crate::{helper, COLOR_NAMES, FLAVOR_NAMES};
 
 pub struct Helper {
     pub name: &'static str,
@@ -182,53 +182,25 @@ pub fn make_registry() -> Handlebars<'static> {
     reg
 }
 
-fn flavor_priority(flavor: &str) -> u32 {
-    match flavor {
-        "latte" => 1,
-        "frappe" => 2,
-        "macchiato" => 3,
-        "mocha" => 4,
-        _ => unreachable!(),
-    }
+fn flavor_priority(color: &str) -> Option<u32> {
+    FLAVOR_NAMES
+        .iter()
+        .position(|&c| c == color)
+        .map(|index| index as u32 + 1)
 }
 
-fn color_priority(color: &str) -> u32 {
-    match color {
-        "rosewater" => 1,
-        "flamingo" => 2,
-        "pink" => 3,
-        "mauve" => 4,
-        "red" => 5,
-        "maroon" => 6,
-        "peach" => 7,
-        "yellow" => 8,
-        "green" => 9,
-        "teal" => 10,
-        "sky" => 11,
-        "sapphire" => 12,
-        "blue" => 13,
-        "lavender" => 14,
-        "text" => 15,
-        "subtext1" => 16,
-        "subtext0" => 17,
-        "overlay2" => 18,
-        "overlay1" => 19,
-        "overlay0" => 20,
-        "surface2" => 21,
-        "surface1" => 22,
-        "surface0" => 23,
-        "base" => 24,
-        "mantle" => 25,
-        "crust" => 26,
-        _ => unreachable!(),
-    }
+fn color_priority(color: &str) -> Option<u32> {
+    COLOR_NAMES
+        .iter()
+        .position(|&c| c == color)
+        .map(|index| index as u32 + 1)
 }
 
 #[must_use]
 #[allow(clippy::missing_panics_doc)] // panic here implies an internal issue
 pub fn make_context_all() -> serde_json::Value {
     let mut ctx: IndexMap<String, serde_json::Value> = catppuccin::Flavour::into_iter()
-        .map(|f| (f.name().into(), make_context(f)))
+        .map(|f| (f.name().into(), make_context(&f)))
         .collect();
     ctx.sort_by(|a, _, b, _| flavor_priority(a).cmp(&flavor_priority(b)));
     serde_json::to_value(ctx).expect("context is serializable into json")
@@ -236,7 +208,7 @@ pub fn make_context_all() -> serde_json::Value {
 
 #[must_use]
 #[allow(clippy::missing_panics_doc)] // panic here implies an internal issue
-pub fn make_context(flavor: catppuccin::Flavour) -> serde_json::Value {
+pub fn make_context(flavor: &catppuccin::Flavour) -> serde_json::Value {
     let colors = flavor.colours();
 
     let mut color_map: IndexMap<String, String> = colors
@@ -248,9 +220,9 @@ pub fn make_context(flavor: catppuccin::Flavour) -> serde_json::Value {
     let mut context =
         serde_json::to_value(color_map.clone()).expect("color names & hexcodes can be serialized");
 
-    context["flavor"] = flavor.name().into();
-    context["isLight"] = (flavor == catppuccin::Flavour::Latte).into();
-    context["isDark"] = (flavor != catppuccin::Flavour::Latte).into();
+    context["name"] = flavor.name().into();
+    context["isLight"] = (*flavor == catppuccin::Flavour::Latte).into();
+    context["isDark"] = (*flavor != catppuccin::Flavour::Latte).into();
     context["colors"] =
         serde_json::to_value(color_map).expect("color names & hexcodes can be serialized");
 
