@@ -9,8 +9,8 @@ mod happy_path {
     #[test]
     fn example_file_has_flavor_mocha() -> Result<(), Box<dyn std::error::Error>> {
         let mut cmd = Command::cargo_bin("whiskers")?;
-        let expected = fs::read_to_string("examples/demo/output/mocha.md")
-            .expect("expected file is readable");
+        let expected =
+            fs::read_to_string("examples/demo/output/mocha.md").expect("expected file is readable");
         cmd.arg("examples/demo/input.hbs").arg("mocha");
         cmd.assert()
             .success()
