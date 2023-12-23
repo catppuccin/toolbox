@@ -5,22 +5,34 @@ accent: "{{mauve}}"
 user: "@sgoudham"
 overrides:
   # And you can override variables for specific flavors
+  latte:
+    accent: "{{pink}}"
+    # feature or bug? (I ask since it's not defined in the root context)
+    emoji: "🌻"
+    user: "@backwardspy"
   frappe:
     flavor: "frappé"
+    # feature or bug? (I ask since it's not defined in the root context)
+    emoji: "🪴"
     accent: "{{blue}}"
+  macchiato:
+    # feature or bug? (I ask since it's not defined in the root context)
+    emoji: "🌺"
   mocha: # Turning Mocha into OLED
     flavor: "OLEDppuccin"
+    # feature or bug? (I ask since it's not defined in the root context)
+    emoji: "🌿"
     base: "020202"
     mantle: "010101"
     crust: "000000"
     user: "@nekowinston"
 ---
 
+# Single File With Overrides
+
 {{#each flavors}}
-# {{titlecase flavor}}
-  - {{user}} loves the accent #{{accent}}"
-  - Every Color:
-    {{#each colors as | color colorName |}}
-    - **{{colorName}}**: #{{color}}
-    {{/each}}
+## {{emoji}} {{titlecase flavor}}
+
+{{user}}'s favourite hex code is #{{accent}}
+
 {{/each}}
