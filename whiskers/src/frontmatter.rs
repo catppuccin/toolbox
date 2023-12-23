@@ -30,14 +30,7 @@ fn split(template: &str) -> Option<(&str, &str)> {
 /// 3. The `"overrides": ("latte" | "frappe" | "macchiato" | "mocha")` frontmatter block(s)
 ///
 fn merge_overrides(cli_overrides: Option<Value>, frontmatter: Value, flavor: &str) -> Value {
-    let mut merged_mut = frontmatter.clone();
-
-    // applying cli overrides
-    let mut merged = cli_overrides.map_or(frontmatter.clone(), |cli| {
-        let mut merged = frontmatter;
-        merge(&mut merged, &cli);
-        merged
-    });
+    let mut merged = frontmatter;
 
     if let Some(yaml) = merged.get("overrides").cloned() {
         // hoisting "all" overrides to root context
@@ -50,28 +43,33 @@ fn merge_overrides(cli_overrides: Option<Value>, frontmatter: Value, flavor: &st
         }
     }
 
-    let merged_mut = merged
+    // Applying CLI overrides
+    if let Some(overrides) = cli_overrides {
+        merge(&mut merged, &overrides);
+    }
+
+    let merged_map = merged
         .as_object_mut()
         .expect("merged can be converted to a mutable map");
 
     // Don't need the "overrides" block anymore since we've hoisted everything up
-    merged_mut.remove("overrides");
+    merged_map.remove("overrides");
 
     // Propagate overridden palette colors to inside ["colors] handlebars iterator
-    let colours = merged_mut
+    let colours = merged_map
         .clone()
         .into_iter()
         .filter(|(k, _)| COLOR_NAMES.iter().any(|s| s == k))
         .collect::<Map>();
     if !colours.is_empty() {
-        merged_mut.insert("colors".to_string(), Value::from(colours));
+        merged_map.insert("colors".to_string(), Value::from(colours));
     }
 
     // Also, this code isn't performing any validation to check if the override
     // variables exist beforehand, suppose we need to decide if that's a feature
     // or bug?
 
-    serde_json::to_value(merged_mut).expect("overridden frontmatter can be serialized")
+    serde_json::to_value(merged_map).expect("overridden frontmatter can be serialized")
 }
 
 #[must_use]
@@ -335,7 +333,7 @@ mod tests {
         }
 
         #[test]
-        fn cli() {
+        fn cli_overriding_frontmatter() {
             let frontmatter = yaml!(r#"accent: "{{ mauve }}""#);
             let overrides = Some(json!({
                 "accent": "{{ pink }}"
@@ -345,7 +343,7 @@ mod tests {
         }
 
         #[test]
-        fn cli_overriding_frontmatter() {
+        fn cli_merging_with_frontmatter() {
             let frontmatter = yaml!(
                 r#"
                     accent: "{{ mauve }}"
