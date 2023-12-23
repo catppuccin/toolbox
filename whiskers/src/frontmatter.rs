@@ -23,11 +23,11 @@ fn split(template: &str) -> Option<(&str, &str)> {
 
 /// Merges together overrides from the cli and frontmatter.
 ///
-/// The order is as follows:
+/// The order of priority is as follows:
 ///
 /// 1. CLI overrides from the `--overrides` flag.
-/// 2. The `"overrides": "all"` frontmatter block.
-/// 3. The `"overrides": ("latte" | "frappe" | "macchiato" | "mocha")` frontmatter block(s)
+/// 2. The `"overrides": ("latte" | "frappe" | "macchiato" | "mocha")` frontmatter block(s)
+/// 3. The `"overrides": "all"` frontmatter block.
 ///
 fn merge_overrides(cli_overrides: Option<Value>, frontmatter: Value, flavor: &str) -> Value {
     let mut merged = frontmatter;
@@ -146,85 +146,171 @@ pub fn render_and_parse<'a>(
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
+    mod split {
+        use crate::frontmatter::split;
 
-    use crate::Map;
+        #[test]
+        fn no_frontmatter() {
+            let content = "a\nb\nc";
+            let result = split(content);
+            assert_eq!(result, None);
+        }
 
-    use super::*;
+        #[test]
+        fn unclosed_frontmatter() {
+            let content = "---\na: b\nc: d";
+            let result = split(content);
+            assert_eq!(result, None);
+        }
 
-    #[test]
-    fn no_frontmatter() {
-        let content = "a\nb\nc";
-        let result = split(content);
-        assert_eq!(result, None);
+        #[test]
+        fn all_frontmatter_no_template() {
+            let content = "---\na: b\nc: d\n---";
+            let result = split(content);
+            assert_eq!(result, Some(("a: b\nc: d", "")));
+        }
+
+        #[test]
+        fn some_frontmatter_some_template() {
+            let content = "---\na: b\nc: d\n---\na: b\nc: d\n";
+            let result = split(content);
+            assert_eq!(result, Some(("a: b\nc: d", "a: b\nc: d")));
+        }
     }
 
-    #[test]
-    fn unclosed_frontmatter() {
-        let content = "---\na: b\nc: d";
-        let result = split(content);
-        assert_eq!(result, None);
-    }
-
-    #[test]
-    fn all_frontmatter_no_template() {
-        let content = "---\na: b\nc: d\n---";
-        let result = split(content);
-        assert_eq!(result, Some(("a: b\nc: d", "")));
-    }
-
-    #[test]
-    fn some_frontmatter_some_template() {
-        let content = "---\na: b\nc: d\n---\na: b\nc: d\n";
-        let result = split(content);
-        assert_eq!(result, Some(("a: b\nc: d", "a: b\nc: d")));
-    }
-
-    #[test]
-    fn parse_frontmatter() {
-        let content = "---\na: b\nc: d\n---\na: b\nc: d\n";
-        let expected =
-            serde_json::from_str::<Value>(r#"{"a":"b","c":"d"}"#).expect("valid json fixture");
-        let reg = Handlebars::new();
-        let ctx = Value::Object(Map::new());
-        let overrides = Some(Value::Object(Map::new()));
-        let result = render_and_parse(content, overrides, "mocha", &reg, &ctx);
-        assert_eq!(result, ("a: b\nc: d", expected));
-    }
-
-    #[test]
-    fn parse_frontmatter_with_cli_overrides() {
-        let content = "---\na: b\nc: d\n---\na: b\nc: d\n";
-        let expected = serde_json::from_str::<Value>(r#"{"a":"override","c":"d"}"#)
-            .expect("valid json fixture");
-        let reg = Handlebars::new();
-        let ctx = Value::Object(Map::new());
-        let overrides = Some(json!({"a": "override"}));
-        let result = render_and_parse(content, overrides, "mocha", &reg, &ctx);
-        assert_eq!(result, ("a: b\nc: d", expected));
-    }
-
-    #[test]
-    fn parse_frontmatter_with_override_block() {
-        let content = "---\na: b\nc: d\noverrides:\n  mocha:\n    a: 'override'\n---\na: b\nc: d\n";
-        let expected = serde_json::from_str::<Value>(r#"{"a":"override","c":"d"}"#)
-            .expect("valid json fixture");
-        let reg = Handlebars::new();
-        let ctx = Value::Object(Map::new());
-        let overrides = Some(Value::Object(Map::new()));
-        let result = render_and_parse(content, overrides, "mocha", &reg, &ctx);
-        assert_eq!(result, ("a: b\nc: d", expected));
-    }
-
-    mod merge_overrides {
-        use crate::frontmatter::merge_overrides;
+    mod parse_and_render {
+        use handlebars::Handlebars;
         use serde_json::{json, Value};
 
-        macro_rules! yaml {
-            ($yaml:expr) => {{
-                serde_yaml::from_str::<Value>($yaml).expect("yaml can be parsed")
-            }};
+        use crate::frontmatter::{render_and_parse, render_and_parse_all};
+        use crate::Map;
+
+        #[test]
+        fn parse_frontmatter() {
+            let content = "---\na: b\nc: d\n---\na: b\nc: d\n";
+            let expected = json!({"a": "b", "c": "d"});
+            let reg = Handlebars::new();
+            let ctx = Value::Object(Map::new());
+            let overrides = Some(Value::Object(Map::new()));
+            let result = render_and_parse(content, overrides, "mocha", &reg, &ctx);
+            assert_eq!(result, ("a: b\nc: d", expected));
         }
+
+        #[test]
+        fn fail_to_parse_frontmatter() {
+            let content = "
+            ---
+            a: b
+            c:
+            ---
+        ";
+            let reg = Handlebars::new();
+            let ctx = Value::Object(Map::new());
+            let overrides = Some(Value::Object(Map::new()));
+            let result = render_and_parse(content, overrides, "mocha", &reg, &ctx);
+            assert_eq!(result, ("", Value::Null));
+        }
+
+        #[test]
+        fn parse_frontmatter_with_cli_overrides() {
+            let content = "---\na: b\nc: d\n---\na: b\nc: d\n";
+            let expected = serde_json::from_str::<Value>(r#"{"a":"override","c":"d"}"#)
+                .expect("valid json fixture");
+            let reg = Handlebars::new();
+            let ctx = Value::Object(Map::new());
+            let overrides = Some(json!({"a": "override"}));
+            let result = render_and_parse(content, overrides, "mocha", &reg, &ctx);
+            assert_eq!(result, ("a: b\nc: d", expected));
+        }
+
+        #[test]
+        fn parse_frontmatter_with_override_block() {
+            let content =
+                "---\na: b\nc: d\noverrides:\n  mocha:\n    a: 'override'\n---\na: b\nc: d\n";
+            let expected = serde_json::from_str::<Value>(r#"{"a":"override","c":"d"}"#)
+                .expect("valid json fixture");
+            let reg = Handlebars::new();
+            let ctx = Value::Object(Map::new());
+            let overrides = Some(Value::Object(Map::new()));
+            let result = render_and_parse(content, overrides, "mocha", &reg, &ctx);
+            assert_eq!(result, ("a: b\nc: d", expected));
+        }
+
+        #[test]
+        fn render_frontmatter() {
+            let content = "---\na: '{{var}}'\nc: d\n---\n{{a}}\nc: d\n";
+            let expected =
+                serde_json::from_str::<Value>(r#"{"a":"b","c":"d"}"#).expect("valid json fixture");
+            let reg = Handlebars::new();
+            let ctx = serde_json::from_str::<Value>(r#"{"var":"b"}"#).expect("valid json fixture");
+            let overrides = Some(Value::Object(Map::new()));
+            let result = render_and_parse(content, overrides, "mocha", &reg, &ctx);
+            assert_eq!(result, ("{{a}}\nc: d", expected));
+        }
+
+        #[test]
+        fn single_file_with_frontmatter() {
+            let content = "---\na: '{{num}}'\nc: d\n---\n{{a}}\nc: d\n";
+            let expected = json!({
+                "latte": {"a": "1","c": "d"},
+                "frappe": {"a": "2","c": "d"},
+                "macchiato": {"a": "3","c": "d"},
+                "mocha": {"a": "4","c": "d"}
+            })
+            .as_object()
+            .expect("expected is valid json")
+            .clone();
+            let reg = Handlebars::new();
+            let ctx = serde_json::from_str::<Value>(r#"{"latte":{"num": 1}, "frappe": {"num": 2}, "macchiato": {"num": 3}, "mocha": {"num": 4}}"#).expect("valid json fixture");
+            let overrides = Some(Value::Object(Map::new()));
+            let result = render_and_parse_all(content, &overrides, &reg, &ctx);
+            assert_eq!(result, ("{{a}}\nc: d", expected));
+        }
+
+        #[test]
+        fn single_file_with_frontmatter_and_overrides() {
+            let content = "---\na: '{{num}}'\nc: d\n---\n{{a}}\nc: d\n";
+            let expected = json!({
+                "latte": {"a": "5","c": "d"},
+                "frappe": {"a": "5","c": "d"},
+                "macchiato": {"a": "5","c": "d"},
+                "mocha": {"a": "5","c": "d"}
+            })
+            .as_object()
+            .expect("expected is valid json")
+            .clone();
+            let reg = Handlebars::new();
+            let ctx = serde_json::from_str::<Value>(r#"{"latte":{"num": 1}, "frappe": {"num": 2}, "macchiato": {"num": 3}, "mocha": {"num": 4}}"#).expect("valid json fixture");
+            let overrides = Some(json!({"a": "5"}));
+            let result = render_and_parse_all(content, &overrides, &reg, &ctx);
+            assert_eq!(result, ("{{a}}\nc: d", expected));
+        }
+
+        #[test]
+        fn single_file_with_no_frontmatter() {
+            let content = "c: d";
+            let expected = json!({
+                "latte": null,
+                "frappe": null,
+                "macchiato": null,
+                "mocha": null
+            })
+            .as_object()
+            .expect("expected is valid json")
+            .clone();
+            let reg = Handlebars::new();
+            let ctx = Value::Null;
+            let overrides = Some(Value::Object(Map::new()));
+            let result = render_and_parse_all(content, &overrides, &reg, &ctx);
+            assert_eq!(result, ("c: d", expected));
+        }
+    }
+
+    mod overrides {
+        use serde_json::{json, Value};
+
+        use crate::frontmatter::merge_overrides;
+        use crate::yaml;
 
         #[test]
         fn frontmatter_with_no_overrides() {
@@ -366,36 +452,32 @@ mod tests {
             let actual = merge_overrides(overrides, frontmatter, "mocha");
             assert_eq!(actual, expected);
         }
-    }
 
-    #[test]
-    fn render_frontmatter() {
-        let content = "---\na: '{{var}}'\nc: d\n---\n{{a}}\nc: d\n";
-        let expected =
-            serde_json::from_str::<Value>(r#"{"a":"b","c":"d"}"#).expect("valid json fixture");
-        let reg = Handlebars::new();
-        let ctx = serde_json::from_str::<Value>(r#"{"var":"b"}"#).expect("valid json fixture");
-        let overrides = Some(Value::Object(Map::new()));
-        let result = render_and_parse(content, overrides, "mocha", &reg, &ctx);
-        assert_eq!(result, ("{{a}}\nc: d", expected));
-    }
-
-    #[test]
-    fn render_frontmatter_when_flavor_all() {
-        let content = "---\na: '{{num}}'\nc: d\n---\n{{a}}\nc: d\n";
-        let expected = json!({
-            "latte": {"a": "1","c": "d"},
-            "frappe": {"a": "2","c": "d"},
-            "macchiato": {"a": "3","c": "d"},
-            "mocha": {"a": "4","c": "d"}
-        })
-        .as_object()
-        .expect("expected is valid json")
-        .clone();
-        let reg = Handlebars::new();
-        let ctx = serde_json::from_str::<Value>(r#"{"latte":{"num": 1}, "frappe": {"num": 2}, "macchiato": {"num": 3}, "mocha": {"num": 4}}"#).expect("valid json fixture");
-        let overrides = Some(Value::Object(Map::new()));
-        let result = render_and_parse_all(content, &overrides, &reg, &ctx);
-        assert_eq!(result, ("{{a}}\nc: d", expected));
+        #[test]
+        fn cli_merging_with_frontmatter_and_propagating_colors() {
+            let frontmatter = yaml!(
+                r#"
+                    accent: "{{ mauve }}"
+                    overrides:
+                        mocha:
+                            accent: "{{ blue }}"
+                            base: "020202"
+            "#
+            );
+            let overrides = Some(json!({
+                "accent": "{{ pink }}",
+                "base": "no color"
+            }));
+            let expected = yaml!(
+                r#"
+                    accent: "{{ pink }}"
+                    base: "no color"
+                    colors:
+                        base: "no color"
+            "#
+            );
+            let actual = merge_overrides(overrides, frontmatter, "mocha");
+            assert_eq!(actual, expected);
+        }
     }
 }

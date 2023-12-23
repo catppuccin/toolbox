@@ -42,3 +42,10 @@ const COLOR_NAMES: [&str; 26] = [
 ];
 
 const FLAVOR_NAMES: [&str; 4] = ["latte", "frappe", "macchiato", "mocha"];
+
+#[macro_export]
+macro_rules! yaml {
+    ($yaml:expr) => {{
+        serde_yaml::from_str::<Value>($yaml).expect("yaml can be parsed")
+    }};
+}
