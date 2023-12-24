@@ -60,13 +60,15 @@ whiskers.
 
 The following variables are available for use in your templates:
 
-| Variable                                                                                                                                           | Description                                                                                       |
-|----------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| `flavor` (string)                                                                                                                                  | The name of the flavor being templated. Possible values: `latte`, `frappé`, `macchiato`, `mocha`. | 
-| `isLight` (bool)                                                                                                                                   | True if `flavor` is `latte`, false otherwise.                                                     |
-| `isDark` (bool)                                                                                                                                    | True unless `flavor` is `latte`.                                                                  |
-| `rosewater`, `flamingo`, `pink`, [(etc.)](https://github.com/catppuccin/rust/blob/5124eb99eb98d7111dca24537d428a6078e5bbb6/src/flavour.rs#L41-L66) | All named colors in each flavor, each color is formatted as hex by default.                       |
-| Frontmatter                                                                                                                                        | All frontmatter variables as described in the [Frontmatter](#Frontmatter) section .               |
+| Variable                                                                                                                                                    | Description                                                                                                                                                                 |
+|-------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `flavor` (string)                                                                                                                                           | The name of the flavor being templated. Possible values: `latte`, `frappé`, `macchiato`, `mocha`.                                                                           | 
+| `isLight` (bool)                                                                                                                                            | True if `flavor` is `latte`, false otherwise.                                                                                                                               |
+| `isDark` (bool)                                                                                                                                             | True unless `flavor` is `latte`.                                                                                                                                            |
+| `rosewater`, `flamingo`, `pink`, [(etc.)](https://github.com/catppuccin/rust/blob/5124eb99eb98d7111dca24537d428a6078e5bbb6/src/flavour.rs#L41-L66) (string) | All named colors in each flavor, each color is formatted as hex by default.                                                                                                 | 
+| `colors` (array)                                                                                                                                            | An array containing all of the named colors.                                                                                                                                |
+| `flavors` (array)                                                                                                                                           | An array containing all of the named flavors, with every other context variable.<br/><strong>See [Single File Support](#Single-File-Support) for more information.</strong> |
+| Any Frontmatter                                                                                                                                             | All frontmatter variables as described in the [Frontmatter](#Frontmatter) section.                                                                                          |
 
 ### Helpers
 
@@ -193,7 +195,7 @@ theme:
 
 When running `whiskers example.yml latte --overrides '{"accent": "{{pink}}"}'`, the `accent` will be overridden to pink.
 
-Please see the [examples/accent](examples/accent) directory to understand how this is used to generate files for each
+Please see the [examples/accents](examples/accents) directory to understand how this is used to generate files for each
 accent in each flavor.
 
 ### Frontmatter & CLI
@@ -228,6 +230,129 @@ The resulting file will have the accent `pink` as the accent will go through the
 1. accent is set to `mauve` in the root context.
 2. accent is overridden to `blue` in the overrides block.
 3. accent is overridden again to `pink` in the CLI overrides.
+
+## Single File Support
+
+Sometimes, you may not want to generate a file per flavor, but rather use all the flavors inside one single file. This
+is achieved specifying the `<template>` argument as `all`. (e.g. `whiskers example.yml all`)
+
+When the `<template>` has been set to `all`, a new context variable `flavors` is available which can be iterated through
+the `{{#each}}` handlebars helper. E.g. if we have the following contexts:
+
+`latte`
+
+```json
+{
+  "flavor": "latte",
+  "isLight": true,
+  "isDark": false,
+  "rosewater": "#dc8a78",
+  ...
+}
+```
+
+`frappe`
+
+```json
+{
+  "flavor": "frappe",
+  "isLight": false,
+  "isDark": true,
+  "rosewater": "#f2d5cf",
+  ...
+}
+```
+
+`macchiato`
+
+```json
+{
+  "flavor": "macchiato",
+  "isLight": false,
+  "isDark": true,
+  "rosewater": "#f4dbd6",
+  ...
+}
+```
+
+`mocha`
+
+```json
+{
+  "flavor": "mocha",
+  "isLight": false,
+  "isDark": true,
+  "rosewater": "#f5e0dc",
+  ...
+}
+```
+
+The `all` context looks like the following:
+
+```json
+{
+  "flavors": {
+    "latte": {
+      "flavor": "latte",
+      "isLight": true,
+      "isDark": false,
+      "rosewater": "#dc8a78",
+      ...
+    },
+    "frappe": {
+      "flavor": "frappe",
+      "isLight": false,
+      "isDark": true,
+      "rosewater": "#f2d5cf",
+      ...
+    },
+    "macchiato": {
+      "flavor": "macchiato",
+      "isLight": false,
+      "isDark": true,
+      "rosewater": "#f4dbd6",
+      ...
+    },
+    "mocha": {
+      "flavor": "mocha",
+      "isLight": false,
+      "isDark": true,
+      "rosewater": "#f5e0dc",
+      ...
+    }
+  }
+}
+```
+
+This allows us to define a template file like the following: 
+
+`example.yml`
+```md
+# Single File
+
+{{#each flavors}}
+## {{titlecase flavor}}
+Accent: #{{mauve}}
+{{/each}}
+```
+
+and after running `whiskers example.yml all -o README.md`, we get the following output file:
+
+`README.md`
+```md
+# Single File
+
+## Latte
+Accent: #8839ef
+## Frappe
+Accent: #ca9ee6
+## Macchiato
+Accent: #c6a0f6
+## Mocha
+Accent: #cba6f7
+```
+
+Please see the [examples/single-file](examples/single-file) directory for more concrete examples on how can be used.
 
 ## Check Mode
 
