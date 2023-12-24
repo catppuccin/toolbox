@@ -63,7 +63,7 @@ impl fmt::Display for Flavor {
 fn parse_overrides(s: &str) -> Result<Value> {
     match serde_json::from_str(s) {
         Ok(json) => Ok(json),
-        Err(err) => Err(eyre!("invalid JSON syntax in overrides: {}", err)),
+        Err(err) => Err(eyre!("could not parse overrides as JSON: {}", err)),
     }
 }
 
@@ -78,7 +78,7 @@ struct Args {
     #[arg(value_enum, required_unless_present = "list_helpers")]
     flavor: Option<Flavor>,
 
-    /// The overrides to apply to the template in JSON/YAML format
+    /// The overrides to apply to the template in JSON format
     #[arg(long, value_parser(parse_overrides))]
     overrides: Option<Value>,
 
