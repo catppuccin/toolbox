@@ -15,6 +15,7 @@ clean:
     rm -fv {{output}}/*.yml
 
 # Generate a single flavor, e.g. "mocha"
+# Because of the order of priority, each accent in every flavor is overridden with the "base" color
 gen flavor:
   @{{whiskers_cmd}} input.hbs {{flavor}} --overrides '{"accent": "{{{{base}}" }' -o {{output}}/{{flavor}}.yml
 

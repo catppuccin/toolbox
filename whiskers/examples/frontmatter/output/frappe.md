@@ -1,8 +1,13 @@
-## No Frontmatter
-
-This file doesn't have any frontmatter, but you can still use all the helpers, as shown below:
+## Demo With Frontmatter
 
 **flavor:** Frappe
+
+This file also contains variables that have been defined in the frontmatter, as shown below:
+
+### Frontmatter Variables
+
+- **parent** is darcula
+- **accent** is #ca9ee6
 
 ### Colours
 

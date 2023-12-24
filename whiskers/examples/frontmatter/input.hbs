@@ -1,8 +1,20 @@
-## No Frontmatter
+---
+# like jetbrains
+parent: "{{ darklight 'darcula' 'default' }}"
+# alternative built-in method
+accent: "{{ #if isLight }}{{ pink }}{{ ^ }}{{ mauve }}{{ /if }}"
+---
 
-This file doesn't have any frontmatter, but you can still use all the helpers, as shown below:
+## Demo With Frontmatter
 
 **flavor:** {{ titlecase flavor }}
+
+This file also contains variables that have been defined in the frontmatter, as shown below:
+
+### Frontmatter Variables
+
+- **parent** is {{ parent }}
+- **accent** is #{{ accent }}
 
 ### Colours
 

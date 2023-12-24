@@ -1,18 +1,6 @@
----
-# like jetbrains
-parent: "{{ darklight 'darcula' 'default' }}"
-# alternative built-in method
-accent: "{{ #if isLight }}{{ pink }}{{ ^ }}{{ mauve }}{{ /if }}"
----
-
 ## Demo
 
 **flavor:** {{ titlecase flavor }}
-
-### Frontmatter Variables
-
-- **parent** is {{ parent }}
-- **accent** is #{{ accent }}
 
 ### Colours
 

@@ -2,11 +2,6 @@
 
 **flavor:** Latte
 
-### Frontmatter Variables
-
-- **parent** is default
-- **accent** is #ea76cb
-
 ### Colours
 
 - **red:**                #d20f39 / rgb(210, 15, 57) / hsl(347, 87%, 44%)

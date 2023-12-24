@@ -2,11 +2,6 @@
 
 **flavor:** Macchiato
 
-### Frontmatter Variables
-
-- **parent** is darcula
-- **accent** is #c6a0f6
-
 ### Colours
 
 - **red:**                #ed8796 / rgb(237, 135, 150) / hsl(351, 74%, 73%)

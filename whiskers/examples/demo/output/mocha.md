@@ -2,11 +2,6 @@
 
 **flavor:** Mocha
 
-### Frontmatter Variables
-
-- **parent** is darcula
-- **accent** is #cba6f7
-
 ### Colours
 
 - **red:**                #f38ba8 / rgb(243, 139, 168) / hsl(343, 81%, 75%)

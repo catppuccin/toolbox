@@ -2,11 +2,6 @@
 
 **flavor:** Frappe
 
-### Frontmatter Variables
-
-- **parent** is darcula
-- **accent** is #ca9ee6
-
 ### Colours
 
 - **red:**                #e78284 / rgb(231, 130, 132) / hsl(359, 68%, 71%)
