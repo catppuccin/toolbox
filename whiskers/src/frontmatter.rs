@@ -27,16 +27,12 @@ fn split(template: &str) -> Option<(&str, &str)> {
 ///
 /// 1. CLI overrides from the `--overrides` flag.
 /// 2. The `"overrides": ("latte" | "frappe" | "macchiato" | "mocha")` frontmatter block(s)
-/// 3. The `"overrides": "all"` frontmatter block.
+/// 3. The root context (variables defined at the top level)
 ///
 fn merge_overrides(cli_overrides: Option<Value>, frontmatter: Value, flavor: &str) -> Value {
     let mut merged = frontmatter;
 
     if let Some(yaml) = merged.get("overrides").cloned() {
-        // hoisting "all" overrides to root context
-        if let Some(all) = yaml.get("all") {
-            merge(&mut merged, all);
-        }
         // hosting current flavor overrides to root context
         if let Some(flavor) = yaml.get(flavor) {
             merge(&mut merged, flavor);
@@ -359,27 +355,6 @@ mod tests {
             "#
             );
             let actual = merge_overrides(None, frontmatter, "latte");
-            assert_eq!(actual, expected);
-        }
-
-        #[test]
-        fn frontmatter_with_all_flavors_override() {
-            let frontmatter = yaml!(
-                r#"
-                    accent: "{{ mauve }}"
-                    primary: true
-                    overrides:
-                        all:
-                            accent: "{{ blue }}"
-            "#
-            );
-            let expected = yaml!(
-                r#"
-                    accent: "{{ blue }}"
-                    primary: true
-            "#
-            );
-            let actual = merge_overrides(None, frontmatter, "mocha");
             assert_eq!(actual, expected);
         }
 
