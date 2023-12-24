@@ -1,16 +1,15 @@
 #[cfg(test)]
 mod happy_path {
+    use std::process::Command;
+
     use assert_cmd::assert::OutputAssertExt;
     use assert_cmd::cargo::CommandCargoExt;
     use predicates::prelude::predicate;
-    use std::fs;
-    use std::process::Command;
 
     #[test]
     fn example_file_has_flavor_mocha() -> Result<(), Box<dyn std::error::Error>> {
         let mut cmd = Command::cargo_bin("whiskers")?;
-        let expected =
-            fs::read_to_string("examples/demo/output/mocha.md").expect("expected file is readable");
+        let expected = include_str!("../examples/demo/output/mocha.md");
         cmd.arg("examples/demo/input.hbs").arg("mocha");
         cmd.assert()
             .success()
@@ -21,8 +20,7 @@ mod happy_path {
     #[test]
     fn single_file_has_flavor_all() -> Result<(), Box<dyn std::error::Error>> {
         let mut cmd = Command::cargo_bin("whiskers")?;
-        let expected = fs::read_to_string("examples/single-file/simple/output.md")
-            .expect("expected file is readable");
+        let expected = include_str!("../examples/single-file/simple/output.md");
         cmd.arg("examples/single-file/simple/input.hbs").arg("all");
         cmd.assert()
             .success()
@@ -33,10 +31,11 @@ mod happy_path {
 
 #[cfg(test)]
 mod sad_path {
+    use std::process::Command;
+
     use assert_cmd::assert::OutputAssertExt;
     use assert_cmd::cargo::CommandCargoExt;
     use predicates::prelude::predicate;
-    use std::process::Command;
 
     #[test]
     fn nonexistent_template_file() -> Result<(), Box<dyn std::error::Error>> {
