@@ -66,7 +66,7 @@ jobs:
         if: ${{ !env.ACT }}
 
       - name: Upload to artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{steps.build.outputs.binary}}
           path: ${{steps.build.outputs.binary}}
