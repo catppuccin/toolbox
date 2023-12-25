@@ -1,4 +1,4 @@
-import Ajv, { type Schema } from "https://esm.sh/v135/ajv@8.12.0";
+import Ajv, { type Schema } from "https://esm.sh/ajv@8.12.0?pin=v135";
 import { parse } from "https://deno.land/std@0.207.0/yaml/parse.ts";
 
 /**
