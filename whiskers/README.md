@@ -326,7 +326,7 @@ The `all` context looks like the following:
 
 This allows us to define a template file like the following: 
 
-`example.yml`
+`input.md`
 ```md
 # Single File
 
@@ -336,7 +336,7 @@ Accent: #{{mauve}}
 {{/each}}
 ```
 
-and after running `whiskers example.yml all -o README.md`, we get the following output file:
+and after running `whiskers input.md all -o README.md`, we get the following output file:
 
 `README.md`
 ```md
