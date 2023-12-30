@@ -1,5 +1,5 @@
 import Ajv, { type Schema } from "https://esm.sh/ajv@8.12.0?pin=v135";
-import { parse } from "https://deno.land/std@0.207.0/yaml/parse.ts";
+import { parse } from "https://deno.land/std@0.210.0/yaml/parse.ts";
 
 /**
  * Validates a string of YAML content against a JSON schema with Ajv.
