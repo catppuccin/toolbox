@@ -68,6 +68,18 @@ handlebars_helper!(blue_f: |color: String| {
 handlebars_helper!(alpha_f: |color: String| {
     RGBA::from_hex(&color)?.a.as_f32()
 });
+handlebars_helper!(red_h: |color: String| {
+    format!("{:02x}", RGBA::from_hex(&color)?.r.as_u8())
+});
+handlebars_helper!(green_h: |color: String| {
+    format!("{:02x}", RGBA::from_hex(&color)?.g.as_u8())
+});
+handlebars_helper!(blue_h: |color: String| {
+    format!("{:02x}", RGBA::from_hex(&color)?.b.as_u8())
+});
+handlebars_helper!(alpha_h: |color: String| {
+    format!("{:02x}", RGBA::from_hex(&color)?.a.as_u8())
+});
 
 pub fn darklight(
     h: &Helper,
