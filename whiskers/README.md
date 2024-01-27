@@ -195,9 +195,6 @@ theme:
 
 When running `whiskers example.yml latte --overrides '{"accent": "{{pink}}"}'`, the `accent` will be overridden to pink.
 
-Please see the [examples/accents](examples/accents) directory to understand how this is used to generate files for each
-accent in each flavor.
-
 ### Frontmatter & CLI
 
 Overrides can be specified both in the frontmatter and the CLI but it is important to understand the order of priority:
@@ -352,8 +349,6 @@ Accent: #c6a0f6
 Accent: #cba6f7
 ```
 
-Please see the [examples/single-file](examples/single-file) directory for more concrete examples on how can be used.
-
 ## Check Mode
 
 You can use Whiskers as a linter with *check mode*. To do so, set the `--check` option to a file containing the expected
@@ -382,7 +377,6 @@ Templating would result in changes.
 
 ## Further Reading
 
-- There are plenty of examples in the [examples](examples) directory to showcase the utilities and power of whiskers.
 - See the draft RFC, [CAT-0003-Whiskers](https://github.com/catppuccin/community/pull/12), to understand the motivations
   behind creating whiskers.
 
