@@ -1,0 +1,32 @@
+---
+# Set default accent color
+accent: "{{mauve}}"
+# Set custom variables
+user: "@sgoudham"
+overrides:
+  # And you can override variables for specific flavors
+  latte:
+    accent: "{{pink}}"
+    emoji: "🌻"
+    user: "@backwardspy"
+  frappe:
+    accent: "{{blue}}"
+    emoji: "🪴"
+    flavor: "frappé"
+    user: "@nullishamy"
+  macchiato: # defaults are used
+    emoji: "🌺"
+  mocha:
+    accent: "{{sky}}"
+    emoji: "🌿"
+    user: "@nekowinston"
+---
+
+# Single File With Overrides
+
+{{#each flavors}}
+## {{emoji}} {{titlecase flavor}}
+
+{{user}}'s favourite hex code is #{{accent}}
+
+{{/each}}
