@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/catppuccin/toolbox/stargazers"><img src="https://img.shields.io/github/stars/catppuccin/toolbox?colorA=363a4f&colorB=b7bdf8&style=for-the-badge"></a>
-  <a href="https://github.com/catppuccin/toolbox/issues"><img src="https://img.shields.io/github/issues/catppuccin/toolbox?colorA=363a4f&colorB=f5a97f&style=for-the-badge"></a>
+  <a href="https://github.com/catppuccin/toolbox/issues?label=whiskers"><img src="https://img.shields.io/github/issues/catppuccin/toolbox?colorA=363a4f&colorB=f5a97f&style=for-the-badge"></a>
   <a href="https://github.com/catppuccin/toolbox/contributors"><img src="https://img.shields.io/github/contributors/catppuccin/toolbox?colorA=363a4f&colorB=a6da95&style=for-the-badge"></a>
 </p>
 
@@ -146,14 +146,11 @@ You can include additional context variables in the templating process by adding
 As a simple example, given the following template (`example.cfg`):
 
 ```handlebars
----
-app: 'Pepperjack'
-author: 'winston'
----
-# Catppuccin for {{app}}
-# by {{author}}
-bg = '{{base}}'
-fg = '{{text}}'
+--- app: 'Pepperjack' author: 'winston' --- # Catppuccin for
+{{app}}
+# by
+{{author}}
+bg = '{{base}}' fg = '{{text}}'
 ```
 
 Running `whiskers example.cfg mocha` produces the following output:
@@ -168,15 +165,8 @@ fg = 'cdd6f4'
 Values in YAML frontmatter are rendered in the same way as the rest of the template, which means you can also make use of context variables in your frontmatter. This can be useful for things like setting an accent color:
 
 ```handlebars
----
-accent: "{{mauve}}"
-darkGreen: "{{darken green 0.3}}"
----
-bg = "#{{base}}"
-fg = "#{{text}}"
-border = "#{{accent}}"
-diffAddFg = "#{{green}}"
-diffAddBg = "#{{darkGreen}}"
+--- accent: "{{mauve}}" darkGreen: "{{darken green 0.3}}" --- bg = "#{{base}}"
+fg = "#{{text}}" border = "#{{accent}}" diffAddFg = "#{{green}}" diffAddBg = "#{{darkGreen}}"
 ```
 
 Rendering the above template produces the following output:
@@ -196,11 +186,7 @@ Whiskers supports overriding individual template values without changing the und
 We'll use the following template for this example:
 
 ```handlebars
----
-accent: '{{mauve}}'
----
-bg = "#{{base}}"
-fg = "#{{accent}}"
+--- accent: '{{mauve}}' --- bg = "#{{base}}" fg = "#{{accent}}"
 ```
 
 With no overrides passed to whiskers, we get the following output:
@@ -233,7 +219,7 @@ fg = "#f9e2af"
 
 ## Check Mode
 
-You can use Whiskers as a linter with *check mode*. To do so, set the `--check` option to a file containing the expected output. Whiskers will render your template as per usual, but then instead of printing the result it will check it against the expected output and fail with exit code 1 if they differ.
+You can use Whiskers as a linter with _check mode_. To do so, set the `--check` option to a file containing the expected output. Whiskers will render your template as per usual, but then instead of printing the result it will check it against the expected output and fail with exit code 1 if they differ.
 
 This is especially useful in CI pipelines to ensure that the generated files are not changed without a corresponding change to the templates.
 
