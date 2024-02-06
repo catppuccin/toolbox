@@ -5,47 +5,57 @@
   <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
 </h3>
 
-<p align="center">
-  <a href="https://github.com/catppuccin/toolbox/stargazers"><img src="https://img.shields.io/github/stars/catppuccin/toolbox?colorA=363a4f&colorB=b7bdf8&style=for-the-badge"></a>
-  <a href="https://github.com/catppuccin/toolbox/issues"><img src="https://img.shields.io/github/issues/catppuccin/toolbox?colorA=363a4f&colorB=f5a97f&style=for-the-badge"></a>
-  <a href="https://github.com/catppuccin/toolbox/contributors"><img src="https://img.shields.io/github/contributors/catppuccin/toolbox?colorA=363a4f&colorB=a6da95&style=for-the-badge"></a>
-</p>
-
 &nbsp;
 
 A sweet program that takes in four showcase images and displays them all at once.
 
-Installation with Cargo, Nix, or from source:
+## Installation
+
+### Cargo
+
+#### Crates.io
 
 ```console
 $ cargo install catppuccin-catwalk
-$ catwalk <images> <flags>
+```
 
-# to install from source:
+#### From source
+
+```console
 $ cargo install --git https://github.com/catppuccin/toolbox catwalk
+```
 
-# if you're using Homebrew (or Linuxbrew):
+### Homebrew
+
+```console
 $ brew install catppuccin/tap/catwalk
+```
 
-# there's also a Nix flake:
+### Nix
+
+```console
 $ nix run github:catppuccin/toolbox#catwalk -- <images> <flags>
 ```
 
-Usage:
+## Usage
 
-Parameter     | Description
---------------| ------------------------------------------------------------------------------------------------------- 
-`[latte]`     | Path to Latte image (default: `./latte.webp`)
-`[frappe]`    | Path to Frappé image (default: `./frappe.webp`)
-`[macchiato]` | Path to Macchiato image (default: `./macchiato.webp`)
-`[mocha]`     | Path to Mocha image (default: `./mocha.webp`)
-`--output`    | Path to output file (default: `./preview.webp`)
-`--layout`    | Style of the showcase image. Available options are `composite` (default), `grid`, `row`, and `stacked`.
-`--radius`    | Radius of rounded corners (percentage).
-`--directory` | Change to `<DIRECTORY>` before processing files. (e.g. `catwalk -C ./assets/`)
-`--ext`       | File extension to use for input files, if they're not explicitly named. `webp` (default) or `png`.
-`--gap`       | Size of gaps between pictures for the `grid` layout.
-`--help`      | A summary of the available parameters.
+```console
+$ catwalk <images> <flags>
+```
+
+| Parameter     | Description                                                                                             |
+| ------------- | ------------------------------------------------------------------------------------------------------- |
+| `[latte]`     | Path to Latte image (default: `./latte.webp`).                                                          |
+| `[frappe]`    | Path to Frappé image (default: `./frappe.webp`).                                                        |
+| `[macchiato]` | Path to Macchiato image (default: `./macchiato.webp`).                                                  |
+| `[mocha]`     | Path to Mocha image (default: `./mocha.webp`).                                                          |
+| `--output`    | Path to output file (default: `./preview.webp`).                                                        |
+| `--layout`    | Style of the showcase image. Available options are `composite` (default), `grid`, `row`, and `stacked`. |
+| `--radius`    | Radius of rounded corners (percentage).                                                                 |
+| `--directory` | Change to `<DIRECTORY>` before processing files (e.g. `catwalk -C ./assets/`).                          |
+| `--ext`       | File extension to use for input files, if they're not explicitly named. `webp` (default) or `png`.      |
+| `--gap`       | Size of gaps between pictures for the `grid` layout.                                                    |
+| `--help`      | A summary of the available parameters.                                                                  |
 
 &nbsp;
 

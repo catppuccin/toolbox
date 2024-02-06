@@ -5,31 +5,41 @@
   <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
 </h3>
 
-<p align="center">
-  <a href="https://github.com/catppuccin/toolbox/stargazers"><img src="https://img.shields.io/github/stars/catppuccin/toolbox?colorA=363a4f&colorB=b7bdf8&style=for-the-badge"></a>
-  <a href="https://github.com/catppuccin/toolbox/issues"><img src="https://img.shields.io/github/issues/catppuccin/toolbox?colorA=363a4f&colorB=f5a97f&style=for-the-badge"></a>
-  <a href="https://github.com/catppuccin/toolbox/contributors"><img src="https://img.shields.io/github/contributors/catppuccin/toolbox?colorA=363a4f&colorB=a6da95&style=for-the-badge"></a>
-</p>
-
 &nbsp;
 
 If you wrote a v1 or v2 Catppuccin theme, you may use Puccinier to automatically create the rest of the v2 themes. Puccinier supports the conversion of properly formatted hex, rgb, and hsl colors (case insensitive).
 
-Installation with Cargo, Nix, or from source:
+## Installation
 
-```bash
+### Cargo
+
+#### Crates.io
+
+```console
 $ cargo install puccinier
-# to install from source:
+```
+
+#### From source
+
+```console
 $ cargo install --git https://github.com/catppuccin/toolbox puccinier
-# there's also a Nix flake:
+```
+
+### Nix
+
+```console
 $ nix run github:catppuccin/toolbox#puccinier -- <source> --flags
 ```
 
-Usage:
+## Usage
+
+```
+puccinier <source> <flags>
+```
 
 | Parameter  | Description                                                                                       |
-|------------|---------------------------------------------------------------------------------------------------|
-| `source`   | The source file to convert                                                                        |
+| ---------- | ------------------------------------------------------------------------------------------------- |
+| `<source>` | The source file to convert.                                                                       |
 | `--output` | Set the themes to generate from the source file (one of `latte`, `frappe`, `macchiato`, `mocha`). |
 | `--silent` | Disable showing which parts of the file were replaced.                                            |
 | `--help`   | Prints help information.                                                                          |

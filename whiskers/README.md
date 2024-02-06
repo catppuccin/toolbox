@@ -5,42 +5,51 @@
   <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
 </h3>
 
-<p align="center">
-  <a href="https://github.com/catppuccin/toolbox/stargazers"><img src="https://img.shields.io/github/stars/catppuccin/toolbox?colorA=363a4f&colorB=b7bdf8&style=for-the-badge"></a>
-  <a href="https://github.com/catppuccin/toolbox/issues"><img src="https://img.shields.io/github/issues/catppuccin/toolbox?colorA=363a4f&colorB=f5a97f&style=for-the-badge"></a>
-  <a href="https://github.com/catppuccin/toolbox/contributors"><img src="https://img.shields.io/github/contributors/catppuccin/toolbox?colorA=363a4f&colorB=a6da95&style=for-the-badge"></a>
-</p>
-
 &nbsp;
 
 A templating tool to simplify the creation of Catppuccin ports.
 
 ## Installation
 
+### Cargo
+
+#### Crates.io
+
+```console
+$ cargo install catppuccin-whiskers
+```
+
+#### From source
+
+```console
+$ cargo install --git https://github.com/catppuccin/toolbox whiskers
+```
+
+### Download binaries
+
 [Compiled binaries are available for Windows, macOS, and Linux.](https://github.com/catppuccin/toolbox/releases)
 
 Download the correct file for your system and place it somewhere in your executable path.
 
-Alternatively, you can install with Cargo, Nix, or from source:
+### Homebrew
 
 ```console
-# latest crates.io release:
-$ cargo install catppuccin-whiskers
-$ whiskers <template> <flavor>
-
-# to install from source:
-$ cargo install --git https://github.com/catppuccin/toolbox whiskers
-
-# if you're using Homebrew (or Linuxbrew):
 $ brew install catppuccin/tap/whiskers
+```
 
-# there's also a Nix flake:
+### Nix
+
+```console
 $ nix run github:catppuccin/toolbox#whiskers -- <template> <flavor>
 ```
 
 ## Usage
 
-Make a template per file type that your port requires, then use the Whiskers CLI to populate the colors for all four Catppuccin flavors:
+Make a template per file type that your port requires, then use the Whiskers CLI to populate the colors for all four Catppuccin flavors.
+
+```console
+$ whiskers <template> <flavor>
+```
 
 ```console
 $ whiskers --help
