@@ -29,8 +29,9 @@ You can install the binary from using one of the methods below:
 
 ## Usage
 
-Whiskers is a port creation helper tool that is custom-built for Catppuccin, allowing developers to define template
-files which the Catppuccin palette can be injected into.
+Whiskers is a port creation helper tool that is custom-built for Catppuccin,
+allowing developers to define template files which the palette can be injected
+into.
 
 ```console
 $ whiskers --help
@@ -53,8 +54,8 @@ Options:
 
 ## Template
 
-Please familiarise yourself with [Handlebars](https://handlebarsjs.com/guide/), which is the templating engine used in
-whiskers.
+Please familiarize yourself with [Handlebars](https://handlebarsjs.com/guide/),
+which is the templating engine used in whiskers.
 
 ### Context Variables
 
@@ -101,8 +102,8 @@ The following custom helpers are available:
 
 ## Frontmatter
 
-You can include additional context variables in the templating process by adding it to an optional YAML frontmatter
-section at the top of your template file.
+You can include additional context variables in the templating process by adding
+it to an optional YAML frontmatter section at the top of your template file.
 
 As a simple example, given the following template (`example.cfg`):
 
@@ -126,8 +127,9 @@ bg = '1e1e2e'
 fg = 'cdd6f4'
 ```
 
-Values in YAML frontmatter are rendered in the same way as the rest of the template, which means you can also make use
-of context variables in your frontmatter. This can be useful for things like setting an accent color:
+Values in YAML frontmatter are rendered in the same way as the rest of the
+template, which means you can also make use of context variables in your
+frontmatter. This can be useful for things like setting an accent color:
 
 ```yaml
 ---
@@ -155,8 +157,8 @@ diffaddbg = "#40b436"
 
 ### Frontmatter
 
-Whiskers supports overriding template values in the frontmatter itself. For example, this can be useful for changing
-variables depending on the flavor:
+Whiskers supports overriding template values in the frontmatter itself. For
+example, this can be useful for changing variables depending on the flavor:
 
 `example.yml`
 
@@ -193,11 +195,13 @@ theme:
   accent: "{{accent}}"
 ```
 
-When running `whiskers example.yml latte --overrides '{"accent": "{{pink}}"}'`, the `accent` will be overridden to pink.
+When running `whiskers example.yml latte --overrides '{"accent": "{{pink}}"}'`,
+the `accent` will be overridden to pink.
 
 ### Frontmatter & CLI
 
-Overrides can be specified both in the frontmatter and the CLI but it is important to understand the order of priority:
+Overrides can be specified both in the frontmatter and the CLI but it is
+important to understand the order of priority:
 
 1. CLI overrides (`--overrides` flag.)
 2. Frontmatter `overrides` block.
@@ -222,7 +226,8 @@ and the command:
 whiskers example.yml mocha --overrides '{"accent": "{{pink}}"}' # <-- CLI Overrides
 ```
 
-The resulting file will have the accent `pink` as the accent will go through the following transformations:
+The resulting file will have the accent `pink` as the accent will go through the
+following transformations:
 
 1. accent is set to `mauve` in the root context.
 2. accent is overridden to `blue` in the overrides block.
@@ -230,11 +235,13 @@ The resulting file will have the accent `pink` as the accent will go through the
 
 ## Single File Support
 
-Sometimes, you may not want to generate a file per flavor, but rather use all the flavors inside one single file. This
-is achieved specifying the `<template>` argument as `all`. (e.g. `whiskers example.yml all`)
+Sometimes, you may not want to generate a file per flavor, but rather use all
+the flavors inside one single file. This is achieved specifying the `<template>`
+argument as `all`. (e.g. `whiskers example.yml all`)
 
-When the `<template>` has been set to `all`, a new context variable `flavors` is available which can be iterated through
-the `{{#each}}` handlebars helper. E.g. if we have the following contexts:
+When the `<template>` has been set to `all`, a new context variable `flavors` is
+available which can be iterated through the `{{#each}}` handlebars helper. E.g.
+if we have the following contexts:
 
 `latte`
 
@@ -321,7 +328,7 @@ The `all` context looks like the following:
 }
 ```
 
-This allows us to define a template file like the following: 
+This allows us to define a template file like the following:
 
 `input.md`
 ```md
@@ -349,17 +356,22 @@ Accent: #c6a0f6
 Accent: #cba6f7
 ```
 
+Please see the [examples/single-file](examples/single-file) directory for more
+concrete examples on how it can be used.
+
 ## Check Mode
 
-You can use Whiskers as a linter with *check mode*. To do so, set the `--check` option to a file containing the expected
-output. Whiskers will render your template as per usual, but then instead of printing the result it will check it
+You can use Whiskers as a linter with *check mode*. To do so, set the `--check`
+option to a file containing the expected output. Whiskers will render your
+template as per usual, but then instead of printing the result it will check it
 against the expected output and fail with exit code 1 if they differ.
 
-This is especially useful in CI pipelines to ensure that the generated files are not changed without a corresponding
-change to the templates.
+This is especially useful in CI pipelines to ensure that the generated files are
+not changed without a corresponding change to the templates.
 
-Whiskers will diff the output against the check file using the program set in the `DIFFTOOL` environment variable,
-falling back to `diff` if it's not set. The command will be invoked as `$DIFFTOOL <actual> <expected>`.
+Whiskers will diff the output against the check file using the program set in
+the `DIFFTOOL` environment variable, falling back to `diff` if it's not set. The
+command will be invoked as `$DIFFTOOL <actual> <expected>`.
 
 ```console
 $ whiskers theme.hbs latte --check themes/latte.cfg
@@ -377,8 +389,11 @@ Templating would result in changes.
 
 ## Further Reading
 
-- See the draft RFC, [CAT-0003-Whiskers](https://github.com/catppuccin/community/pull/12), to understand the motivations
-  behind creating whiskers.
+- See the [examples](examples) directory which further showcase the utilities
+  and power of whiskers.
+- See the draft RFC,
+  [CAT-0003-Whiskers](https://github.com/catppuccin/community/pull/12), to
+  understand the motivations behind creating whiskers.
 
 &nbsp;
 
