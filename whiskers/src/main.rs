@@ -1,9 +1,9 @@
 #![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::unwrap_used)]
 // we like truncating u32s into u8s around here
 #![allow(clippy::cast_possible_truncation)]
+
 use std::{
-    clone::Clone,
-    env, fs,
+    env, fmt, fs,
     io::Write,
     path::{Path, PathBuf},
     process,
@@ -15,11 +15,14 @@ use color_eyre::{
     eyre::{eyre, Context},
     Result,
 };
+use json_patch::merge;
+use serde_json::{json, Value};
 
 use catppuccin_whiskers::{
     frontmatter,
     postprocess::postprocess,
     template::{self, helpers},
+    Map,
 };
 
 #[derive(clap::ValueEnum, Clone, Debug)]
@@ -28,8 +31,10 @@ enum Flavor {
     Frappe,
     Macchiato,
     Mocha,
+    All,
 }
 
+#[allow(clippy::fallible_impl_from)]
 impl From<Flavor> for catppuccin::Flavour {
     fn from(value: Flavor) -> Self {
         match value {
@@ -37,25 +42,29 @@ impl From<Flavor> for catppuccin::Flavour {
             Flavor::Frappe => Self::Frappe,
             Flavor::Macchiato => Self::Macchiato,
             Flavor::Mocha => Self::Mocha,
+            // This should never be called, but it's here to satisfy the compiler.
+            Flavor::All => panic!(),
         }
     }
 }
 
-#[derive(Clone, Debug)]
-struct Override {
-    pub key: String,
-    pub value: serde_json::Value,
+impl fmt::Display for Flavor {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Self::Latte => write!(f, "latte"),
+            Self::Frappe => write!(f, "frappe"),
+            Self::Macchiato => write!(f, "macchiato"),
+            Self::Mocha => write!(f, "mocha"),
+            Self::All => write!(f, "all"),
+        }
+    }
 }
 
-fn parse_override(s: &str) -> Result<Override> {
-    let kvpair = s.split_once('=');
-    if let Some((key, value)) = kvpair {
-        return Ok(Override {
-            key: key.trim().to_string(),
-            value: serde_json::Value::String(value.trim().to_owned()),
-        });
+fn parse_overrides(s: &str) -> Result<Value> {
+    match serde_json::from_str(s) {
+        Ok(json) => Ok(json),
+        Err(err) => Err(eyre!("could not parse overrides as JSON: {}", err)),
     }
-    Err(eyre!("invalid override, expected 'key=value', got '{}'", s))
 }
 
 #[derive(clap::Parser, Debug)]
@@ -69,63 +78,50 @@ struct Args {
     #[arg(value_enum, required_unless_present = "list_helpers")]
     flavor: Option<Flavor>,
 
-    /// The overrides to apply to the template in key=value format
-    #[arg(long("override"), value_parser(parse_override))]
-    overrides: Vec<Override>,
+    /// The overrides to apply to the template in JSON format
+    #[arg(long, value_parser(parse_overrides))]
+    overrides: Option<Value>,
 
     /// Path to write to instead of stdout
     #[arg(short, long)]
     output_path: Option<PathBuf>,
 
-    /// Instead of printing a result just check if anything would change
+    /// Instead of printing a result, check if anything would change
     #[arg(long)]
     check: Option<PathBuf>,
 
-    /// List all template helpers in markdown format
+    /// List all template helpers in Markdown format
     #[arg(short, long)]
     list_helpers: bool,
 }
 
-fn contextualize_overrides(overrides: Vec<Override>, ctx: &serde_json::Value) -> Vec<Override> {
-    let map = ctx.as_object().expect("base context is an object value");
-    overrides
+fn merge_contexts_all(ctx: &Value, frontmatter: &Map) -> Value {
+    let ctx = ctx.as_object().expect("ctx is an object").clone();
+
+    // Slight inefficiency here as the root context variables are
+    // also duplicated into each flavor.
+    let flavors: Map = ctx
         .into_iter()
-        .map(|o| {
-            let lookup = o.value.as_str().expect("override values are strings");
-            let value = map.get(lookup).map(Clone::clone).unwrap_or(o.value);
-            Override { key: o.key, value }
+        .map(|(name, ctx)| {
+            let flavor = frontmatter
+                .get(&name)
+                .expect("flavor exists in frontmatter");
+            let merged_ctx = merge_contexts(ctx, flavor);
+            (name, merged_ctx)
         })
-        .collect()
+        .collect();
+
+    let merged = json!({ "flavors": flavors });
+
+    serde_json::to_value(merged).expect("merged context is serializable")
 }
 
-fn overrides_to_map(overrides: Vec<Override>) -> serde_json::Map<String, serde_json::Value> {
-    overrides.into_iter().map(|o| (o.key, o.value)).collect()
-}
-
-fn merge_contexts(
-    ctx: serde_json::Value,
-    frontmatter: Option<serde_json::Value>,
-    overrides: Vec<Override>,
-) -> serde_json::Value {
-    type Map = serde_json::Map<String, serde_json::Value>;
-    let mut merged = Map::new();
-
-    let overrides = contextualize_overrides(overrides, &ctx);
-
-    merged.extend(
-        serde_json::from_value::<Map>(ctx).expect("base context is deserializable into a map"),
-    );
-
-    if let Some(frontmatter) = frontmatter {
-        merged.extend(
-            serde_json::from_value::<Map>(frontmatter)
-                .expect("frontmatter is deserializable into a map"),
-        );
+fn merge_contexts(ctx: Value, frontmatter: &Value) -> Value {
+    let mut merged = ctx;
+    if !frontmatter.is_null() {
+        merge(&mut merged, frontmatter);
     }
-
-    merged.extend(overrides_to_map(overrides));
-
-    serde_json::Value::Object(merged)
+    merged
 }
 
 fn main() -> Result<()> {
@@ -143,16 +139,33 @@ fn main() -> Result<()> {
 
     let template = &args
         .template
-        .expect("template_path is guaranteed to be set");
+        .expect("template_path is guaranteed to be set")
+        .contents()
+        .expect("template contents are readable");
 
     let flavor = args.flavor.expect("flavor is guaranteed to be set");
+    let flavor_string = flavor.to_string();
 
     let reg = template::make_registry();
 
-    let ctx = template::make_context(flavor.into());
-    let (content, frontmatter) = frontmatter::render_and_parse(template, &reg, &ctx);
-
-    let ctx = merge_contexts(ctx, frontmatter, args.overrides);
+    let (content, ctx) = if matches!(flavor, Flavor::All) {
+        let ctx = template::make_context_all();
+        let (content, frontmatter) =
+            frontmatter::render_and_parse_all(template, &args.overrides, &reg, &ctx);
+        let merged_ctx = merge_contexts_all(&ctx, &frontmatter);
+        (content, merged_ctx)
+    } else {
+        let ctx = template::make_context(&flavor.into());
+        let (content, frontmatter) = frontmatter::render_and_parse(
+            template,
+            args.overrides,
+            flavor_string.as_str(),
+            &reg,
+            &ctx,
+        );
+        let merged_ctx = merge_contexts(ctx, &frontmatter);
+        (content, merged_ctx)
+    };
 
     let result = reg
         .render_template(content, &ctx)
@@ -180,7 +193,7 @@ fn invoke_difftool(actual: &str, expected_path: &Path) -> Result<(), color_eyre:
 
     let mut actual_file = tempfile::NamedTempFile::new()?;
     write!(&mut actual_file, "{actual}")?;
-    if let Ok(mut child) = std::process::Command::new(tool)
+    if let Ok(mut child) = process::Command::new(tool)
         .args([actual_file.path(), &expected_path])
         .spawn()
     {
