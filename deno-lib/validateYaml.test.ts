@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.210.0/assert/mod.ts";
+import { assertEquals } from "https://deno.land/std@0.215.0/assert/mod.ts";
 import { validateYaml } from "./validateYaml.ts";
 
 import blogPostSchema from "./fixtures/updateYaml/blogpost.schema.json" assert {
