@@ -1,4 +1,4 @@
-name: Build and populate cache
+name: Publish to FlakeHub
 
 on:
   push:
@@ -12,7 +12,11 @@ jobs:
   build:
     strategy:
       matrix:
-        os: ["ubuntu-latest", "macos-latest"]
+        os: [ubuntu-latest, macos-latest]
+
+    permissions:
+      id-token: write
+      contents: read
 
     runs-on: ${{ matrix.os }}
 
@@ -26,12 +30,19 @@ jobs:
         uses: cachix/cachix-action@v14
         if: startsWith(github.event.ref, 'refs/tags/v')
         with:
-          name: "catppuccin"
+          name: catppuccin
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-          skipPush: ${{ github.ref != 'refs/heads/main' }}
 
       - name: Flake check
         run: nix flake check -Lv
 
       - name: Build packages
         run: nix build -L .#catwalk .#puccinier .#whiskers
+
+      - uses: DeterminateSystems/flakehub-push@main
+        # only push to FlakeHub once
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        with:
+          name: catppuccin/toolbox
+          rolling: true
+          visibility: public
