@@ -39,8 +39,8 @@ jobs:
         run: nix build -L .#catwalk .#puccinier .#whiskers
 
       - uses: DeterminateSystems/flakehub-push@main
-        # only push to FlakeHub once
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        # only push to FlakeHub once when running on main
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && matrix.os == 'ubuntu-latest'
         with:
           name: catppuccin/toolbox
           rolling: true
