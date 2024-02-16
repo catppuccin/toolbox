@@ -109,8 +109,8 @@ As a simple example, given the following template (`example.cfg`):
 
 ```yaml
 ---
-app: "Pepperjack"
-author: "winston"
+app: 'Pepperjack'
+author: 'winston'
 ---
 # Catppuccin for {{app}}
 # by {{author}}
@@ -336,9 +336,7 @@ This allows us to define a template file like the following:
 # Single File
 
 {{#each flavors}}
-
 ## {{titlecase flavor}}
-
 Accent: #{{mauve}}
 {{/each}}
 ```
@@ -351,19 +349,12 @@ and after running `whiskers input.md all -o README.md`, we get the following out
 # Single File
 
 ## Latte
-
 Accent: #8839ef
-
 ## Frappe
-
 Accent: #ca9ee6
-
 ## Macchiato
-
 Accent: #c6a0f6
-
 ## Mocha
-
 Accent: #cba6f7
 ```
 
@@ -372,7 +363,7 @@ concrete examples on how it can be used.
 
 ## Check Mode
 
-You can use Whiskers as a linter with _check mode_. To do so, set the `--check`
+You can use Whiskers as a linter with *check mode*. To do so, set the `--check`
 option to a file containing the expected output. Whiskers will render your
 template as per usual, but then instead of printing the result it will check it
 against the expected output and fail with exit code 1 if they differ.
