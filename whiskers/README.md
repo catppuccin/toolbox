@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/catppuccin/toolbox/stargazers"><img src="https://img.shields.io/github/stars/catppuccin/toolbox?colorA=363a4f&colorB=b7bdf8&style=for-the-badge"></a>
-  <a href="https://github.com/catppuccin/toolbox/issues"><img src="https://img.shields.io/github/issues/catppuccin/toolbox?colorA=363a4f&colorB=f5a97f&style=for-the-badge"></a>
+  <a href="https://github.com/catppuccin/toolbox/issues?label=whiskers"><img src="https://img.shields.io/github/issues/catppuccin/toolbox?colorA=363a4f&colorB=f5a97f&style=for-the-badge"></a>
   <a href="https://github.com/catppuccin/toolbox/contributors"><img src="https://img.shields.io/github/contributors/catppuccin/toolbox?colorA=363a4f&colorB=a6da95&style=for-the-badge"></a>
 </p>
 
@@ -17,15 +17,15 @@ A templating tool to simplify the creation of Catppuccin ports.
 
 ## Installation
 
-You can install the binary from using one of the methods below:
+You can install Whiskers using one of the methods below:
 
 | Installation Method                   | Instructions                                                                                                        |
-|---------------------------------------|---------------------------------------------------------------------------------------------------------------------|
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | crates.io                             | `cargo install catppuccin-whiskers`                                                                                 |
 | Source                                | `cargo install --git https://github.com/catppuccin/toolbox whiskers`                                                |
 | Homebrew                              | `brew install catppuccin/tap/whiskers`                                                                              |
-| Nix                                   | `nix profile install github:catppuccin/toolbox#whiskers`<br/>`nix run github:catppuccin/toolbox#whiskers -- <args>` | 
-| Binaries<br/>(Windows, MacOS & Linux) | Download the [latest GitHub release](https://github.com/catppuccin/toolbox/releases/latest)                         |
+| Nix                                   | `nix profile install github:catppuccin/toolbox#whiskers`<br/>`nix run github:catppuccin/toolbox#whiskers -- <args>` |
+| Binaries<br/>(Windows, MacOS & Linux) | Available from the [latest GitHub release](https://github.com/catppuccin/toolbox/releases?q=whiskers).              |
 
 ## Usage
 
@@ -62,11 +62,11 @@ which is the templating engine used in whiskers.
 The following variables are available for use in your templates:
 
 | Variable                                                                                                                                                    | Description                                                                                                                                                                 |
-|-------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `flavor` (string)                                                                                                                                           | The name of the flavor being templated. Possible values: `latte`, `frappé`, `macchiato`, `mocha`.                                                                           | 
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `flavor` (string)                                                                                                                                           | The name of the flavor being templated. Possible values: `latte`, `frappé`, `macchiato`, `mocha`.                                                                           |
 | `isLight` (bool)                                                                                                                                            | True if `flavor` is `latte`, false otherwise.                                                                                                                               |
 | `isDark` (bool)                                                                                                                                             | True unless `flavor` is `latte`.                                                                                                                                            |
-| `rosewater`, `flamingo`, `pink`, [(etc.)](https://github.com/catppuccin/rust/blob/5124eb99eb98d7111dca24537d428a6078e5bbb6/src/flavour.rs#L41-L66) (string) | All named colors in each flavor, each color is formatted as hex by default.                                                                                                 | 
+| `rosewater`, `flamingo`, `pink`, [(etc.)](https://github.com/catppuccin/rust/blob/5124eb99eb98d7111dca24537d428a6078e5bbb6/src/flavour.rs#L41-L66) (string) | All named colors in each flavor, each color is formatted as hex by default.                                                                                                 |
 | `colors` (array)                                                                                                                                            | An array containing all of the named colors.                                                                                                                                |
 | `flavors` (array)                                                                                                                                           | An array containing all of the named flavors, with every other context variable.<br/><strong>See [Single File Support](#Single-File-Support) for more information.</strong> |
 | Any Frontmatter                                                                                                                                             | All frontmatter variables as described in the [Frontmatter](#Frontmatter) section.                                                                                          |
@@ -76,7 +76,7 @@ The following variables are available for use in your templates:
 The following custom helpers are available:
 
 | Helper<br/>(`<>` values are args)     | Input                             | Output                                                     | Description                                                                                                                               |
-|---------------------------------------|-----------------------------------|------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| ------------------------------------- | --------------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | uppercase \<string\>                  | `{{ uppercase "hello" }}`         | `HELLO`                                                    | Convert a string to uppercase.                                                                                                            |
 | lowercase \<string\>                  | `{{ lowercase "HELLO" }}`         | `hello`                                                    | Convert a string to lowercase.                                                                                                            |
 | titlecase \<string\>                  | `{{ titlecase "hello there" }}`   | `Hello There`                                              | Convert a string to titlecase.                                                                                                            |
@@ -215,7 +215,7 @@ To express this visually, given an `example.yml` file:
 
 ```yaml
 ---
-accent: "{{mauve}}"     # <-- Frontmatter Root Context
+accent: "{{mauve}}" # <-- Frontmatter Root Context
 background: "{{base}}"
 text: "{{text}}"
 overrides: # <-- Frontmatter Overrides Block
@@ -335,6 +335,7 @@ The `all` context looks like the following:
 This allows us to define a template file like the following:
 
 `input.md`
+
 ```md
 # Single File
 
@@ -347,6 +348,7 @@ Accent: #{{mauve}}
 and after running `whiskers input.md all -o README.md`, we get the following output file:
 
 `README.md`
+
 ```md
 # Single File
 

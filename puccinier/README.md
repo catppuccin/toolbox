@@ -15,24 +15,38 @@
 
 If you wrote a v1 or v2 Catppuccin theme, you may use Puccinier to automatically create the rest of the v2 themes. Puccinier supports the conversion of properly formatted hex, rgb, and hsl colors (case insensitive).
 
-Installation with Cargo, Nix, or from source:
+## Installation
 
-```bash
-$ cargo install puccinier
-# to install from source:
-$ cargo install --git https://github.com/catppuccin/toolbox puccinier
-# there's also a Nix flake:
-$ nix run github:catppuccin/toolbox#puccinier -- <source> --flags
+You can install Puccinier using one of the methods below:
+
+| Installation Method                   | Instructions                                                                                                                      |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| crates.io                             | `cargo install puccinier`                                                                                                         |
+| Source                                | `cargo install --git https://github.com/catppuccin/toolbox puccinier`                                                             |
+| Nix                                   | `nix profile install github:catppuccin/toolbox#puccinier`<br/>`nix run github:catppuccin/toolbox#puccinier -- [OPTIONS] <source>` |
+| Binaries<br/>(Windows, MacOS & Linux) | Available from the [latest GitHub release](https://github.com/catppuccin/toolbox/releases?q=puccinier).                           |
+
+## Usage
+
+```console
+$ puccinier
+puccinier
+  Generate the other Catppuccin flavours off a template file written in one of them
+
+ARGS:
+    <source>
+      The source file to convert
+
+OPTIONS:
+    -o, --output <type>
+      Set the themes to generate from the source file (one of 'latte', 'frappe', 'macchiato', or 'mocha')
+
+    -s, --silent
+      Disable showing which parts of the file were replaced
+
+    -h, --help
+      Prints help information.
 ```
-
-Usage:
-
-| Parameter  | Description                                                                                       |
-|------------|---------------------------------------------------------------------------------------------------|
-| `source`   | The source file to convert                                                                        |
-| `--output` | Set the themes to generate from the source file (one of `latte`, `frappe`, `macchiato`, `mocha`). |
-| `--silent` | Disable showing which parts of the file were replaced.                                            |
-| `--help`   | Prints help information.                                                                          |
 
 &nbsp;
 
