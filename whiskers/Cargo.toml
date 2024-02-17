@@ -33,4 +33,4 @@ json-patch = "1.2.0"
 
 [dev-dependencies]
 assert_cmd = "2.0"
-predicates = "3.0.4"
+predicates = "3.1.0"
