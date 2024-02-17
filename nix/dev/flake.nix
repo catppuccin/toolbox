@@ -2,9 +2,13 @@
   description = "Catppuccin's development tools, dev flake";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    fenix.url = "https://flakehub.com/f/nix-community/fenix/0.1.*.tar.gz";
-    fenix.inputs.nixpkgs.follows = "nixpkgs";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    flake-utils.url = "github:numtide/flake-utils";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
     call-flake.url = "github:divnix/call-flake";
   };
 
@@ -15,7 +19,7 @@
     ...
   } @ inputs: let
     systems = ["aarch64-darwin" "aarch64-linux" "x86_64-darwin" "x86_64-linux"];
-    overlays = [inputs.fenix.overlays.default];
+    overlays = [inputs.rust-overlay.overlays.default];
     inherit (nixpkgs) lib;
     forEachSystem = fn: lib.genAttrs systems (system: fn (import nixpkgs {inherit overlays system;}));
     mainFlake = call-flake ../..;
@@ -24,17 +28,18 @@
 
     devShells = forEachSystem (pkgs: let
       inherit (pkgs.stdenv) isDarwin;
-      rust-toolchain = pkgs.fenix.combine [
-        pkgs.fenix.complete.toolchain
-        pkgs.rust-analyzer
-        pkgs.fenix.targets.wasm32-unknown-unknown.latest.rust-std
-      ];
+      rust-toolchain = pkgs.rust-bin.selectLatestNightlyWith (toolchain:
+        toolchain.default.override {
+          extensions = ["rust-src"];
+          targets = ["wasm32-unknown-unknown"];
+        });
     in {
       default = pkgs.mkShell {
         buildInputs = with pkgs;
           [
             self.formatter.${pkgs.system}
             rust-toolchain
+            rust-analyzer
             deno
             # wasm + publishing to npm
             binaryen
