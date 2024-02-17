@@ -1,6 +1,6 @@
 ## Demo With Frontmatter
 
-**flavor:** Frappe
+**flavor:** Frappé
 
 This file also contains variables that have been defined in the frontmatter, as shown below:
 
