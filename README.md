@@ -22,7 +22,7 @@ You can install Whiskers using one of the methods below:
 | Installation Method                   | Instructions                                                                                                        |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | crates.io                             | `cargo install catppuccin-whiskers`                                                                                 |
-| Source                                | `cargo install --git https://github.com/catppuccin/toolbox whiskers`                                                |
+| Source                                | `cargo install --git https://github.com/catppuccin/toolbox catppuccin-whiskers`                                     |
 | Homebrew                              | `brew install catppuccin/tap/whiskers`                                                                              |
 | Nix                                   | `nix profile install github:catppuccin/toolbox#whiskers`<br/>`nix run github:catppuccin/toolbox#whiskers -- <args>` |
 | Binaries<br/>(Windows, MacOS & Linux) | Available from the [latest GitHub release](https://github.com/catppuccin/toolbox/releases?q=whiskers).              |
