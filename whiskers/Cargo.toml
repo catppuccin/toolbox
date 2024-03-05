@@ -15,7 +15,7 @@ path = "src/main.rs"
 
 [dependencies]
 base64 = "0.21"
-catppuccin = { version = "1.4", features = ["css"] }
+catppuccin = { version = "2.0", features = ["css"] }
 indexmap = { version = "2.2.3", features = ["serde"] }
 clap = { version = "4.5", features = ["derive"] }
 clap-stdin = "0.4.0"
