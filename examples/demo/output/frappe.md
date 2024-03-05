@@ -1,6 +1,6 @@
 ## Demo
 
-**flavor:** Frappe
+**flavor:** Frappé
 
 ### Colours
 

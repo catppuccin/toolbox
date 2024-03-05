@@ -3,7 +3,7 @@ use handlebars::HelperDef;
 use indexmap::IndexMap;
 use serde_json::Value;
 
-use crate::{helper, COLOR_NAMES, FLAVOR_NAMES};
+use crate::helper;
 
 pub struct Helper {
     pub name: &'static str,
@@ -211,47 +211,37 @@ pub fn make_registry() -> Handlebars<'static> {
     reg
 }
 
-fn flavor_priority(color: &str) -> Option<u32> {
-    FLAVOR_NAMES
-        .iter()
-        .position(|&c| c == color)
-        .map(|index| index as u32 + 1)
-}
-
-fn color_priority(color: &str) -> Option<u32> {
-    COLOR_NAMES
-        .iter()
-        .position(|&c| c == color)
-        .map(|index| index as u32 + 1)
-}
-
 #[must_use]
 #[allow(clippy::missing_panics_doc)] // panic here implies an internal issue
 pub fn make_context_all() -> Value {
-    let mut ctx: IndexMap<String, Value> = catppuccin::Flavour::into_iter()
-        .map(|f| (f.name().into(), make_context(&f)))
+    let ctx: IndexMap<String, Value> = catppuccin::PALETTE
+        .into_iter()
+        .map(|f| (f.name.identifier().to_string(), make_context(f)))
         .collect();
-    ctx.sort_by(|a, _, b, _| flavor_priority(a).cmp(&flavor_priority(b)));
     serde_json::to_value(ctx).expect("context is serializable into json")
 }
 
 #[must_use]
 #[allow(clippy::missing_panics_doc)] // panic here implies an internal issue
-pub fn make_context(flavor: &catppuccin::Flavour) -> Value {
-    let colors = flavor.colours();
-
-    let mut color_map: IndexMap<String, String> = colors
-        .into_fields_iter()
-        .map(|(name, c)| (name.to_string(), c.hex().to_ascii_lowercase()))
+pub fn make_context(flavor: &catppuccin::Flavor) -> Value {
+    let color_map: IndexMap<String, String> = flavor
+        .colors
+        .into_iter()
+        .map(|c| {
+            (
+                c.name.identifier().to_string(),
+                format!("{:02x}{:02x}{:02x}", c.rgb.r, c.rgb.g, c.rgb.b),
+            )
+        })
         .collect();
-    color_map.sort_by(|a, _, b, _| color_priority(a).cmp(&color_priority(b)));
 
     let mut context =
         serde_json::to_value(color_map.clone()).expect("color names & hexcodes can be serialized");
 
-    context["flavor"] = flavor.name().into();
-    context["isLight"] = (*flavor == catppuccin::Flavour::Latte).into();
-    context["isDark"] = (*flavor != catppuccin::Flavour::Latte).into();
+    context["flavor"] = flavor.name.identifier().to_string().into();
+    context["flavorName"] = flavor.name.to_string().into();
+    context["isLight"] = (!flavor.dark).into();
+    context["isDark"] = flavor.dark.into();
     context["colors"] =
         serde_json::to_value(color_map).expect("color names & hexcodes can be serialized");
 

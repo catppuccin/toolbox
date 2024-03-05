@@ -195,7 +195,7 @@
 </table>
 </details>
 <details open>
-<summary>Frappe</summary>
+<summary>Frappé</summary>
 <table>
 	<tr>
 		<th></th>

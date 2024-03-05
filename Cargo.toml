@@ -14,14 +14,14 @@ name = "whiskers"
 path = "src/main.rs"
 
 [dependencies]
-base64 = "0.21"
-catppuccin = { version = "1.4", features = ["css"] }
-indexmap = { version = "2.2.3", features = ["serde"] }
+base64 = "0.22"
+catppuccin = { version = "2.0", features = ["css-colors"] }
+indexmap = { version = "2.2", features = ["serde"] }
 clap = { version = "4.5", features = ["derive"] }
-clap-stdin = "0.4.0"
+clap-stdin = "0.4"
 color-eyre = { version = "0.6", default-features = false }
 css-colors = "1.0"
-handlebars = "4.5"
+handlebars = "5.1"
 regex = "1.10"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0", features = ["preserve_order"] }
@@ -29,8 +29,8 @@ serde_yaml = "0.9"
 tempfile = "3.10"
 thiserror = "1.0"
 titlecase = "2.2"
-json-patch = "1.2.0"
+json-patch = "1.2"
 
 [dev-dependencies]
 assert_cmd = "2.0"
-predicates = "3.1.0"
+predicates = "3.1"

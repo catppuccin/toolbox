@@ -180,7 +180,7 @@ overrides:
 
 When running `whiskers example.yml {latte, frappe, macchiato, mocha}`, we see that:
 
-- Frappe & Macchiato will have the accent `mauve` hex code.
+- Frappé & Macchiato will have the accent `mauve` hex code.
 - Latte will have the accent `pink` hex code.
 - Mocha will have the accent `blue` hex code.
 
@@ -340,7 +340,7 @@ This allows us to define a template file like the following:
 # Single File
 
 {{#each flavors}}
-## {{titlecase flavor}}
+## {{flavorName}}
 Accent: #{{mauve}}
 {{/each}}
 ```
@@ -354,7 +354,7 @@ and after running `whiskers input.md all -o README.md`, we get the following out
 
 ## Latte
 Accent: #8839ef
-## Frappe
+## Frappé
 Accent: #ca9ee6
 ## Macchiato
 Accent: #c6a0f6

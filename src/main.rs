@@ -35,7 +35,7 @@ enum Flavor {
 }
 
 #[allow(clippy::fallible_impl_from)]
-impl From<Flavor> for catppuccin::Flavour {
+impl From<Flavor> for catppuccin::FlavorName {
     fn from(value: Flavor) -> Self {
         match value {
             Flavor::Latte => Self::Latte,
@@ -155,7 +155,7 @@ fn main() -> Result<()> {
         let merged_ctx = merge_contexts_all(&ctx, &frontmatter);
         (content, merged_ctx)
     } else {
-        let ctx = template::make_context(&flavor.into());
+        let ctx = template::make_context(&catppuccin::PALETTE[flavor.into()]);
         let (content, frontmatter) = frontmatter::render_and_parse(
             template,
             args.overrides,
