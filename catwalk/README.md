@@ -22,7 +22,7 @@ You can install Catwalk using one of the methods below:
 | Installation Method                   | Instructions                                                                                                                  |
 | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | crates.io                             | `cargo install catppuccin-catwalk`                                                                                            |
-| Source                                | `cargo install --git https://github.com/catppuccin/toolbox catwalk`                                                           |
+| Source                                | `cargo install --git https://github.com/catppuccin/toolbox catppuccin-catwalk`                                                |
 | Homebrew                              | `brew install catppuccin/tap/catwalk`                                                                                         |
 | Nix                                   | `nix profile install github:catppuccin/toolbox#catwalk`<br/>`nix run github:catppuccin/toolbox#catwalk -- [OPTIONS] <images>` |
 | Binaries<br/>(Windows, MacOS & Linux) | Available from the [latest GitHub release](https://github.com/catppuccin/toolbox/releases?q=catwalk).                         |
