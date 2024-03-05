@@ -91,7 +91,7 @@ pub fn darklight(
     h: &Helper,
     _r: &Handlebars,
     ctx: &Context,
-    _rc: &mut RenderContext,
+    rc: &mut RenderContext,
     out: &mut dyn Output,
 ) -> HelperResult {
     let dark = h
@@ -101,7 +101,13 @@ pub fn darklight(
         .param(1)
         .ok_or_else(|| RenderErrorReason::ParamNotFoundForIndex("darklight", 1))?;
 
-    if ctx.data()["flavor"] == "latte" {
+    // if we're in an each block, we have to try and get the flavor from the iteration key
+    let flavor = rc
+        .block()
+        .and_then(|block| block.get_local_var("key"))
+        .unwrap_or_else(|| &ctx.data()["flavor"]);
+
+    if flavor == "latte" {
         out.write(&light.render())?;
     } else {
         out.write(&dark.render())?;
