@@ -66,22 +66,11 @@ fn main() -> Result<()> {
     match args.output.extension() {
         None => return Err(eyre!("Output file type could not be determined")),
         Some(os_str) => match os_str.to_str() {
-            Some("png") => {
-                use ril::encodings::png::PngEncoder;
-
-                PngEncoder::encode_static(&catwalk, &mut writebuf)?;
-            }
-            Some("webp") => {
-                use ril::encodings::webp::{WebPEncoderOptions, WebPStaticEncoder};
-
-                let opt = WebPEncoderOptions::new().with_lossless(true);
-                let meta = EncoderMetadata::<Rgba>::from(&catwalk).with_config(opt);
-                let mut encoder = WebPStaticEncoder::new(&mut writebuf, meta)?;
-                encoder.add_frame(&catwalk)?;
-            }
+            Some("png") => catwalk.encode(ImageFormat::Png, &mut writebuf)?,
+            Some("webp") => catwalk.encode(ImageFormat::WebP, &mut writebuf)?,
             _ => return Err(eyre!("Output file type not supported")),
         },
-    }
+    };
 
     let output = if args.directory.is_some() {
         let mut path = args.directory.clone().unwrap_or_default();
@@ -95,5 +84,7 @@ fn main() -> Result<()> {
         args.output
     };
 
-    std::fs::write(output, writebuf.get_ref()).map_err(|e| eyre!("Failed to write image: {}", e))
+    // std::fs::write(output, writebuf.get_ref()).map_err(|e| eyre!("Failed to write image: {}", e))
+    catwalk.save_inferred(output)?;
+    Ok(())
 }
