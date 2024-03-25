@@ -117,56 +117,56 @@
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/latte_subtext1.png" height="23" width="23"/></td>
-        <td>Subtext1</td>
+        <td>Subtext 1</td>
         <td><code>#5c5f77</code></td>
         <td><code>rgb(92, 95, 119)</code></td>
         <td><code>hsl(233, 13%, 42%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/latte_subtext0.png" height="23" width="23"/></td>
-        <td>Subtext0</td>
+        <td>Subtext 0</td>
         <td><code>#6c6f85</code></td>
         <td><code>rgb(108, 111, 133)</code></td>
         <td><code>hsl(233, 10%, 47%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/latte_overlay2.png" height="23" width="23"/></td>
-        <td>Overlay2</td>
+        <td>Overlay 2</td>
         <td><code>#7c7f93</code></td>
         <td><code>rgb(124, 127, 147)</code></td>
         <td><code>hsl(232, 10%, 53%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/latte_overlay1.png" height="23" width="23"/></td>
-        <td>Overlay1</td>
+        <td>Overlay 1</td>
         <td><code>#8c8fa1</code></td>
         <td><code>rgb(140, 143, 161)</code></td>
         <td><code>hsl(231, 10%, 59%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/latte_overlay0.png" height="23" width="23"/></td>
-        <td>Overlay0</td>
+        <td>Overlay 0</td>
         <td><code>#9ca0b0</code></td>
         <td><code>rgb(156, 160, 176)</code></td>
         <td><code>hsl(228, 11%, 65%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/latte_surface2.png" height="23" width="23"/></td>
-        <td>Surface2</td>
+        <td>Surface 2</td>
         <td><code>#acb0be</code></td>
         <td><code>rgb(172, 176, 190)</code></td>
         <td><code>hsl(227, 12%, 71%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/latte_surface1.png" height="23" width="23"/></td>
-        <td>Surface1</td>
+        <td>Surface 1</td>
         <td><code>#bcc0cc</code></td>
         <td><code>rgb(188, 192, 204)</code></td>
         <td><code>hsl(225, 14%, 77%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/latte_surface0.png" height="23" width="23"/></td>
-        <td>Surface0</td>
+        <td>Surface 0</td>
         <td><code>#ccd0da</code></td>
         <td><code>rgb(204, 208, 218)</code></td>
         <td><code>hsl(223, 16%, 83%)</code></td>
@@ -311,56 +311,56 @@
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/frappe_subtext1.png" height="23" width="23"/></td>
-        <td>Subtext1</td>
+        <td>Subtext 1</td>
         <td><code>#b5bfe2</code></td>
         <td><code>rgb(181, 191, 226)</code></td>
         <td><code>hsl(227, 44%, 80%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/frappe_subtext0.png" height="23" width="23"/></td>
-        <td>Subtext0</td>
+        <td>Subtext 0</td>
         <td><code>#a5adce</code></td>
         <td><code>rgb(165, 173, 206)</code></td>
         <td><code>hsl(228, 29%, 73%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/frappe_overlay2.png" height="23" width="23"/></td>
-        <td>Overlay2</td>
+        <td>Overlay 2</td>
         <td><code>#949cbb</code></td>
         <td><code>rgb(148, 156, 187)</code></td>
         <td><code>hsl(228, 22%, 66%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/frappe_overlay1.png" height="23" width="23"/></td>
-        <td>Overlay1</td>
+        <td>Overlay 1</td>
         <td><code>#838ba7</code></td>
         <td><code>rgb(131, 139, 167)</code></td>
         <td><code>hsl(227, 17%, 58%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/frappe_overlay0.png" height="23" width="23"/></td>
-        <td>Overlay0</td>
+        <td>Overlay 0</td>
         <td><code>#737994</code></td>
         <td><code>rgb(115, 121, 148)</code></td>
         <td><code>hsl(229, 13%, 52%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/frappe_surface2.png" height="23" width="23"/></td>
-        <td>Surface2</td>
+        <td>Surface 2</td>
         <td><code>#626880</code></td>
         <td><code>rgb(98, 104, 128)</code></td>
         <td><code>hsl(228, 13%, 44%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/frappe_surface1.png" height="23" width="23"/></td>
-        <td>Surface1</td>
+        <td>Surface 1</td>
         <td><code>#51576d</code></td>
         <td><code>rgb(81, 87, 109)</code></td>
         <td><code>hsl(227, 15%, 37%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/frappe_surface0.png" height="23" width="23"/></td>
-        <td>Surface0</td>
+        <td>Surface 0</td>
         <td><code>#414559</code></td>
         <td><code>rgb(65, 69, 89)</code></td>
         <td><code>hsl(230, 16%, 30%)</code></td>
@@ -505,56 +505,56 @@
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/macchiato_subtext1.png" height="23" width="23"/></td>
-        <td>Subtext1</td>
+        <td>Subtext 1</td>
         <td><code>#b8c0e0</code></td>
         <td><code>rgb(184, 192, 224)</code></td>
         <td><code>hsl(228, 39%, 80%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/macchiato_subtext0.png" height="23" width="23"/></td>
-        <td>Subtext0</td>
+        <td>Subtext 0</td>
         <td><code>#a5adcb</code></td>
         <td><code>rgb(165, 173, 203)</code></td>
         <td><code>hsl(227, 27%, 72%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/macchiato_overlay2.png" height="23" width="23"/></td>
-        <td>Overlay2</td>
+        <td>Overlay 2</td>
         <td><code>#939ab7</code></td>
         <td><code>rgb(147, 154, 183)</code></td>
         <td><code>hsl(228, 20%, 65%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/macchiato_overlay1.png" height="23" width="23"/></td>
-        <td>Overlay1</td>
+        <td>Overlay 1</td>
         <td><code>#8087a2</code></td>
         <td><code>rgb(128, 135, 162)</code></td>
         <td><code>hsl(228, 15%, 57%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/macchiato_overlay0.png" height="23" width="23"/></td>
-        <td>Overlay0</td>
+        <td>Overlay 0</td>
         <td><code>#6e738d</code></td>
         <td><code>rgb(110, 115, 141)</code></td>
         <td><code>hsl(230, 12%, 49%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/macchiato_surface2.png" height="23" width="23"/></td>
-        <td>Surface2</td>
+        <td>Surface 2</td>
         <td><code>#5b6078</code></td>
         <td><code>rgb(91, 96, 120)</code></td>
         <td><code>hsl(230, 14%, 42%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/macchiato_surface1.png" height="23" width="23"/></td>
-        <td>Surface1</td>
+        <td>Surface 1</td>
         <td><code>#494d64</code></td>
         <td><code>rgb(73, 77, 100)</code></td>
         <td><code>hsl(231, 16%, 34%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/macchiato_surface0.png" height="23" width="23"/></td>
-        <td>Surface0</td>
+        <td>Surface 0</td>
         <td><code>#363a4f</code></td>
         <td><code>rgb(54, 58, 79)</code></td>
         <td><code>hsl(230, 19%, 26%)</code></td>
@@ -699,56 +699,56 @@
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/mocha_subtext1.png" height="23" width="23"/></td>
-        <td>Subtext1</td>
+        <td>Subtext 1</td>
         <td><code>#bac2de</code></td>
         <td><code>rgb(186, 194, 222)</code></td>
         <td><code>hsl(227, 35%, 80%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/mocha_subtext0.png" height="23" width="23"/></td>
-        <td>Subtext0</td>
+        <td>Subtext 0</td>
         <td><code>#a6adc8</code></td>
         <td><code>rgb(166, 173, 200)</code></td>
         <td><code>hsl(228, 24%, 72%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/mocha_overlay2.png" height="23" width="23"/></td>
-        <td>Overlay2</td>
+        <td>Overlay 2</td>
         <td><code>#9399b2</code></td>
         <td><code>rgb(147, 153, 178)</code></td>
         <td><code>hsl(228, 17%, 64%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/mocha_overlay1.png" height="23" width="23"/></td>
-        <td>Overlay1</td>
+        <td>Overlay 1</td>
         <td><code>#7f849c</code></td>
         <td><code>rgb(127, 132, 156)</code></td>
         <td><code>hsl(230, 13%, 56%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/mocha_overlay0.png" height="23" width="23"/></td>
-        <td>Overlay0</td>
+        <td>Overlay 0</td>
         <td><code>#6c7086</code></td>
         <td><code>rgb(108, 112, 134)</code></td>
         <td><code>hsl(231, 11%, 47%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/mocha_surface2.png" height="23" width="23"/></td>
-        <td>Surface2</td>
+        <td>Surface 2</td>
         <td><code>#585b70</code></td>
         <td><code>rgb(88, 91, 112)</code></td>
         <td><code>hsl(233, 12%, 39%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/mocha_surface1.png" height="23" width="23"/></td>
-        <td>Surface1</td>
+        <td>Surface 1</td>
         <td><code>#45475a</code></td>
         <td><code>rgb(69, 71, 90)</code></td>
         <td><code>hsl(234, 13%, 31%)</code></td>
     </tr>
     <tr>
         <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/mocha_surface0.png" height="23" width="23"/></td>
-        <td>Surface0</td>
+        <td>Surface 0</td>
         <td><code>#313244</code></td>
         <td><code>rgb(49, 50, 68)</code></td>
         <td><code>hsl(237, 16%, 23%)</code></td>

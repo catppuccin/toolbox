@@ -1,8 +1,12 @@
+---
+whiskers:
+    version: "2.0.0"
+---
 # Catppuccin Palette v0.2.0
 
-{{#each flavors}}
+{% for _, flavor in flavors -%}
 <details open>
-<summary>{{flavorName}}</summary>
+<summary>{{flavor.name}}</summary>
 <table>
 	<tr>
 		<th></th>
@@ -11,15 +15,15 @@
 		<th>RGB</th>
 		<th>HSL</th>
 	</tr>
-    {{#each colors as | color colorName |}}
+    {%- for _, color in flavor.colors %}
     <tr>
-        <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/{{../flavor}}_{{colorName}}.png" height="23" width="23"/></td>
-        <td>{{titlecase colorName}}</td>
-        <td><code>#{{color}}</code></td>
-        <td><code>{{rgb color}}</code></td>
-        <td><code>{{hsl color}}</code></td>
+        <td><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/circles/{{flavor.identifier}}_{{color.identifier}}.png" height="23" width="23"/></td>
+        <td>{{color.name}}</td>
+        <td><code>#{{color.hex}}</code></td>
+        <td><code>{{css_rgb(color=color)}}</code></td>
+        <td><code>{{css_hsl(color=color)}}</code></td>
     </tr>
-    {{/each}}
+    {%- endfor %}
 </table>
 </details>
-{{/each}}
+{% endfor %}
