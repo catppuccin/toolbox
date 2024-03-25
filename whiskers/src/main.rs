@@ -1,186 +1,259 @@
-#![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::unwrap_used)]
-// we like truncating u32s into u8s around here
-#![allow(clippy::cast_possible_truncation)]
-
 use std::{
-    env, fmt, fs,
-    io::Write,
+    collections::HashMap,
+    env,
+    io::Write as _,
     path::{Path, PathBuf},
     process,
 };
 
-use clap::Parser;
-use clap_stdin::FileOrStdin;
-use color_eyre::{
-    eyre::{eyre, Context},
-    Result,
-};
-use json_patch::merge;
-use serde_json::{json, Value};
-
-use catppuccin_whiskers::{
-    frontmatter,
-    postprocess::postprocess,
-    template::{self, helpers},
-    Map,
+use anyhow::{anyhow, Context as _};
+use catppuccin::FlavorName;
+use clap::Parser as _;
+use itertools::Itertools;
+use whiskers::{
+    cli::{Args, OutputFormat},
+    context::merge_values,
+    frontmatter, markdown,
+    matrix::{self, Matrix},
+    models, templating,
 };
 
-#[derive(clap::ValueEnum, Clone, Debug)]
-enum Flavor {
-    Latte,
-    Frappe,
-    Macchiato,
-    Mocha,
-    All,
+const FRONTMATTER_OPTIONS_SECTION: &str = "whiskers";
+
+#[derive(Default, Debug, serde::Deserialize)]
+struct TemplateOptions {
+    version: Option<semver::VersionReq>,
+    matrix: Option<Matrix>,
+    filename: Option<String>,
+    hex_prefix: Option<String>,
+    #[serde(default)]
+    capitalize_hex: bool,
 }
 
-#[allow(clippy::fallible_impl_from)]
-impl From<Flavor> for catppuccin::FlavorName {
-    fn from(value: Flavor) -> Self {
-        match value {
-            Flavor::Latte => Self::Latte,
-            Flavor::Frappe => Self::Frappe,
-            Flavor::Macchiato => Self::Macchiato,
-            Flavor::Mocha => Self::Mocha,
-            // This should never be called, but it's here to satisfy the compiler.
-            Flavor::All => panic!(),
+impl TemplateOptions {
+    fn from_frontmatter(
+        frontmatter: &HashMap<String, tera::Value>,
+        only_flavor: Option<FlavorName>,
+    ) -> anyhow::Result<Self> {
+        // a `TemplateOptions` object before matrix transformation
+        #[derive(serde::Deserialize)]
+        struct RawTemplateOptions {
+            version: Option<semver::VersionReq>,
+            matrix: Option<Vec<tera::Value>>,
+            filename: Option<String>,
+            hex_prefix: Option<String>,
+            #[serde(default)]
+            capitalize_hex: bool,
+        }
+
+        if let Some(opts) = frontmatter.get(FRONTMATTER_OPTIONS_SECTION) {
+            let opts: RawTemplateOptions = tera::from_value(opts.clone())
+                .context("Frontmatter `whiskers` section is invalid")?;
+            let matrix = opts
+                .matrix
+                .map(|m| matrix::from_values(m, only_flavor))
+                .transpose()
+                .context("Frontmatter matrix is invalid")?;
+            Ok(Self {
+                version: opts.version,
+                matrix,
+                filename: opts.filename,
+                hex_prefix: opts.hex_prefix,
+                capitalize_hex: opts.capitalize_hex,
+            })
+        } else {
+            Ok(Self::default())
         }
     }
 }
 
-impl fmt::Display for Flavor {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Self::Latte => write!(f, "latte"),
-            Self::Frappe => write!(f, "frappe"),
-            Self::Macchiato => write!(f, "macchiato"),
-            Self::Mocha => write!(f, "mocha"),
-            Self::All => write!(f, "all"),
-        }
-    }
-}
-
-fn parse_overrides(s: &str) -> Result<Value> {
-    match serde_json::from_str(s) {
-        Ok(json) => Ok(json),
-        Err(err) => Err(eyre!("could not parse overrides as JSON: {}", err)),
-    }
-}
-
-#[derive(clap::Parser, Debug)]
-#[command(author, version, about, long_about = None)]
-struct Args {
-    /// Path to the template file to render, or `-` for stdin
-    #[arg(required_unless_present = "list_helpers")]
-    template: Option<FileOrStdin>,
-
-    /// Flavor to get colors from
-    #[arg(value_enum, required_unless_present = "list_helpers")]
-    flavor: Option<Flavor>,
-
-    /// The overrides to apply to the template in JSON format
-    #[arg(long, value_parser(parse_overrides))]
-    overrides: Option<Value>,
-
-    /// Path to write to instead of stdout
-    #[arg(short, long)]
-    output_path: Option<PathBuf>,
-
-    /// Instead of printing a result, check if anything would change
-    #[arg(long)]
-    check: Option<PathBuf>,
-
-    /// List all template helpers in Markdown format
-    #[arg(short, long)]
-    list_helpers: bool,
-}
-
-fn merge_contexts_all(ctx: &Value, frontmatter: &Map) -> Value {
-    let ctx = ctx.as_object().expect("ctx is an object").clone();
-
-    // Slight inefficiency here as the root context variables are
-    // also duplicated into each flavor.
-    let flavors: Map = ctx
-        .into_iter()
-        .map(|(name, ctx)| {
-            let flavor = frontmatter
-                .get(&name)
-                .expect("flavor exists in frontmatter");
-            let merged_ctx = merge_contexts(ctx, flavor);
-            (name, merged_ctx)
-        })
-        .collect();
-
-    let merged = json!({ "flavors": flavors });
-
-    serde_json::to_value(merged).expect("merged context is serializable")
-}
-
-fn merge_contexts(ctx: Value, frontmatter: &Value) -> Value {
-    let mut merged = ctx;
-    if !frontmatter.is_null() {
-        merge(&mut merged, frontmatter);
-    }
-    merged
-}
-
-fn main() -> Result<()> {
-    color_eyre::config::HookBuilder::default()
-        .panic_section("Consider reporting this issue: https://github.com/catppuccin/toolbox")
-        .display_env_section(false)
-        .install()?;
-
+fn main() -> anyhow::Result<()> {
+    // parse command-line arguments & template frontmatter
     let args = Args::parse();
 
-    if args.list_helpers {
-        list_helpers();
+    if args.list_functions {
+        list_functions(args.output_format);
         return Ok(());
     }
 
-    let template = &args
+    let template = args
         .template
-        .expect("template_path is guaranteed to be set")
-        .contents()
-        .expect("template contents are readable");
+        .expect("args.template is guaranteed by clap to be set");
+    let template_from_stdin = matches!(template.source, clap_stdin::Source::Stdin);
+    let template_name = template_name(&template);
+    let doc = frontmatter::parse(
+        &template
+            .contents()
+            .context("Template contents could not be read")?,
+    )
+    .context("Frontmatter is invalid")?;
+    let template_opts =
+        TemplateOptions::from_frontmatter(&doc.frontmatter, args.flavor.map(Into::into))
+            .context("Could not get template options from frontmatter")?;
 
-    let flavor = args.flavor.expect("flavor is guaranteed to be set");
-    let flavor_string = flavor.to_string();
+    if !template_from_stdin && !template_is_compatible(&template_opts) {
+        std::process::exit(1);
+    }
 
-    let reg = template::make_registry();
+    // merge frontmatter with command-line overrides and add to Tera context
+    let mut frontmatter = doc.frontmatter;
+    if let Some(overrides) = args.overrides {
+        for (key, value) in &overrides {
+            frontmatter
+                .entry(key.clone())
+                .and_modify(|v| {
+                    *v = merge_values(v, value);
+                })
+                .or_insert(
+                    tera::to_value(value)
+                        .with_context(|| format!("Value of {key} override is invalid"))?,
+                );
+        }
+    }
+    let mut ctx = tera::Context::new();
+    for (key, value) in &frontmatter {
+        ctx.insert(key, &value);
+    }
 
-    let (content, ctx) = if matches!(flavor, Flavor::All) {
-        let ctx = template::make_context_all();
-        let (content, frontmatter) =
-            frontmatter::render_and_parse_all(template, &args.overrides, &reg, &ctx);
-        let merged_ctx = merge_contexts_all(&ctx, &frontmatter);
-        (content, merged_ctx)
-    } else {
-        let ctx = template::make_context(&catppuccin::PALETTE[flavor.into()]);
-        let (content, frontmatter) = frontmatter::render_and_parse(
-            template,
-            args.overrides,
-            flavor_string.as_str(),
-            &reg,
+    // build the Tera engine and palette
+    let mut tera = templating::make_engine();
+    tera.add_raw_template(&template_name, &doc.body)
+        .context("Template is invalid")?;
+    let palette = models::build_palette(
+        template_opts.capitalize_hex,
+        template_opts.hex_prefix.as_deref(),
+        args.color_overrides.as_ref(),
+    )
+    .context("Palette context cannot be built")?;
+
+    if let Some(matrix) = template_opts.matrix {
+        let Some(filename_template) = template_opts.filename else {
+            anyhow::bail!("Filename template is required for multi-output render");
+        };
+        render_multi_output(
+            matrix,
+            &filename_template,
             &ctx,
-        );
-        let merged_ctx = merge_contexts(ctx, &frontmatter);
-        (content, merged_ctx)
+            &palette,
+            &tera,
+            &template_name,
+            args.dry_run,
+            args.check.is_some(),
+        )
+        .context("Multi-output render failed")?;
+    } else {
+        let check = args
+            .check
+            .map(|c| {
+                c.ok_or_else(|| anyhow!("--check requires a file argument in single-output mode"))
+            })
+            .transpose()?;
+        render_single_output(
+            args.flavor.map(Into::into),
+            &ctx,
+            &palette,
+            &tera,
+            &template_name,
+            check,
+        )
+        .context("Single-output render failed")?;
+    }
+
+    Ok(())
+}
+
+#[allow(clippy::too_many_lines)]
+fn list_functions(format: OutputFormat) {
+    match format {
+        OutputFormat::Json | OutputFormat::Yaml => {
+            let output = serde_json::json!({
+                "functions": templating::all_functions(),
+                "filters": templating::all_filters()
+            });
+            println!(
+                "{}",
+                if matches!(format, OutputFormat::Json) {
+                    serde_json::to_string_pretty(&output).expect("output is guaranteed to be valid")
+                } else {
+                    serde_yaml::to_string(&output).expect("output is guaranteed to be valid")
+                }
+            );
+        }
+        OutputFormat::Markdown => {
+            println!(
+                "{}",
+                markdown::format_filters_and_functions(markdown::Format::List)
+            );
+        }
+        OutputFormat::MarkdownTable => {
+            println!(
+                "{}",
+                markdown::format_filters_and_functions(markdown::Format::Table)
+            );
+        }
+    }
+}
+
+fn template_name(template: &clap_stdin::FileOrStdin) -> String {
+    match &template.source {
+        clap_stdin::Source::Stdin => "template".to_string(),
+        clap_stdin::Source::Arg(arg) => Path::new(&arg).file_name().map_or_else(
+            || "template".to_string(),
+            |name| name.to_string_lossy().to_string(),
+        ),
+    }
+}
+
+fn template_is_compatible(template_opts: &TemplateOptions) -> bool {
+    let whiskers_version = semver::Version::parse(env!("CARGO_PKG_VERSION"))
+        .expect("CARGO_PKG_VERSION is always valid");
+    if let Some(template_version) = &template_opts.version {
+        if !template_version.matches(&whiskers_version) {
+            eprintln!("Template requires whiskers version {template_version}, but you are running whiskers {whiskers_version}");
+            return false;
+        }
+    } else {
+        eprintln!("Warning: No Whiskers version requirement specified in template.");
+        eprintln!("This template may not be compatible with this version of Whiskers.");
+        eprintln!();
+        eprintln!("To fix this, add the minimum supported Whiskers version to the template frontmatter as follows:");
+        eprintln!();
+        eprintln!("---");
+        eprintln!("whiskers:");
+        eprintln!("    version: \"{whiskers_version}\"");
+        eprintln!("---");
+        eprintln!();
     };
 
-    let result = reg
-        .render_template(content, &ctx)
-        .wrap_err("Failed to render template")?;
-    let result = postprocess(&result);
+    true
+}
 
-    if let Some(expected_path) = args.check {
-        let expected = fs::read_to_string(&expected_path)?;
-        if result != expected {
-            eprintln!("Templating would result in changes.");
-            invoke_difftool(&result, &expected_path)?;
-            process::exit(1);
+fn render_single_output(
+    flavor: Option<FlavorName>,
+    ctx: &tera::Context,
+    palette: &models::Palette,
+    tera: &tera::Tera,
+    template_name: &str,
+    check: Option<PathBuf>,
+) -> Result<(), anyhow::Error> {
+    let mut ctx = ctx.clone();
+    ctx.insert("flavors", &palette.flavors);
+    if let Some(flavor) = flavor {
+        let flavor = &palette.flavors[flavor.identifier()];
+        ctx.insert("flavor", flavor);
+
+        // also throw in the flavor's colors for convenience
+        for (_, color) in flavor {
+            ctx.insert(&color.identifier, &color);
         }
-    } else if let Some(output_path) = args.output_path {
-        fs::write(output_path, result)?;
+    }
+
+    let result = tera
+        .render(template_name, &ctx)
+        .context("Template render failed")?;
+
+    if let Some(path) = check {
+        check_result_with_file(&path, &result).context("Check mode failed")?;
     } else {
         print!("{result}");
     }
@@ -188,7 +261,82 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn invoke_difftool(actual: &str, expected_path: &Path) -> Result<(), color_eyre::eyre::Error> {
+fn render_multi_output(
+    matrix: HashMap<String, Vec<String>>,
+    filename_template: &str,
+    ctx: &tera::Context,
+    palette: &models::Palette,
+    tera: &tera::Tera,
+    template_name: &str,
+    dry_run: bool,
+    check: bool,
+) -> Result<(), anyhow::Error> {
+    let iterables = matrix
+        .into_iter()
+        .map(|(key, iterable)| iterable.into_iter().map(move |v| (key.clone(), v)))
+        .multi_cartesian_product()
+        .collect::<Vec<_>>();
+
+    for iterable in iterables {
+        let mut ctx = ctx.clone();
+        for (key, value) in iterable {
+            // expand flavor automatically to prevent requiring:
+            // `{% set flavor = flavors[flavor] %}`
+            // at the top of every template.
+            if key == "flavor" {
+                let flavor: catppuccin::FlavorName = value.parse()?;
+                let flavor = &palette.flavors[flavor.identifier()];
+                ctx.insert("flavor", flavor);
+            } else {
+                ctx.insert(key, &value);
+            }
+        }
+        let result = tera
+            .render(template_name, &ctx)
+            .context("Main template render failed")?;
+        let filename = tera::Tera::one_off(filename_template, &ctx, false)
+            .context("Filename template render failed")?;
+
+        if dry_run || cfg!(test) {
+            println!(
+                "Would write {} bytes into {filename}",
+                result.as_bytes().len()
+            );
+        } else if check {
+            check_result_with_file(&filename, &result).context("Check mode failed")?;
+        } else {
+            std::fs::write(&filename, result)
+                .with_context(|| format!("Couldn't write to {filename}"))?;
+        }
+    }
+
+    Ok(())
+}
+
+fn check_result_with_file<P>(path: &P, result: &str) -> Result<(), anyhow::Error>
+where
+    P: AsRef<Path>,
+{
+    let path = path.as_ref();
+    let expected = std::fs::read_to_string(path).with_context(|| {
+        format!(
+            "Couldn't read {} for comparison against result",
+            path.display()
+        )
+    })?;
+    if *result != expected {
+        eprintln!("Output does not match {}", path.display());
+        invoke_difftool(result, path)?;
+        std::process::exit(1);
+    }
+    Ok(())
+}
+
+fn invoke_difftool<P>(actual: &str, expected_path: P) -> Result<(), anyhow::Error>
+where
+    P: AsRef<Path>,
+{
+    let expected_path = expected_path.as_ref();
     let tool = env::var("DIFFTOOL").unwrap_or_else(|_| "diff".to_string());
 
     let mut actual_file = tempfile::NamedTempFile::new()?;
@@ -203,17 +351,4 @@ fn invoke_difftool(actual: &str, expected_path: &Path) -> Result<(), color_eyre:
     }
 
     Ok(())
-}
-
-fn list_helpers() {
-    for helper in helpers() {
-        print!("- `{}", helper.name);
-        for arg in helper.args {
-            print!(" {arg}");
-        }
-        println!("` : {}", helper.description);
-        for (before, after) in helper.examples {
-            println!("    - `{{{{ {} {} }}}}` → {}", helper.name, before, after);
-        }
-    }
 }

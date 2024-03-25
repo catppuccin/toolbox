@@ -380,10 +380,10 @@ the `DIFFTOOL` environment variable, falling back to `diff` if it's not set. The
 command will be invoked as `$DIFFTOOL <actual> <expected>`.
 
 ```console
-$ whiskers theme.hbs latte --check themes/latte.cfg
+$ whiskers theme.tera latte --check themes/latte.cfg
 (no output, exit code 0)
 
-$ whiskers theme.hbs latte --check themes/latte.cfg
+$ whiskers theme.tera latte --check themes/latte.cfg
 Templating would result in changes.
 4c4
 < accent is #ea76cb

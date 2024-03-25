@@ -1,10 +1,10 @@
 ## Demo
 
-**flavor:** {{ flavorName }}
+**flavor:** {{ flavor.name }}
 
 ### Colours
 
-- **red:**                #{{ red }} / {{ rgb red }} / {{ hsl red }}
+- **red:**                #{{ red.hex }} / {{ rgb red }} / {{ hsl red }}
 - **components:**         r: {{ red_i red }} / {{ trunc (red_f red) 2 }}, g: {{ green_i red }} / {{ trunc (green_f red) 2 }}, b: {{ blue_i red }} / {{ trunc (blue_f red) 2 }}
 - **alpha:**              {{ alpha_i (opacity red 0.6) }} / {{ trunc (alpha_f (opacity red 0.6)) 2 }}
 - **10% lighter:**        #{{ lighten red 0.1 }} / {{ rgb (lighten red 0.1) }} / {{ hsl (lighten red 0.1) }}
