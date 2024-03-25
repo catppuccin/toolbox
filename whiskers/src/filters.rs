@@ -7,6 +7,27 @@ use base64::Engine as _;
 
 use crate::models::Color;
 
+pub fn mix(
+    value: &tera::Value,
+    args: &HashMap<String, tera::Value>,
+) -> Result<tera::Value, tera::Error> {
+    let base: Color = tera::from_value(value.clone())?;
+    let blend: Color = tera::from_value(
+        args.get("color")
+            .ok_or_else(|| tera::Error::msg("blend color is required"))?
+            .clone(),
+    )?;
+    let amount = args
+        .get("amount")
+        .ok_or_else(|| tera::Error::msg("blend amount is required"))?
+        .as_f64()
+        .ok_or_else(|| tera::Error::msg("blend amount must be a number"))?;
+
+    let result = Color::mix(&base, &blend, amount);
+
+    Ok(tera::to_value(result)?)
+}
+
 pub fn modify(
     value: &tera::Value,
     args: &HashMap<String, tera::Value>,
@@ -97,4 +118,17 @@ pub fn urlencode_lzma(
     let _ = writer.write(&[])?;
     let encoded = base64::engine::general_purpose::URL_SAFE.encode(compressed);
     Ok(tera::to_value(encoded)?)
+}
+
+pub fn trunc(
+    value: &tera::Value,
+    args: &HashMap<String, tera::Value>,
+) -> Result<tera::Value, tera::Error> {
+    let value: f64 = tera::from_value(value.clone())?;
+    let places: usize = tera::from_value(
+        args.get("places")
+            .ok_or_else(|| tera::Error::msg("number of places is required"))?
+            .clone(),
+    )?;
+    Ok(tera::to_value(format!("{value:.places$}"))?)
 }

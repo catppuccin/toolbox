@@ -1,27 +1,27 @@
+---
+whiskers:
+    version: "2.0.0"
+---
 ## Demo
 
 **flavor:** {{ flavor.name }}
 
 ### Colours
 
-- **red:**                #{{ red.hex }} / {{ rgb red }} / {{ hsl red }}
-- **components:**         r: {{ red_i red }} / {{ trunc (red_f red) 2 }}, g: {{ green_i red }} / {{ trunc (green_f red) 2 }}, b: {{ blue_i red }} / {{ trunc (blue_f red) 2 }}
-- **alpha:**              {{ alpha_i (opacity red 0.6) }} / {{ trunc (alpha_f (opacity red 0.6)) 2 }}
-- **10% lighter:**        #{{ lighten red 0.1 }} / {{ rgb (lighten red 0.1) }} / {{ hsl (lighten red 0.1) }}
-- **10% darker:**         #{{ darken red 0.1 }} / {{ rgb (darken red 0.1) }} / {{ hsl (darken red 0.1) }}
+- **red:**                #{{ red.hex }} / {{ css_rgb(color=red) }} / {{ css_hsl(color=red) }}
+- **components:**         r: {{ red.rgb.r }} / {{ red.rgb.r / 255 | trunc(places=2) }}, g: {{ red.rgb.g }} / {{ red.rgb.g / 255 | trunc(places=2) }}, b: {{ red.rgb.b }} / {{ red.rgb.b / 255 | trunc(places=2) }}
+- **alpha:**              {{ red.opacity }} / {{ red.opacity / 255 | trunc(places=2) }}
+{% set lightred = red | add(lightness=10) -%}
+- **10% lighter:**        #{{ lightred.hex }} / {{ css_rgb(color=lightred) }} / {{ css_hsl(color=lightred) }}
+{% set darkred = red | sub(lightness=10) -%}
+- **10% darker:**         #{{ darkred.hex }} / {{ css_rgb(color=darkred) }} / {{ css_hsl(color=darkred) }}
 
-{{ #with (mix red base 0.3) as | red | }}
-- **30% mix with base:**  #{{ red }} / {{ rgb red }} / {{ hsl red }}
-{{ /with }}
+{% set palered = red | mix(color=base, amount=0.3) -%}
+- **30% mix with base:**  #{{ palered.hex }} / {{ css_rgb(color=palered) }} / {{ css_hsl(color=palered) }}
 
-{{ #with (opacity red 0.5) as | red | }}
-- **50% opacity:**        #{{ red }} / {{ rgba red }} / {{ hsla red }}
-{{ /with }}
+{% set fadered = red | mod(opacity=0.5) -%}
+- **50% opacity:**        #{{ fadered.hex }} / {{ css_rgba(color=fadered) }} / {{ css_hsla(color=fadered) }}
 
 ### Conditionals
 
-this is a {{ darklight "dark" "light" }} theme
-
-### Misc
-
-unquote this: "{{ unquote isLight }}"
+this is a {{ if(cond=flavor.dark, t="dark", f="light") }} theme

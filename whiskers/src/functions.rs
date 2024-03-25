@@ -2,28 +2,6 @@ use std::collections::{BTreeMap, HashMap};
 
 use crate::models::Color;
 
-pub fn mix(args: &HashMap<String, tera::Value>) -> Result<tera::Value, tera::Error> {
-    let base: Color = tera::from_value(
-        args.get("base")
-            .ok_or_else(|| tera::Error::msg("base color is required"))?
-            .clone(),
-    )?;
-    let blend: Color = tera::from_value(
-        args.get("blend")
-            .ok_or_else(|| tera::Error::msg("blend color is required"))?
-            .clone(),
-    )?;
-    let amount = args
-        .get("amount")
-        .ok_or_else(|| tera::Error::msg("amount is required"))?
-        .as_f64()
-        .ok_or_else(|| tera::Error::msg("amount must be a number"))?;
-
-    let result = Color::mix(&base, &blend, amount);
-
-    Ok(tera::to_value(result)?)
-}
-
 pub fn if_fn(args: &HashMap<String, tera::Value>) -> Result<tera::Value, tera::Error> {
     let cond = args
         .get("cond")
@@ -46,4 +24,46 @@ pub fn object(args: &HashMap<String, tera::Value>) -> Result<tera::Value, tera::
     // sorting the args gives us stable output
     let args: BTreeMap<_, _> = args.iter().collect();
     Ok(tera::to_value(args)?)
+}
+
+pub fn css_rgb(args: &HashMap<String, tera::Value>) -> Result<tera::Value, tera::Error> {
+    let color: Color = tera::from_value(
+        args.get("color")
+            .ok_or_else(|| tera::Error::msg("color is required"))?
+            .clone(),
+    )?;
+
+    let color: css_colors::RGB = (&color).into();
+    Ok(tera::to_value(color.to_string())?)
+}
+
+pub fn css_rgba(args: &HashMap<String, tera::Value>) -> Result<tera::Value, tera::Error> {
+    let color: Color = tera::from_value(
+        args.get("color")
+            .ok_or_else(|| tera::Error::msg("color is required"))?
+            .clone(),
+    )?;
+    let color: css_colors::RGBA = (&color).into();
+    Ok(tera::to_value(color.to_string())?)
+}
+
+pub fn css_hsl(args: &HashMap<String, tera::Value>) -> Result<tera::Value, tera::Error> {
+    let color: Color = tera::from_value(
+        args.get("color")
+            .ok_or_else(|| tera::Error::msg("color is required"))?
+            .clone(),
+    )?;
+
+    let color: css_colors::HSL = (&color).into();
+    Ok(tera::to_value(color.to_string())?)
+}
+
+pub fn css_hsla(args: &HashMap<String, tera::Value>) -> Result<tera::Value, tera::Error> {
+    let color: Color = tera::from_value(
+        args.get("color")
+            .ok_or_else(|| tera::Error::msg("color is required"))?
+            .clone(),
+    )?;
+    let color: css_colors::HSLA = (&color).into();
+    Ok(tera::to_value(color.to_string())?)
 }

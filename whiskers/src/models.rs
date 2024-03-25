@@ -267,7 +267,7 @@ impl Color {
 
     #[must_use]
     pub fn mix(base: &Self, blend: &Self, amount: f64) -> Self {
-        let amount = (amount * 100.0).round() as u8;
+        let amount = (amount * 100.0).clamp(0.0, 100.0).round() as u8;
         let blueprint = base;
         let base: css_colors::RGBA = base.into();
         let base = base.to_rgba();
@@ -388,7 +388,7 @@ impl From<&Color> for css_colors::RGBA {
             r: css_colors::Ratio::from_u8(c.rgb.r),
             g: css_colors::Ratio::from_u8(c.rgb.g),
             b: css_colors::Ratio::from_u8(c.rgb.b),
-            a: css_colors::percent(c.opacity),
+            a: css_colors::Ratio::from_u8(c.opacity),
         }
     }
 }

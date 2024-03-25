@@ -22,14 +22,14 @@ macro_rules! function_example {
 ///
 /// `filter_example!(red | add(hue=30)) => "#ff6666")`
 macro_rules! filter_example {
-    ($value:ident | $name:ident => $output:expr) => {
+    ($value:tt | $name:ident => $output:expr) => {
         $crate::templating::FilterExample {
             value: stringify!($value).to_string(),
             inputs: indexmap::IndexMap::new(),
             output: $output.to_string(),
         }
     };
-    ($value:ident | $name:ident($($key:ident = $arg_value:tt),*) => $output:expr) => {
+    ($value:tt | $name:ident($($key:ident = $arg_value:tt),*) => $output:expr) => {
         $crate::templating::FilterExample {
             value: stringify!($value).to_string(),
             inputs: {
@@ -48,23 +48,20 @@ pub fn make_engine() -> tera::Tera {
     tera.register_filter("sub", filters::sub);
     tera.register_filter("mod", filters::modify);
     tera.register_filter("urlencode_lzma", filters::urlencode_lzma);
-    tera.register_function("mix", functions::mix);
+    tera.register_filter("trunc", filters::trunc);
+    tera.register_filter("mix", filters::mix);
     tera.register_function("if", functions::if_fn);
     tera.register_function("object", functions::object);
+    tera.register_function("css_rgb", functions::css_rgb);
+    tera.register_function("css_rgba", functions::css_rgba);
+    tera.register_function("css_hsl", functions::css_hsl);
+    tera.register_function("css_hsla", functions::css_hsla);
     tera
 }
 
 #[must_use]
 pub fn all_functions() -> Vec<Function> {
     vec![
-        Function {
-            name: "mix".to_string(),
-            description: "Mix two colors together".to_string(),
-            examples: vec![
-                function_example!(mix(base=base, blend=red, amount=0.5) => "#804040"),
-                function_example!(mix(base=base, blend=red, amount=0.5) => "#804040"),
-            ],
-        },
         Function {
             name: "if".to_string(),
             description: "Return one value if a condition is true, and another if it's false"
@@ -80,6 +77,38 @@ pub fn all_functions() -> Vec<Function> {
             examples: vec![
                 function_example!(object(a=1, b=2) => "{a: 1, b: 2}"),
                 function_example!(object(a=1, b=2) => "{a: 1, b: 2}"),
+            ],
+        },
+        Function {
+            name: "css_rgb".to_string(),
+            description: "Convert a color to an RGB CSS string".to_string(),
+            examples: vec![
+                function_example!(css_rgb(color=red) => "rgb(255, 0, 0)"),
+                function_example!(css_rgb(color=red) => "rgb(255, 0, 0)"),
+            ],
+        },
+        Function {
+            name: "css_rgba".to_string(),
+            description: "Convert a color to an RGBA CSS string".to_string(),
+            examples: vec![
+                function_example!(css_rgba(color=red) => "rgba(255, 0, 0, 1)"),
+                function_example!(css_rgba(color=red) => "rgba(255, 0, 0, 1)"),
+            ],
+        },
+        Function {
+            name: "css_hsl".to_string(),
+            description: "Convert a color to an HSL CSS string".to_string(),
+            examples: vec![
+                function_example!(css_hsl(color=red) => "hsl(0, 100%, 50%)"),
+                function_example!(css_hsl(color=red) => "hsl(0, 100%, 50%)"),
+            ],
+        },
+        Function {
+            name: "css_hsla".to_string(),
+            description: "Convert a color to an HSLA CSS string".to_string(),
+            examples: vec![
+                function_example!(css_hsla(color=red) => "hsla(0, 100%, 50%, 1)"),
+                function_example!(css_hsla(color=red) => "hsla(0, 100%, 50%, 1)"),
             ],
         },
     ]
@@ -113,6 +142,14 @@ pub fn all_filters() -> Vec<Filter> {
             ],
         },
         Filter {
+            name: "mix".to_string(),
+            description: "Mix two colors together".to_string(),
+            examples: vec![
+                filter_example!(red | mix(color=base, amount=0.5) => "#804040"),
+                filter_example!(red | mix(color=base, amount=0.5) => "#804040"),
+            ],
+        },
+        Filter {
             name: "urlencode_lzma".to_string(),
             description: "Serialize an object into a URL-safe string with LZMA compression"
                 .to_string(),
@@ -120,6 +157,11 @@ pub fn all_filters() -> Vec<Filter> {
                 filter_example!(red | urlencode_lzma => "#ff6666"),
                 filter_example!(red | urlencode_lzma => "#ff6666"),
             ],
+        },
+        Filter {
+            name: "trunc".to_string(),
+            description: "Truncate a number to a certain number of places".to_string(),
+            examples: vec![filter_example!(1.123456 | trunc(places=3) => "1.123")],
         },
     ]
 }
