@@ -37,77 +37,168 @@ into.
 $ whiskers --help
 Soothing port creation tool for the high-spirited!
 
-Usage: whiskers [OPTIONS] [TEMPLATE] [FLAVOR]
+Usage: whiskers [OPTIONS] [TEMPLATE]
 
 Arguments:
-  [TEMPLATE]  Path to the template file to render, or `-` for stdin
-  [FLAVOR]    Flavor to get colors from [possible values: latte, frappe, macchiato, mocha, all]
+  [TEMPLATE]
+          Path to the template file, or - for stdin
 
 Options:
-      --overrides <OVERRIDES>      The overrides to apply to the template in JSON format
-  -o, --output-path <OUTPUT_PATH>  Path to write to instead of stdout
-      --check <CHECK>              Instead of printing a result, check if anything would change
-  -l, --list-helpers               List all template helpers in Markdown format
-  -h, --help                       Print help
-  -V, --version                    Print version
+  -f, --flavor <FLAVOR>
+          Render a single flavor instead of all four
+          
+          [possible values: latte, frappe, macchiato, mocha]
+
+      --color-overrides <COLOR_OVERRIDES>
+          Set color overrides
+
+      --overrides <OVERRIDES>
+          Set frontmatter overrides
+
+      --check [<EXAMPLE_PATH>]
+          Instead of creating an output, check it against an example
+          
+          In single-output mode, a path to the example file must be provided. In multi-output mode, no path is required and, if one is provided, it will be ignored.
+
+      --dry-run
+          Dry run, don't write anything to disk
+
+  -l, --list-functions
+          List all Tera filters and functions
+
+  -o, --output-format <OUTPUT_FORMAT>
+          Output format of --list-functions
+          
+          [default: json]
+          [possible values: json, yaml, markdown, markdown-table]
+
+  -h, --help
+          Print help (see a summary with '-h')
+
+  -V, --version
+          Print version
+
 ```
 
 ## Template
 
-Please familiarize yourself with [Handlebars](https://handlebarsjs.com/guide/),
-which is the templating engine used in whiskers.
+Please familiarize yourself with [Tera](https://keats.github.io/tera/),
+which is the templating engine used in Whiskers.
 
 ### Context Variables
 
 The following variables are available for use in your templates:
 
-| Variable                                                                                                                                                    | Description                                                                                                                                                                 |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `flavor` (string)                                                                                                                                           | The name of the flavor being templated. Possible values: `latte`, `frappé`, `macchiato`, `mocha`.                                                                           |
-| `isLight` (bool)                                                                                                                                            | True if `flavor` is `latte`, false otherwise.                                                                                                                               |
-| `isDark` (bool)                                                                                                                                             | True unless `flavor` is `latte`.                                                                                                                                            |
-| `rosewater`, `flamingo`, `pink`, [(etc.)](https://github.com/catppuccin/rust/blob/5124eb99eb98d7111dca24537d428a6078e5bbb6/src/flavour.rs#L41-L66) (string) | All named colors in each flavor, each color is formatted as hex by default.                                                                                                 |
-| `colors` (array)                                                                                                                                            | An array containing all of the named colors.                                                                                                                                |
-| `flavors` (array)                                                                                                                                           | An array containing all of the named flavors, with every other context variable.<br/><strong>See [Single File Support](#Single-File-Support) for more information.</strong> |
-| Any Frontmatter                                                                                                                                             | All frontmatter variables as described in the [Frontmatter](#Frontmatter) section.                                                                                          |
+#### Single-Flavor Mode
 
-### Helpers
+| Variable | Description |
+| - | - |
+| `flavor` ([`Flavor`](#flavor)) | The flavor being templated. |
+| `rosewater`, `flamingo`, `pink`, [etc.](https://github.com/catppuccin/catppuccin#-palette) ([`Color`](#color)) | All colors of the flavor being templated. |
+| Any Frontmatter | All frontmatter variables as described in the [Frontmatter](#Frontmatter) section. |
 
-The following custom helpers are available:
+#### Multi-Flavor Mode
 
-| Helper<br/>(`<>` values are args)     | Input                             | Output                                                     | Description                                                                                                                               |
-| ------------------------------------- | --------------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| uppercase \<string\>                  | `{{ uppercase "hello" }}`         | `HELLO`                                                    | Convert a string to uppercase.                                                                                                            |
-| lowercase \<string\>                  | `{{ lowercase "HELLO" }}`         | `hello`                                                    | Convert a string to lowercase.                                                                                                            |
-| titlecase \<string\>                  | `{{ titlecase "hello there" }}`   | `Hello There`                                              | Convert a string to titlecase.                                                                                                            |
-| trunc \<number\> \<places\>           | `{{ trunc 3.14159265 2 }}`        | `3.14`                                                     | Format a number to a string with a given number of places.                                                                                |
-| lighten \<color\> \<amount\>          | `{{ lighten red 0.1 }}`           | `f8bacc` / `hsl(343, 81%, 85%)`                            | Lighten a color by a percentage.                                                                                                          |
-| darken \<color\> \<amount\>           | `{{ darken red 0.1 }}`            | `ee5c85` / `hsl(343, 81%, 65%)`                            | Darken a color by a percentage.                                                                                                           |
-| mix \<color_a\> \<color_b\> \<ratio\> | `{{ mix red base 0.3 }}`          | `5e4054` (30% red, 70% base)                               | Mix two colors together in a given ratio.                                                                                                 |
-| opacity \<color\> \<amount\>          | `{{ opacity red 0.5 }}`           | `hsla(343, 81%, 75%, 0.50)`                                | Set the opacity of a color.                                                                                                               |
-| unquote \<value\>                     | `"{{ unquote isLight true }}"`    | `true` (the surrounding quotation marks have been removed) | Marks a value to be unquoted. Mostly useful for maintaining JSON syntax highlighting in template files when a non-string value is needed. |
-| rgb \<color\>                         | `{{ rgb red }}`                   | `rgb(243, 139, 168)`                                       | Convert a color to CSS RGB format.                                                                                                        |
-| rgba \<color\>                        | `{{ rgba (opacity red 0.6) }}`    | `rgba(243, 139, 168, 0.60)`                                | Convert a color to CSS RGBA format.                                                                                                       |
-| hsl \<color\>                         | `{{ hsl red }}`                   | `hsl(343, 81%, 75%)`                                       | Convert a color to CSS HSL format.                                                                                                        |
-| hsla \<color\>                        | `{{ hsla (opacity red 0.6) }}`    | `hsla(343, 81%, 75%, 0.60)`                                | Convert a color to CSS HSLA format.                                                                                                       |
-| red_i \<color\>                       | `{{ red_i red }}`                 | `243`                                                      | Get the red channel of a color as an integer from 0 to 255.                                                                               |
-| green_i \<color\>                     | `{{ green_i red }}`               | `139`                                                      | Get the green channel of a color as an integer from 0 to 255.                                                                             |
-| blue_i \<color\>                      | `{{ blue_i red }}`                | `168`                                                      | Get the blue channel of a color as an integer from 0 to 255.                                                                              |
-| alpha_i \<color\>                     | `{{ alpha_i (opacity red 0.6) }}` | `153`                                                      | Get the alpha channel of a color as an integer from 0 to 255.                                                                             |
-| red_f \<color\>                       | `{{ red_f red }}`                 | `0.95` (truncated to 2 places)                             | Get the red channel of a color as a float from 0 to 1.                                                                                    |
-| green_f \<color\>                     | `{{ green_f red }}`               | `0.55` (truncated to 2 places)                             | Get the green channel of a color as a float from 0 to 1.                                                                                  |
-| blue_f \<color\>                      | `{{ blue_f red }}`                | `0.66` (truncated to 2 places)                             | Get the blue channel of a color as a float from 0 to 1.                                                                                   |
-| alpha_f \<color\>                     | `{{ alpha_f (opacity red 0.6) }}` | `0.60` (truncated to 2 places)                             | Get the alpha channel of a color as a float from 0 to 1.                                                                                  |
-| red_h \<color\>                       | `{{ red_h red }}`                 | `f3`                                                       | Get the red channel of a color as a hexadecimal number from 00 to ff.                                                                     |
-| green_h \<color\>                     | `{{ green_h red }}`               | `8b`                                                       | Get the green channel of a color as a hexadecimal number from 00 to ff.                                                                   |
-| blue_h \<color\>                      | `{{ blue_h red }}`                | `a8`                                                       | Get the blue channel of a color as a hexadecimal number from 00 to ff.                                                                    |
-| alpha_h \<color\>                     | `{{ alpha_h (opacity red 0.6) }}` | `99`                                                       | Get the alpha channel of a color as a hexadecimal number from 00 to ff.                                                                   |
-| darklight \<if-dark\> \<if-light\>    | `{{ darklight "Night" "Day" }}`   | `Day` on Latte, `Night` on other flavors                   | Choose a value depending on the current flavor. Latte is light, while Frappé, Macchiato, and Mocha are all dark.                          |
+| Variable | Description |
+| - | - |
+| `flavors` (Map\<String, [`Flavor`](#flavor)>) | An array containing all of the named flavors, with every other context variable. |
+| Any Frontmatter | All frontmatter variables as described in the [Frontmatter](#Frontmatter) section. |
+
+#### Types
+
+These types are designed to closely match the [palette.json](https://github.com/catppuccin/palette/blob/main/palette.json).
+
+##### Flavor
+
+| Field | Type | Description | Examples |
+| - | - | - | - |
+| `name` | `String` | The name of the flavor. | `"Latte"`, `"Frappé"`, `"Macchiato"`, `"Mocha"` |
+| `identifier` | `String` | The identifier of the flavor. | `"latte"`, `"frappe"`, `"macchiato"`, `"mocha"` |
+| `dark` | `bool` | Whether the flavor is dark. | `false` for Latte, `true` for others |
+| `light` | `bool` | Whether the flavor is light. | `true` for Latte, `false` for others |
+| `colors` | `Map<String, Color>` | A map of color identifiers to their respective values. | |
+
+##### Color
+
+| Field | Type | Description | Examples |
+| - | - | - | - |
+| `name` | `String` | The name of the color. | `"Rosewater"`, `"Surface 0"`, `"Base"` |
+| `identifier` | `String` | The identifier of the color. | `"rosewater"`, `"surface0"`, `"base"` |
+| `accent` | `bool` | Whether the color is an accent color. | |
+| `hex` | `String` | The color in hexadecimal format. | `"1e1e2e"` |
+| `rgb` | `RGB` | The color in RGB format. | |
+| `hsl` | `HSL` | The color in HSL format. | |
+| `opacity` | `u8` | The opacity of the color. | `0` to `255` |
+
+##### RGB
+
+| Field | Type | Description |
+| - | - | - |
+| `r` | `u8` | The red channel of the color. |
+| `g` | `u8` | The green channel of the color. |
+| `b` | `u8` | The blue channel of the color. |
+
+##### HSL
+
+| Field | Type | Description |
+| - | - | - |
+| `h` | `u16` | The hue of the color. |
+| `s` | `u8` | The saturation of the color. |
+| `l` | `u8` | The lightness of the color. |
+
+### Functions
+
+| Name | Description | Examples |
+|------|-------------|----------|
+| `if` | Return one value if a condition is true, and another if it's false | `if(cond=true, t=1, f=0)` => `1` |
+| `object` | Create an object from the input | `object(a=1, b=2)` => `{a: 1, b: 2}` |
+| `css_rgb` | Convert a color to an RGB CSS string | `css_rgb(color=red)` => `rgb(255, 0, 0)` |
+| `css_rgba` | Convert a color to an RGBA CSS string | `css_rgba(color=red)` => `rgba(255, 0, 0, 1)` |
+| `css_hsl` | Convert a color to an HSL CSS string | `css_hsl(color=red)` => `hsl(0, 100%, 50%)` |
+| `css_hsla` | Convert a color to an HSLA CSS string | `css_hsla(color=red)` => `hsla(0, 100%, 50%, 1)` |
+
+### Filters
+
+| Name | Description | Examples |
+|------|-------------|----------|
+| `add` | Add a value to a color | `red \| add(hue=30)` => `#ff6666` |
+| `sub` | Subtract a value from a color | `red \| sub(hue=30)` => `#ff6666` |
+| `mod` | Modify a color | `red \| mod(lightness=0.5)` => `#ff6666` |
+| `mix` | Mix two colors together | `red \| mix(color=base, amount=0.5)` => `#804040` |
+| `urlencode_lzma` | Serialize an object into a URL-safe string with LZMA compression | `red \| urlencode_lzma()` => `#ff6666` |
+| `trunc` | Truncate a number to a certain number of places | `1.123456 \| trunc(places=3)` => `1.123` |
 
 ## Frontmatter
 
-You can include additional context variables in the templating process by adding
-it to an optional YAML frontmatter section at the top of your template file.
+Whiskers templates may include a frontmatter section at the top of the file.
+
+The frontmatter is a YAML block that contains metadata about the template. If
+present, the frontmatter section must be the first thing in the file and must
+take the form of valid YAML set between triple-dashed lines.
+
+### Template Version
+
+The most important frontmatter key is the Whiskers version. This key allows
+Whiskers to ensure that it is rendering a template that it can understand.
+
+Example:
+
+```yaml
+---
+whiskers:
+  version: "2.0.0"
+---
+... standard template content goes here ...
+```
+
+If the version key is not present, Whiskers will display a warning and attempt
+to render the template anyway. However, it is recommended to always include the
+version key to ensure compatibility with future versions of Whiskers.
+
+### Frontmatter Variables
+
+You can also include additional context variables in the templating process by
+adding them to your template's frontmatter.
 
 As a simple example, given the following template (`example.cfg`):
 
@@ -118,11 +209,11 @@ author: 'winston'
 ---
 # Catppuccin for {{app}}
 # by {{author}}
-bg = '{{base}}'
-fg = '{{text}}'
+bg = '{{base.hex}}'
+fg = '{{text.hex}}'
 ```
 
-Running `whiskers example.cfg mocha` produces the following output:
+Running `whiskers example.cfg -f mocha` produces the following output:
 
 ```yaml
 # Catppuccin for Pepperjack
@@ -131,20 +222,18 @@ bg = '1e1e2e'
 fg = 'cdd6f4'
 ```
 
-Values in YAML frontmatter are rendered in the same way as the rest of the
-template, which means you can also make use of context variables in your
-frontmatter. This can be useful for things like setting an accent color:
+A common use of frontmatter is setting an accent color for the theme:
 
-```yaml
+```
 ---
-accent: "{{mauve}}"
-darkGreen: "{{darken green 0.3}}"
+accent: "mauve"
 ---
-bg = "#{{base}}"
-fg = "#{{text}}"
-border = "#{{accent}}"
-diffAddFg = "#{{green}}"
-diffAddBg = "#{{darkGreen}}"
+{% set darkGreen = green | sub(lightness=30) %}
+bg = "#{{base.hex}}"
+fg = "#{{text.hex}}"
+border = "#{{flavor.colors[accent].hex}}"
+diffAddFg = "#{{green.hex}}"
+diffAddBg = "#{{darkGreen.hex}}"
 ```
 
 Rendering the above template produces the following output:
@@ -160,6 +249,9 @@ diffaddbg = "#40b436"
 ## Overrides
 
 ### Frontmatter
+
+> [!IMPORTANT]
+> This feature is currently unavailable
 
 Whiskers supports overriding template values in the frontmatter itself. For
 example, this can be useful for changing variables depending on the flavor:
@@ -178,7 +270,7 @@ overrides:
 {{flavor}} has accent color {{accent}}.
 ```
 
-When running `whiskers example.yml {latte, frappe, macchiato, mocha}`, we see that:
+When running `whiskers example.yml`, we see that:
 
 - Frappé & Macchiato will have the accent `mauve` hex code.
 - Latte will have the accent `pink` hex code.
@@ -193,13 +285,13 @@ frontmatter. This is particularly useful with build scripts to automatically gen
 
 ```yaml
 ---
-accent: "{{mauve}}"
+accent: "mauve"
 ---
 theme:
-  accent: "{{accent}}"
+  accent: "{{flavor.colors[accent].hex}}"
 ```
 
-When running `whiskers example.yml latte --overrides '{"accent": "{{pink}}"}'`,
+When running `whiskers example.yml -f latte --overrides '{"accent": "pink"}'`,
 the `accent` will be overridden to pink.
 
 ### Frontmatter & CLI
@@ -215,19 +307,19 @@ To express this visually, given an `example.yml` file:
 
 ```yaml
 ---
-accent: "{{mauve}}" # <-- Frontmatter Root Context
-background: "{{base}}"
-text: "{{text}}"
+accent: "mauve" # <-- Frontmatter Root Context
+background: "base"
+text: "text"
 overrides: # <-- Frontmatter Overrides Block
   mocha:
-    accent: "{{blue}}"
+    accent: "blue"
 ---
 ```
 
 and the command:
 
 ```shell
-whiskers example.yml mocha --overrides '{"accent": "{{pink}}"}' # <-- CLI Overrides
+whiskers example.yml -f mocha --overrides '{"accent": "{{pink}}"}' # <-- CLI Overrides
 ```
 
 The resulting file will have the accent `pink` as the accent will go through the
@@ -237,143 +329,94 @@ following transformations:
 2. accent is overridden to `blue` in the overrides block.
 3. accent is overridden again to `pink` in the CLI overrides.
 
-## Single File Support
+## Single-Flavor Mode
 
-Sometimes, you may not want to generate a file per flavor, but rather use all
-the flavors inside one single file. This is achieved specifying the `<template>`
-argument as `all`. (e.g. `whiskers example.yml all`)
+Running Whiskers with the `--flavor/-f` flag causes it to run in single-flavor mode.
+This means the chosen flavor is placed into the template context as `flavor` and,
+for convenience, all of its colors are also placed into the context as their respective
+identifiers (`red`, `surface0`, et cetera.)
 
-When the `<template>` has been set to `all`, a new context variable `flavors` is
-available which can be iterated through the `{{#each}}` handlebars helper. E.g.
-if we have the following contexts:
+## Multi-Flavor Mode
 
-`latte`
+Running Whiskers without the `--flavor/-f` flag causes it to run in multi-flavor mode.
+In this mode, all flavors are placed into the template context as a map of flavor identifiers
+to their respective [`Flavor`](#flavor) objects.
 
-```json
-{
-  "flavor": "latte",
-  "isLight": true,
-  "isDark": false,
-  "rosewater": "#dc8a78",
-  ...
-}
+This map can be iterated like so:
+
 ```
-
-`frappe`
-
-```json
-{
-  "flavor": "frappe",
-  "isLight": false,
-  "isDark": true,
-  "rosewater": "#f2d5cf",
-  ...
-}
-```
-
-`macchiato`
-
-```json
-{
-  "flavor": "macchiato",
-  "isLight": false,
-  "isDark": true,
-  "rosewater": "#f4dbd6",
-  ...
-}
-```
-
-`mocha`
-
-```json
-{
-  "flavor": "mocha",
-  "isLight": false,
-  "isDark": true,
-  "rosewater": "#f5e0dc",
-  ...
-}
-```
-
-The `all` context looks like the following:
-
-```json
-{
-  "flavors": {
-    "latte": {
-      "flavor": "latte",
-      "isLight": true,
-      "isDark": false,
-      "rosewater": "#dc8a78",
-      ...
-    },
-    "frappe": {
-      "flavor": "frappe",
-      "isLight": false,
-      "isDark": true,
-      "rosewater": "#f2d5cf",
-      ...
-    },
-    "macchiato": {
-      "flavor": "macchiato",
-      "isLight": false,
-      "isDark": true,
-      "rosewater": "#f4dbd6",
-      ...
-    },
-    "mocha": {
-      "flavor": "mocha",
-      "isLight": false,
-      "isDark": true,
-      "rosewater": "#f5e0dc",
-      ...
-    }
-  }
-}
-```
-
-This allows us to define a template file like the following:
-
-`input.md`
-
-```md
-# Single File
-
-{{#each flavors}}
-## {{flavorName}}
-Accent: #{{mauve}}
-{{/each}}
-```
-
-and after running `whiskers input.md all -o README.md`, we get the following output file:
-
-`README.md`
-
-```md
-# Single File
-
-## Latte
-Accent: #8839ef
-## Frappé
-Accent: #ca9ee6
-## Macchiato
-Accent: #c6a0f6
-## Mocha
-Accent: #cba6f7
+{% for id, flavor in flavors %}
+{{id}} is one of "latte", "frappe", "macchiato", or "mocha".
+{{flavor}} is an object containing the flavor's properties and colors.
+{% endfor %}
 ```
 
 Please see the [examples/single-file](examples/single-file) directory for more
 concrete examples on how it can be used.
 
+## Template Matrix
+
+Whiskers can render multiple outputs from a single template using a matrix set
+in the frontmatter. This can be useful for generating one output per flavor per
+accent color, for example.
+
+The matrix is defined as a list of iterables. Whiskers will generate a file for
+each combination of the iterables in the matrix.
+
+Some of the iterables in the matrix can be strings without any values provided.
+In this case, Whiskers will treat it as a "magic iterable", which is an iterable
+that Whiskers can automatically generate values for before rendering the
+template.
+
+The following magic iterables are supported:
+
+- `flavor`: latte, frappe, macchiato, mocha
+- `accent`: rosewater, flamingo, pink, mauve, red, maroon, peach, yellow, green, teal, sky, sapphire, blue, lavender
+
+Example:
+
+```
+---
+whiskers:
+  version: 2.0.0
+  matrix:
+    - variant: ["normal", "no-italics"]
+    - flavor
+    - accent
+  filename: "catppuccin-{{flavor.identifier}}-{{accent}}-{{variant}}.ini"
+---
+# Catppuccin {{flavor.name}}{% if variant == "no-italics" %} (no italics){% endif %}
+[theme]
+{{accent}}: #{{flavor.colors[accent].hex}}
+```
+
+Running `whiskers template.ini` will generate the following files:
+
+```
+catppuccin-latte-rosewater-normal.ini
+catppuccin-latte-rosewater-no-italics.ini
+catppuccin-latte-flamingo-normal.ini
+catppuccin-latte-flamingo-no-italics.ini
+...
+catppuccin-frappe-rosewater-normal.ini
+catppuccin-frappe-rosewater-no-italics.ini
+```
+
+... and so on for every combination of flavor, accent, and variant.
+
 ## Check Mode
 
 You can use Whiskers as a linter with *check mode*. To do so, set the `--check`
-option to a file containing the expected output. Whiskers will render your
-template as per usual, but then instead of printing the result it will check it
-against the expected output and fail with exit code 1 if they differ.
+option. Whiskers will render your template as per usual, but then instead of
+printing the result it will check it against the expected output and fail with
+exit code 1 if they differ.
 
 This is especially useful in CI pipelines to ensure that the generated files are
 not changed without a corresponding change to the templates.
+
+In single-flavor mode, you must provide the path to the expected output file as
+an argument to the `--check` option. In multi-flavor mode, the path is
+unnecessary and will be ignored.
 
 Whiskers will diff the output against the check file using the program set in
 the `DIFFTOOL` environment variable, falling back to `diff` if it's not set. The
@@ -396,10 +439,10 @@ Templating would result in changes.
 ## Further Reading
 
 - See the [examples](examples) directory which further showcase the utilities
-  and power of whiskers.
+  and power of Whiskers.
 - See the draft RFC,
   [CAT-0003-Whiskers](https://github.com/catppuccin/community/pull/12), to
-  understand the motivations behind creating whiskers.
+  understand the motivations behind creating Whiskers.
 
 &nbsp;
 
