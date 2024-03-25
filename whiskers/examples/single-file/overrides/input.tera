@@ -1,32 +1,35 @@
 ---
+whiskers:
+  version: "2.0.0"
+
 # Set default accent color
-accent: "{{mauve}}"
+accent: "mauve"
+
 # Set custom variables
 user: "@sgoudham"
+
 overrides:
-  # And you can override variables for specific flavors
   latte:
-    accent: "{{pink}}"
-    emoji: "🌻"
     user: "@backwardspy"
+    accent: "pink"
+    emoji: "🌻"
   frappe:
-    accent: "{{blue}}"
-    emoji: "🪴"
-    flavor: "frappé"
     user: "@nullishamy"
-  macchiato: # defaults are used
+    accent: "blue"
+    emoji: "🪴"
+  macchiato:
     emoji: "🌺"
   mocha:
-    accent: "{{sky}}"
-    emoji: "🌿"
     user: "@nekowinston"
+    accent: "sky"
+    emoji: "🌿"
 ---
-
 # Single File With Overrides
+{% for id, flavor in flavors %}
+{% set o = overrides[id] -%}
+{% set user = o | get(key="user", default=user) -%}
+{% set accent = o | get(key="accent", default=accent) -%}
+## {{o.emoji}} {{flavor.name}}
 
-{{#each flavors}}
-## {{emoji}} {{flavorName}}
-
-{{user}}'s favourite hex code is #{{accent}}
-
-{{/each}}
+{{user}}'s favourite hex code is #{{flavor.colors[accent].hex}}
+{% endfor %}
