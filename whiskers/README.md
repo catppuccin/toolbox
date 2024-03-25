@@ -248,38 +248,10 @@ diffaddbg = "#40b436"
 
 ## Overrides
 
-### Frontmatter
-
-> [!IMPORTANT]
-> This feature is currently unavailable
-
-Whiskers supports overriding template values in the frontmatter itself. For
-example, this can be useful for changing variables depending on the flavor:
-
-`example.yml`
-
-```yaml
----
-accent: "{{mauve}}"
-overrides:
-  latte: # only applies to Latte
-    accent: "{{pink}}"
-  mocha: # only applies to Mocha
-    accent: "{{blue}}"
----
-{{flavor}} has accent color {{accent}}.
-```
-
-When running `whiskers example.yml`, we see that:
-
-- Frappé & Macchiato will have the accent `mauve` hex code.
-- Latte will have the accent `pink` hex code.
-- Mocha will have the accent `blue` hex code.
-
-### CLI
-
-Overrides can also be specified through the cli via the `--overrides` flag, taking in a JSON string resembling the
-frontmatter. This is particularly useful with build scripts to automatically generate files for each accent:
+Frontmatter overrides can also be specified through the cli via the
+`--overrides` flag, taking in a JSON string resembling the frontmatter. This is
+particularly useful with build scripts to automatically generate files for each
+accent:
 
 `example.yml`
 
@@ -294,40 +266,27 @@ theme:
 When running `whiskers example.yml -f latte --overrides '{"accent": "pink"}'`,
 the `accent` will be overridden to pink.
 
-### Frontmatter & CLI
+## Color Overrides
 
-Overrides can be specified both in the frontmatter and the CLI but it is
-important to understand the order of priority:
+Color overrides can be specified through the cli via the `--color-overrides`
+flag. This flag takes a JSON string like the following:
 
-1. CLI overrides (`--overrides` flag.)
-2. Frontmatter `overrides` block.
-3. Frontmatter root context.
-
-To express this visually, given an `example.yml` file:
-
-```yaml
----
-accent: "mauve" # <-- Frontmatter Root Context
-background: "base"
-text: "text"
-overrides: # <-- Frontmatter Overrides Block
-  mocha:
-    accent: "blue"
----
+```json
+{
+  "all": {
+    "text": "ff0000"
+  },
+  "mocha": {
+    "base": "000000",
+    "mantle": "010101",
+    "crust": "020202",
+  }
+}
 ```
 
-and the command:
-
-```shell
-whiskers example.yml -f mocha --overrides '{"accent": "{{pink}}"}' # <-- CLI Overrides
-```
-
-The resulting file will have the accent `pink` as the accent will go through the
-following transformations:
-
-1. accent is set to `mauve` in the root context.
-2. accent is overridden to `blue` in the overrides block.
-3. accent is overridden again to `pink` in the CLI overrides.
+Passing these overrides would set the `text` color to bright red for all
+flavors, and the `base`, `mantle`, and `crust` colors to black/near-black for
+Mocha.
 
 ## Single-Flavor Mode
 
