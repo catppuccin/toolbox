@@ -146,7 +146,7 @@ These types are designed to closely match the [palette.json](https://github.com/
 | `s` | `u8` | The saturation of the color. |
 | `l` | `u8` | The lightness of the color. |
 
-## Functions
+### Functions
 
 | Name | Description | Examples |
 |------|-------------|----------|
@@ -156,7 +156,8 @@ These types are designed to closely match the [palette.json](https://github.com/
 | `css_rgba` | Convert a color to an RGBA CSS string | `css_rgba(color=red)` => `rgba(210, 15, 57, 1.00)` |
 | `css_hsl` | Convert a color to an HSL CSS string | `css_hsl(color=red)` => `hsl(347, 87%, 44%)` |
 | `css_hsla` | Convert a color to an HSLA CSS string | `css_hsla(color=red)` => `hsla(347, 87%, 44%, 1.00)` |
-## Filters
+
+### Filters
 
 | Name | Description | Examples |
 |------|-------------|----------|
