@@ -1,6 +1,6 @@
 [package]
 name = "puccinier"
-version = "1.0.4+deprecated"
+version = "1.0.5+deprecated"
 edition = "2021"
 readme = "README.md"
 authors = ["ap-1 <anishp0828@gmail.com>"]
