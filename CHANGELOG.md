@@ -1,5 +1,32 @@
 # Changelog
 
+## [2.0.0](https://github.com/catppuccin/toolbox/compare/whiskers-v1.1.4...whiskers-v2.0.0) (2024-03-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* switch to tera & rich context variables
+
+### Features
+
+* switch to tera & rich context variables ([bdf0dc5](https://github.com/catppuccin/toolbox/commit/bdf0dc54b0271c26ea5522e105a562ef946e46bd))
+* **whiskers:** add colors object in context ([#104](https://github.com/catppuccin/toolbox/issues/104)) ([0f08acc](https://github.com/catppuccin/toolbox/commit/0f08acc98b77fb8ef2c62cf6d1e842afcc0265bf))
+* **whiskers:** add rgba to hex helpers ([#120](https://github.com/catppuccin/toolbox/issues/120)) ([31ffd9e](https://github.com/catppuccin/toolbox/commit/31ffd9e2bc806fcbd9f0c14653c93c17a91ba6c7))
+* **whiskers:** enforce semver versioning in frontmatter ([bdf0dc5](https://github.com/catppuccin/toolbox/commit/bdf0dc54b0271c26ea5522e105a562ef946e46bd))
+* **whiskers:** update catppuccin to v2 & add `flavorName` var ([#137](https://github.com/catppuccin/toolbox/issues/137)) ([8e60740](https://github.com/catppuccin/toolbox/commit/8e607401c48447f368e4beb59157b34ace1c4a85))
+
+
+### Bug Fixes
+
+* **deps:** update rust crate catppuccin to 1.4 ([#124](https://github.com/catppuccin/toolbox/issues/124)) ([0b6de43](https://github.com/catppuccin/toolbox/commit/0b6de43b4817fa4e34fcebe5fde81159d9103a8c))
+* **deps:** update rust crate catppuccin to 2.1 ([#145](https://github.com/catppuccin/toolbox/issues/145)) ([0eb1fd7](https://github.com/catppuccin/toolbox/commit/0eb1fd78420f6257a1ed11ee71af7e54d02b5c2c))
+* **deps:** update rust crate catppuccin to 2.2 ([#146](https://github.com/catppuccin/toolbox/issues/146)) ([fe9fd1a](https://github.com/catppuccin/toolbox/commit/fe9fd1a8be8c2179b2d0c136b5ce324bae5b2c28))
+* **deps:** update rust crate clap to 4.5 ([#127](https://github.com/catppuccin/toolbox/issues/127)) ([20d4047](https://github.com/catppuccin/toolbox/commit/20d40479bbf3345f2b1038c736a07ccb4c6efda9))
+* **deps:** update rust crate clap-stdin to 0.4.0 ([#96](https://github.com/catppuccin/toolbox/issues/96)) ([dc6c017](https://github.com/catppuccin/toolbox/commit/dc6c0177cedbde090d63993587f6360722c0ed65))
+* **deps:** update rust crate indexmap to 2.2.3 ([#126](https://github.com/catppuccin/toolbox/issues/126)) ([70bfca0](https://github.com/catppuccin/toolbox/commit/70bfca0dbc060e85be291ad230d617bc8c7f9c5e))
+* **deps:** update rust crate tempfile to 3.10 ([#117](https://github.com/catppuccin/toolbox/issues/117)) ([c8846f6](https://github.com/catppuccin/toolbox/commit/c8846f6b038c69aa42a85cdaa46b1ae378f869ba))
+* **whiskers:** use block context in darklight helper ([#144](https://github.com/catppuccin/toolbox/issues/144)) ([486a747](https://github.com/catppuccin/toolbox/commit/486a74772ebb159913063f668dd1f015e8418129))
+
 ## [1.1.4](https://github.com/catppuccin/toolbox/compare/whiskers-v1.1.3...whiskers-v1.1.4) (2023-12-10)
 
 
