@@ -82,34 +82,22 @@ pub fn all_functions() -> Vec<Function> {
         Function {
             name: "css_rgb".to_string(),
             description: "Convert a color to an RGB CSS string".to_string(),
-            examples: vec![
-                function_example!(css_rgb(color=red) => "rgb(255, 0, 0)"),
-                function_example!(css_rgb(color=red) => "rgb(255, 0, 0)"),
-            ],
+            examples: vec![function_example!(css_rgb(color=red) => "rgb(210, 15, 57)")],
         },
         Function {
             name: "css_rgba".to_string(),
             description: "Convert a color to an RGBA CSS string".to_string(),
-            examples: vec![
-                function_example!(css_rgba(color=red) => "rgba(255, 0, 0, 1)"),
-                function_example!(css_rgba(color=red) => "rgba(255, 0, 0, 1)"),
-            ],
+            examples: vec![function_example!(css_rgba(color=red) => "rgba(210, 15, 57, 1.00)")],
         },
         Function {
             name: "css_hsl".to_string(),
             description: "Convert a color to an HSL CSS string".to_string(),
-            examples: vec![
-                function_example!(css_hsl(color=red) => "hsl(0, 100%, 50%)"),
-                function_example!(css_hsl(color=red) => "hsl(0, 100%, 50%)"),
-            ],
+            examples: vec![function_example!(css_hsl(color=red) => "hsl(347, 87%, 44%)")],
         },
         Function {
             name: "css_hsla".to_string(),
             description: "Convert a color to an HSLA CSS string".to_string(),
-            examples: vec![
-                function_example!(css_hsla(color=red) => "hsla(0, 100%, 50%, 1)"),
-                function_example!(css_hsla(color=red) => "hsla(0, 100%, 50%, 1)"),
-            ],
+            examples: vec![function_example!(css_hsla(color=red) => "hsla(347, 87%, 44%, 1.00)")],
         },
     ]
 }
@@ -129,25 +117,22 @@ pub fn all_filters() -> Vec<Filter> {
             name: "sub".to_string(),
             description: "Subtract a value from a color".to_string(),
             examples: vec![
-                filter_example!(red | sub(hue=30) => "#ff6666"),
-                filter_example!(red | sub(saturation=0.5) => "#ff6666"),
+                filter_example!(red | sub(hue=30) => "#d30f9b"),
+                filter_example!(red | sub(saturation=60) => "#8f5360"),
             ],
         },
         Filter {
             name: "mod".to_string(),
             description: "Modify a color".to_string(),
             examples: vec![
-                filter_example!(red | mod(lightness=0.5) => "#ff6666"),
-                filter_example!(red | mod(opacity=0.5) => "#ff6666"),
+                filter_example!(red | mod(lightness=80) => "#f8a0b3"),
+                filter_example!(red | mod(opacity=0.5) => "#d20f3980"),
             ],
         },
         Filter {
             name: "mix".to_string(),
             description: "Mix two colors together".to_string(),
-            examples: vec![
-                filter_example!(red | mix(color=base, amount=0.5) => "#804040"),
-                filter_example!(red | mix(color=base, amount=0.5) => "#804040"),
-            ],
+            examples: vec![filter_example!(red | mix(color=base, amount=0.5) => "#e08097")],
         },
         Filter {
             name: "urlencode_lzma".to_string(),
@@ -155,7 +140,7 @@ pub fn all_filters() -> Vec<Filter> {
                 .to_string(),
             examples: vec![
                 filter_example!(red | urlencode_lzma => "#ff6666"),
-                filter_example!(red | urlencode_lzma => "#ff6666"),
+                filter_example!(some_object | urlencode_lzma => "XQAAgAAEAAAAAAAAAABAqEggMAAAAA=="),
             ],
         },
         Filter {
