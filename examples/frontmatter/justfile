@@ -16,7 +16,7 @@ clean:
 
 # Generate a single flavor, e.g. "mocha"
 gen flavor:
-  @{{whiskers_cmd}} input.hbs {{flavor}} -o {{output}}/{{flavor}}.md
+  @{{whiskers_cmd}} input.tera --flavor {{flavor}} > {{output}}/{{flavor}}.md
 
 # Generate all four flavors
 all: setup (gen "latte") (gen "frappe") (gen "macchiato") (gen "mocha")
