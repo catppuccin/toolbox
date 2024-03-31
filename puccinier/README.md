@@ -13,6 +13,10 @@
 
 &nbsp;
 
+> [!IMPORTANT]
+> Puccinier is **no longer actively maintained**. This tool has been deprecated
+> in favour of our new [`whiskers`](../whiskers/README.md) tool.
+
 If you wrote a v1 or v2 Catppuccin theme, you may use Puccinier to automatically create the rest of the v2 themes. Puccinier supports the conversion of properly formatted hex, rgb, and hsl colors (case insensitive).
 
 ## Installation
