@@ -74,7 +74,7 @@ fn list_format() -> String {
 
 fn table_format() -> String {
     let mut result = String::new();
-    result.push_str("## Functions\n\n");
+    result.push_str("### Functions\n\n");
     result.push_str("| Name | Description | Examples |\n");
     result.push_str("|------|-------------|----------|\n");
     for function in templating::all_functions() {
@@ -104,7 +104,7 @@ fn table_format() -> String {
         ));
     }
 
-    result.push_str("## Filters\n\n");
+    result.push_str("### Filters\n\n");
     result.push_str("| Name | Description | Examples |\n");
     result.push_str("|------|-------------|----------|\n");
     for filter in templating::all_filters() {
