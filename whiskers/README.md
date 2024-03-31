@@ -405,10 +405,10 @@ Templating would result in changes.
 ## Further Reading
 
 - See the [examples](examples) directory which further showcase the utilities
-  and power of Whiskers.
-- See the draft RFC,
-  [CAT-0003-Whiskers](https://github.com/catppuccin/community/pull/12), to
-  understand the motivations behind creating Whiskers.
+  and power of whiskers.
+- See the RFC,
+  [CAT-0003-Whiskers](https://github.com/catppuccin/community/blob/main/rfc/CAT-0003-Whiskers.md),
+  to understand the motivation behind creating whiskers.
 
 &nbsp;
 
