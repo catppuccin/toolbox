@@ -19,7 +19,6 @@ A set of software tools by Catppuccin developers, for Catppuccin developers.
 
 - [Catwalk](https://github.com/catppuccin/toolbox/tree/main/catwalk#readme)
 - [Whiskers](https://github.com/catppuccin/toolbox/tree/main/whiskers#readme)
-- [Puccinier](https://github.com/catppuccin/toolbox/tree/main/puccinier#readme)
 
 &nbsp;
 
@@ -41,7 +40,7 @@ Add the following to your `flake.nix`:
           modules = [
           {
               environment.systemPackages = [
-                catppuccin-toolbox.packages.${pkgs.system}.puccinier
+                catppuccin-toolbox.packages.${pkgs.system}.whiskers
               ];
             }
           ];
@@ -73,7 +72,7 @@ Add the following to your `flake.nix`:
       modules = [
         {
             home.packages = [
-                catppuccin-toolbox.packages.${pkgs.system}.puccinier
+                catppuccin-toolbox.packages.${pkgs.system}.whiskers
             ];
         }
       ];
@@ -95,12 +94,12 @@ Add the following to your configuration:
 in {
     # Home Manager
     home.packages = [
-        catppuccin-toolbox.packages.${pkgs.system}.puccinier
+        catppuccin-toolbox.packages.${pkgs.system}.whiskers
     ];
 
     # Nix
     environment.systemPackages = [
-        catppuccin-toolbox.packages.${pkgs.system}.puccinier
+        catppuccin-toolbox.packages.${pkgs.system}.whiskers
     ];
 }
 ```

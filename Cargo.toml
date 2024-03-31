@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["catwalk", "puccinier", "whiskers"]
+members = ["catwalk", "whiskers"]
 
 [profile.release]
 lto = true
