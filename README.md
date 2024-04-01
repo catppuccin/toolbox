@@ -168,6 +168,11 @@ These types are designed to closely match the [palette.json](https://github.com/
 | `urlencode_lzma` | Serialize an object into a URL-safe string with LZMA compression | `red \| urlencode_lzma()` => `#ff6666` |
 | `trunc` | Truncate a number to a certain number of places | `1.123456 \| trunc(places=3)` => `1.123` |
 
+> [!NOTE]
+> You also have access to all of Tera's own built-in filters and functions.
+> See [the Tera documentation](https://keats.github.io/tera/docs/#built-ins) for
+> more information.
+
 ## Frontmatter
 
 Whiskers templates may include a frontmatter section at the top of the file.
