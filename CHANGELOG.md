@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/catppuccin/toolbox/compare/whiskers-v2.0.0...whiskers-v2.0.1) (2024-04-01)
+
+
+### Bug Fixes
+
+* **whiskers:** fix frontmatter/version detection on windows ([ac38530](https://github.com/catppuccin/toolbox/commit/ac38530909bf6421f87002423f968e04420f9a0e))
+
 ## [2.0.0](https://github.com/catppuccin/toolbox/compare/whiskers-v1.1.4...whiskers-v2.0.0) (2024-03-31)
 
 
