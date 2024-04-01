@@ -85,6 +85,17 @@ Options:
 Please familiarize yourself with [Tera](https://keats.github.io/tera/),
 which is the templating engine used in Whiskers.
 
+### Naming Convention
+
+Whiskers imposes no restrictions on template names. However, we recommend you use one the following options:
+
+- `<port name>.tera` in the repo root for ports that only need one template.
+  - For example the [lazygit](https://github.com/catppuccin/lazygit) port uses [`lazygit.tera`](https://github.com/catppuccin/lazygit/blob/main/lazygit.tera)
+- `templates/<file name>.tera` especially for ports that have multiple templates.
+  - For example, a port that generates files called `ui.cfg` and `palette.cfg` could use `templates/ui.tera` and `templates/palette.tera` respectively.
+
+These conventions exist to make it easier for contributors to find templates and to give code editors a hint about the correct file type.
+
 ### Context Variables
 
 The following variables are available for use in your templates:
@@ -205,7 +216,7 @@ version key to ensure compatibility with future versions of Whiskers.
 You can also include additional context variables in the templating process by
 adding them to your template's frontmatter.
 
-As a simple example, given the following template (`example.cfg`):
+As a simple example, given the following template (`example.tera`):
 
 ```yaml
 ---
@@ -218,7 +229,7 @@ bg = '{{base.hex}}'
 fg = '{{text.hex}}'
 ```
 
-Running `whiskers example.cfg -f mocha` produces the following output:
+Running `whiskers example.tera -f mocha` produces the following output:
 
 ```yaml
 # Catppuccin for Pepperjack
@@ -258,7 +269,7 @@ Frontmatter overrides can also be specified through the cli via the
 particularly useful with build scripts to automatically generate files for each
 accent:
 
-`example.yml`
+`example.tera`
 
 ```yaml
 ---
@@ -268,7 +279,7 @@ theme:
   accent: "{{flavor.colors[accent].hex}}"
 ```
 
-When running `whiskers example.yml -f latte --overrides '{"accent": "pink"}'`,
+When running `whiskers example.tera -f latte --overrides '{"accent": "pink"}'`,
 the `accent` will be overridden to pink.
 
 ## Color Overrides
@@ -359,7 +370,7 @@ whiskers:
 {{accent}}: #{{flavor.colors[accent].hex}}
 ```
 
-Running `whiskers template.ini` will generate the following files:
+Running `whiskers template.tera` will generate the following files:
 
 ```
 catppuccin-latte-rosewater-normal.ini
@@ -406,6 +417,17 @@ Templating would result in changes.
 
 (exit code 1)
 ```
+
+## Editor Support
+
+Tera's syntax is not natively supported by most editors. Some editors have
+extensions available that provide syntax highlighting and other features for
+Tera templates. In the case that your editor does not have a viable extension
+available, you can try using a Jinja extension instead. While not an exact
+match, Tera's syntax is similar enough to Jinja's that it can be used quite
+well in most cases.
+
+For Visual Studio Code users we recommend the [Better Jinja](https://marketplace.visualstudio.com/items?itemName=samuelcolvin.jinjahtml) extension.
 
 ## Further Reading
 
