@@ -1,0 +1,10 @@
+---
+# use `--overrides '{"accent": "red"}'` for example
+whiskers:
+  version: "2.0.0"
+  matrix:
+    - flavor
+    - accent
+  filename: 'output-{{flavor.identifier}}-{{accent}}.txt'
+---
+{{flavor.name}} accent {{accent}}
