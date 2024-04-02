@@ -115,16 +115,30 @@ fn main() -> anyhow::Result<()> {
         ctx.insert(key, &value);
     }
 
-    // build the Tera engine and palette
-    let mut tera = templating::make_engine();
-    tera.add_raw_template(&template_name, &doc.body)
-        .context("Template is invalid")?;
+    // build the palette and add it to the templating context
     let palette = models::build_palette(
         template_opts.capitalize_hex,
         template_opts.hex_prefix.as_deref(),
         args.color_overrides.as_ref(),
     )
     .context("Palette context cannot be built")?;
+
+    ctx.insert("flavors", &palette.flavors);
+    if let Some(flavor) = args.flavor {
+        let flavor: catppuccin::FlavorName = flavor.into();
+        let flavor = &palette.flavors[flavor.identifier()];
+        ctx.insert("flavor", flavor);
+
+        // also throw in the flavor's colors for convenience
+        for (_, color) in flavor {
+            ctx.insert(&color.identifier, &color);
+        }
+    }
+
+    // build the Tera engine
+    let mut tera = templating::make_engine();
+    tera.add_raw_template(&template_name, &doc.body)
+        .context("Template is invalid")?;
 
     if let Some(matrix) = template_opts.matrix {
         let Some(filename_template) = template_opts.filename else {
@@ -148,15 +162,8 @@ fn main() -> anyhow::Result<()> {
                 c.ok_or_else(|| anyhow!("--check requires a file argument in single-output mode"))
             })
             .transpose()?;
-        render_single_output(
-            args.flavor.map(Into::into),
-            &ctx,
-            &palette,
-            &tera,
-            &template_name,
-            check,
-        )
-        .context("Single-output render failed")?;
+        render_single_output(&ctx, &tera, &template_name, check)
+            .context("Single-output render failed")?;
     }
 
     Ok(())
@@ -229,25 +236,11 @@ fn template_is_compatible(template_opts: &TemplateOptions) -> bool {
 }
 
 fn render_single_output(
-    flavor: Option<FlavorName>,
     ctx: &tera::Context,
-    palette: &models::Palette,
     tera: &tera::Tera,
     template_name: &str,
     check: Option<PathBuf>,
 ) -> Result<(), anyhow::Error> {
-    let mut ctx = ctx.clone();
-    ctx.insert("flavors", &palette.flavors);
-    if let Some(flavor) = flavor {
-        let flavor = &palette.flavors[flavor.identifier()];
-        ctx.insert("flavor", flavor);
-
-        // also throw in the flavor's colors for convenience
-        for (_, color) in flavor {
-            ctx.insert(&color.identifier, &color);
-        }
-    }
-
     let result = tera
         .render(template_name, &ctx)
         .context("Template render failed")?;
