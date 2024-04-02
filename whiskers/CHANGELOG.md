@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/catppuccin/toolbox/compare/whiskers-v2.0.1...whiskers-v2.0.2) (2024-04-02)
+
+
+### Bug Fixes
+
+* put flavors/flavor into context even when matrix is used ([#169](https://github.com/catppuccin/toolbox/issues/169)) ([58dc4b5](https://github.com/catppuccin/toolbox/commit/58dc4b5663b4a37abaa29f0b43995d6c4de201ee))
+
 ## [2.0.1](https://github.com/catppuccin/toolbox/compare/whiskers-v2.0.0...whiskers-v2.0.1) (2024-04-01)
 
 
