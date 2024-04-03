@@ -13,21 +13,31 @@ use itertools::Itertools;
 use whiskers::{
     cli::{Args, OutputFormat},
     context::merge_values,
-    frontmatter, markdown,
+    frontmatter,
+    markdown,
     matrix::{self, Matrix},
     models, templating,
 };
 
 const FRONTMATTER_OPTIONS_SECTION: &str = "whiskers";
 
-#[derive(Default, Debug, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize)]
 struct TemplateOptions {
     version: Option<semver::VersionReq>,
     matrix: Option<Matrix>,
     filename: Option<String>,
-    hex_prefix: Option<String>,
-    #[serde(default)]
-    capitalize_hex: bool,
+    hex_format: String,
+}
+
+impl Default for TemplateOptions {
+    fn default() -> Self {
+        Self {
+            version: None,
+            matrix: None,
+            filename: None,
+            hex_format: "{{r}}{{g}}{{b}}".to_string(),
+        }
+    }
 }
 
 impl TemplateOptions {
@@ -41,9 +51,7 @@ impl TemplateOptions {
             version: Option<semver::VersionReq>,
             matrix: Option<Vec<tera::Value>>,
             filename: Option<String>,
-            hex_prefix: Option<String>,
-            #[serde(default)]
-            capitalize_hex: bool,
+            hex_format: Option<String>,
         }
 
         if let Some(opts) = frontmatter.get(FRONTMATTER_OPTIONS_SECTION) {
@@ -58,8 +66,7 @@ impl TemplateOptions {
                 version: opts.version,
                 matrix,
                 filename: opts.filename,
-                hex_prefix: opts.hex_prefix,
-                capitalize_hex: opts.capitalize_hex,
+                hex_format: opts.hex_format.unwrap_or_else(|| "{{r}}{{g}}{{b}}".to_string()),
             })
         } else {
             Ok(Self::default())
@@ -119,12 +126,8 @@ fn main() -> anyhow::Result<()> {
     let mut tera = templating::make_engine();
     tera.add_raw_template(&template_name, &doc.body)
         .context("Template is invalid")?;
-    let palette = models::build_palette(
-        template_opts.capitalize_hex,
-        template_opts.hex_prefix.as_deref(),
-        args.color_overrides.as_ref(),
-    )
-    .context("Palette context cannot be built")?;
+    let palette = models::build_palette(template_opts.hex_format, args.color_overrides.as_ref())
+        .context("Palette context cannot be built")?;
 
     if let Some(matrix) = template_opts.matrix {
         let Some(filename_template) = template_opts.filename else {
@@ -264,6 +267,7 @@ fn render_single_output(
 fn render_multi_output(
     matrix: HashMap<String, Vec<String>>,
     filename_template: &str,
+    // hex_template: &str,
     ctx: &tera::Context,
     palette: &models::Palette,
     tera: &tera::Tera,
