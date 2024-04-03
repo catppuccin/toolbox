@@ -39,7 +39,9 @@ pub fn modify(
         Ok(tera::to_value(color.mod_hue(hue, hex_format))?)
     } else if let Some(saturation) = args.get("saturation") {
         let saturation = tera::from_value(saturation.clone())?;
-        Ok(tera::to_value(color.mod_saturation(saturation, hex_format))?)
+        Ok(tera::to_value(
+            color.mod_saturation(saturation, hex_format),
+        )?)
     } else if let Some(lightness) = args.get("lightness") {
         let lightness = tera::from_value(lightness.clone())?;
         Ok(tera::to_value(color.mod_lightness(lightness, hex_format))?)
@@ -62,7 +64,9 @@ pub fn add(
         Ok(tera::to_value(color.add_hue(hue, hex_format))?)
     } else if let Some(saturation) = args.get("saturation") {
         let saturation = tera::from_value(saturation.clone())?;
-        Ok(tera::to_value(color.add_saturation(saturation, hex_format))?)
+        Ok(tera::to_value(
+            color.add_saturation(saturation, hex_format),
+        )?)
     } else if let Some(lightness) = args.get("lightness") {
         let lightness = tera::from_value(lightness.clone())?;
         Ok(tera::to_value(color.add_lightness(lightness, hex_format))?)
@@ -85,7 +89,9 @@ pub fn sub(
         Ok(tera::to_value(color.sub_hue(hue, hex_format))?)
     } else if let Some(saturation) = args.get("saturation") {
         let saturation = tera::from_value(saturation.clone())?;
-        Ok(tera::to_value(color.sub_saturation(saturation, hex_format))?)
+        Ok(tera::to_value(
+            color.sub_saturation(saturation, hex_format),
+        )?)
     } else if let Some(lightness) = args.get("lightness") {
         let lightness = tera::from_value(lightness.clone())?;
         Ok(tera::to_value(color.sub_lightness(lightness, hex_format))?)

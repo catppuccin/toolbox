@@ -1,8 +1,8 @@
+use crate::cli::ColorOverrides;
 use anyhow::Context;
 use css_colors::Color as _;
 use indexmap::IndexMap;
 use std::collections::HashMap;
-use crate::cli::ColorOverrides;
 
 // a frankenstein mix of Catppuccin & css_colors types to get all the
 // functionality we want.
@@ -54,11 +54,17 @@ pub enum Error {
 /// attempt to canonicalize a hex string, and convert it to the provided format
 fn format_hex(hex: &str, hex_format: String) -> Result<String, anyhow::Error> {
     let hex = hex.trim_start_matches('#');
-    let alpha = if hex.len() == 8 {&hex[6..8]} else {""};
-    let hex = [("r", &hex[0..2]), ("g", &hex[2..4]), ("b", &hex[4..6]), ("a", alpha)].map(|(k,v)| (k.to_string(), v.to_string()));
+    let alpha = if hex.len() == 8 { &hex[6..8] } else { "" };
+    let hex = [
+        ("r", &hex[0..2]),
+        ("g", &hex[2..4]),
+        ("b", &hex[4..6]),
+        ("a", alpha),
+    ]
+    .map(|(k, v)| (k.to_string(), v.to_string()));
 
     let mut hex_ctx = HashMap::from(hex.clone());
-    hex_ctx.extend(hex.map(|(k,v)| (k.to_uppercase(), v.to_uppercase())));
+    hex_ctx.extend(hex.map(|(k, v)| (k.to_uppercase(), v.to_uppercase())));
 
     let hex_ctx = tera::Context::from_serialize(&hex_ctx).context("Hex template render failed")?;
 
@@ -77,7 +83,9 @@ fn color_from_hex(
         b: (i & 0xff) as u8,
     };
     let hsl = css_colors::rgb(rgb.r, rgb.g, rgb.b).to_hsl();
-    let hex = format_hex(hex, hex_format.clone()).context("Hex formatting failed").unwrap();
+    let hex = format_hex(hex, hex_format.clone())
+        .context("Hex formatting failed")
+        .unwrap();
     Ok(Color {
         name: blueprint.name.to_string(),
         identifier: blueprint.name.identifier().to_string(),
@@ -95,7 +103,9 @@ fn color_from_hex(
 }
 
 fn color_from_catppuccin(color: &catppuccin::Color, hex_format: String) -> Color {
-    let hex = format_hex(&color.hex.to_string(), hex_format.clone()).context("Hex formatting failed").unwrap();
+    let hex = format_hex(&color.hex.to_string(), hex_format.clone())
+        .context("Hex formatting failed")
+        .unwrap();
     Color {
         name: color.name.to_string(),
         identifier: color.name.identifier().to_string(),
@@ -207,7 +217,9 @@ impl<'a> IntoIterator for &'a Flavor {
 fn rgb_to_hex(rgb: &RGB, opacity: u8, hex_format: String) -> String {
     let hex = format!("{:02x}{:02x}{:02x}", rgb.r, rgb.g, rgb.b);
     let hexa = format!("{hex}{opacity:02x}");
-    format_hex(if opacity < 255 {&hexa} else {&hex}, hex_format).context("Hex formatting failed").unwrap()
+    format_hex(if opacity < 255 { &hexa } else { &hex }, hex_format)
+        .context("Hex formatting failed")
+        .unwrap()
 }
 
 impl Color {

@@ -13,8 +13,7 @@ use itertools::Itertools;
 use whiskers::{
     cli::{Args, OutputFormat},
     context::merge_values,
-    frontmatter,
-    markdown,
+    frontmatter, markdown,
     matrix::{self, Matrix},
     models, templating,
 };
@@ -66,7 +65,9 @@ impl TemplateOptions {
                 version: opts.version,
                 matrix,
                 filename: opts.filename,
-                hex_format: opts.hex_format.unwrap_or_else(|| "{{r}}{{g}}{{b}}".to_string()),
+                hex_format: opts
+                    .hex_format
+                    .unwrap_or_else(|| "{{r}}{{g}}{{b}}".to_string()),
             })
         } else {
             Ok(Self::default())
@@ -121,13 +122,10 @@ fn main() -> anyhow::Result<()> {
     for (key, value) in &frontmatter {
         ctx.insert(key, &value);
     }
-  
+
     // build the palette and add it to the templating context
-    let palette = models::build_palette(
-        template_opts.hex_format,
-        args.color_overrides.as_ref(),
-    )
-    .context("Palette context cannot be built")?;
+    let palette = models::build_palette(template_opts.hex_format, args.color_overrides.as_ref())
+        .context("Palette context cannot be built")?;
 
     ctx.insert("flavors", &palette.flavors);
     if let Some(flavor) = args.flavor {
