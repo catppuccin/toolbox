@@ -11,6 +11,10 @@ edition = "2021"
 name = "catwalk"
 path = "src/main.rs"
 
+[package.metadata.binstall]
+pkg-url = "{ repo }/releases/download/catwalk-v{ version }/catwalk-{ target }{ archive-suffix }"
+pkg-fmt = "bin"
+
 [lib]
 crate-type = ["cdylib", "rlib"]
 
