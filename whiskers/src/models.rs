@@ -54,7 +54,7 @@ pub enum Error {
 /// attempt to canonicalize a hex string, and convert it to the provided format
 fn format_hex(hex: &str, hex_format: String) -> Result<String, anyhow::Error> {
     let hex = hex.trim_start_matches('#');
-    let alpha = if hex.len() == 8 {&hex[6..8]} else {"ff"};
+    let alpha = if hex.len() == 8 {&hex[6..8]} else {""};
     let hex = [("r", &hex[0..2]), ("g", &hex[2..4]), ("b", &hex[4..6]), ("a", alpha)].map(|(k,v)| (k.to_string(), v.to_string()));
 
     let mut hex_ctx = HashMap::from(hex.clone());
