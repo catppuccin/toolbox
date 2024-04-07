@@ -17,6 +17,10 @@ path = "src/lib.rs"
 name = "whiskers"
 path = "src/main.rs"
 
+[package.metadata.binstall]
+pkg-url = "{ repo }/releases/download/whiskers-v{ version }/whiskers-{ target }{ archive-suffix }"
+pkg-fmt = "bin"
+
 [lints.clippy]
 all = "warn"
 pedantic = "warn"
