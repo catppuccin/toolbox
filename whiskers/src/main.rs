@@ -1,5 +1,5 @@
 use std::{
-    collections::HashMap,
+    collections::{hash_map::Entry, HashMap},
     env,
     io::Write as _,
     path::{Path, PathBuf},
@@ -87,7 +87,7 @@ fn main() -> anyhow::Result<()> {
             .context("Template contents could not be read")?,
     )
     .context("Frontmatter is invalid")?;
-    let template_opts =
+    let mut template_opts =
         TemplateOptions::from_frontmatter(&doc.frontmatter, args.flavor.map(Into::into))
             .context("Could not get template options from frontmatter")?;
 
@@ -108,6 +108,11 @@ fn main() -> anyhow::Result<()> {
                     tera::to_value(value)
                         .with_context(|| format!("Value of {key} override is invalid"))?,
                 );
+
+            // overrides also work on matrix iterables
+            if let Some(ref mut matrix) = template_opts.matrix {
+                override_matrix(matrix, value, key)?;
+            }
         }
     }
     let mut ctx = tera::Context::new();
@@ -164,6 +169,33 @@ fn main() -> anyhow::Result<()> {
             .transpose()?;
         render_single_output(&ctx, &tera, &template_name, check)
             .context("Single-output render failed")?;
+    }
+
+    Ok(())
+}
+
+fn override_matrix(
+    matrix: &mut Matrix,
+    value: &tera::Value,
+    key: &str,
+) -> Result<(), anyhow::Error> {
+    let Entry::Occupied(e) = matrix.entry(key.to_string()) else {
+        return Ok(());
+    };
+
+    // if the override is a list, we can just replace the iterable.
+    if let Some(value_list) = value.as_array() {
+        let value_list = value_list
+            .iter()
+            .map(|v| v.as_str().map(ToString::to_string))
+            .collect::<Option<Vec<_>>>()
+            .context("Override value is not a list of strings")?;
+        *e.into_mut() = value_list;
+    }
+    // if the override is a string, we instead replace the iterable with a
+    // single-element list containing the string.
+    else if let Some(value_string) = value.as_str() {
+        *e.into_mut() = vec![value_string.to_string()];
     }
 
     Ok(())
