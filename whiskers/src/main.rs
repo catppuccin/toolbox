@@ -1,7 +1,7 @@
 use std::{
     collections::{hash_map::Entry, HashMap},
     env,
-    io::Write as _,
+    io::{Read, Write as _},
     path::{Path, PathBuf},
     process,
 };
@@ -9,6 +9,7 @@ use std::{
 use anyhow::{anyhow, Context as _};
 use catppuccin::FlavorName;
 use clap::Parser as _;
+use encoding_rs_io::DecodeReaderBytes;
 use itertools::Itertools;
 use whiskers::{
     cli::{Args, OutputFormat},
@@ -81,12 +82,18 @@ fn main() -> anyhow::Result<()> {
         .expect("args.template is guaranteed by clap to be set");
     let template_from_stdin = matches!(template.source, clap_stdin::Source::Stdin);
     let template_name = template_name(&template);
-    let doc = frontmatter::parse(
-        &template
-            .contents()
-            .context("Template contents could not be read")?,
-    )
-    .context("Frontmatter is invalid")?;
+
+    let mut decoder = DecodeReaderBytes::new(
+        template
+            .into_reader()
+            .context("Failed to open template file")?,
+    );
+    let mut template = String::new();
+    decoder
+        .read_to_string(&mut template)
+        .context("Template could not be read")?;
+
+    let doc = frontmatter::parse(&template).context("Frontmatter is invalid")?;
     let mut template_opts =
         TemplateOptions::from_frontmatter(&doc.frontmatter, args.flavor.map(Into::into))
             .context("Could not get template options from frontmatter")?;
