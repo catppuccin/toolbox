@@ -11,7 +11,14 @@
         inherit (memberCargoToml.package) version;
         src = pkgs.nix-gitignore.gitignoreSource [] ../.;
 
-        cargoLock.lockFile = ../Cargo.lock;
+        cargoLock = {
+          lockFile = ../Cargo.lock;
+          outputHashes = {
+            "image-webp-0.1.1" = "sha256-WlGXjvkw6JL8OsS9IoM5Fpd4au8zp9jO/Z2iTXQE2Ko=";
+            "ril-0.10.1" = "sha256-xVkuR8m6Q91Ii+bbCD9+foyka5a0vpJwTHBM8Hjjt4I=";
+          };
+        };
+
         buildAndTestSubdir = pname;
 
         meta = {
@@ -26,11 +33,6 @@
     catwalk = {
       nativeBuildInputs = with pkgs; [installShellFiles pkg-config];
       buildInputs = with pkgs; [libwebp];
-
-      cargoLock.outputHashes = {
-        "image-webp-0.1.1" = "sha256-WlGXjvkw6JL8OsS9IoM5Fpd4au8zp9jO/Z2iTXQE2Ko=";
-        "ril-0.10.1" = "sha256-xVkuR8m6Q91Ii+bbCD9+foyka5a0vpJwTHBM8Hjjt4I=";
-      };
 
       postInstall = ''
         installShellCompletion --cmd catwalk \
