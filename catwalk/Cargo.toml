@@ -23,7 +23,7 @@ thiserror = "1"
 
 [dependencies.ril]
 git = "https://github.com/nekowinston/ril"
-branch = "feat/image_webp"
+rev = "88d559706bd084468a95723d42910140803cb090"
 default-features = false
 features = ["png", "resize", "webp-pure"]
 

@@ -641,8 +641,7 @@ dependencies = [
 [[package]]
 name = "image-webp"
 version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7a84a25dcae3ac487bc24ef280f9e20c79c9b1a3e5e32cbed3041d1c514aa87c"
+source = "git+https://github.com/image-rs/image-webp#4020925b7002bac88cda9f951eb725f6a7fcd3d8"
 dependencies = [
  "byteorder",
  "thiserror",
@@ -1013,7 +1012,7 @@ checksum = "adad44e29e4c806119491a7f06f03de4d1af22c3a680dd47f1e6e179439d1f56"
 [[package]]
 name = "ril"
 version = "0.10.1"
-source = "git+https://github.com/nekowinston/ril?branch=feat/image_webp#29410372508a6b42523a768859e95d7c914b1c06"
+source = "git+https://github.com/nekowinston/ril?rev=88d559706bd084468a95723d42910140803cb090#88d559706bd084468a95723d42910140803cb090"
 dependencies = [
  "fast_image_resize",
  "image-webp",
