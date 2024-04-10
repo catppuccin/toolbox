@@ -84,7 +84,7 @@ fn main() -> Result<()> {
         args.output
     };
 
-    // std::fs::write(output, writebuf.get_ref()).map_err(|e| eyre!("Failed to write image: {}", e))
-    catwalk.save_inferred(output)?;
-    Ok(())
+    catwalk
+        .save_inferred(output)
+        .map_err(|e| eyre!("Failed to write image: {}", e))
 }
