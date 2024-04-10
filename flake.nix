@@ -14,6 +14,10 @@
   in {
     checks = forEachSystem (pkgs: self.packages.${pkgs.system});
     packages = forEachSystem (pkgs: lib.filterAttrs (_: v: lib.isDerivation v) (pkgs.callPackage ./nix {}));
+    overlays.default = final: prev: {
+      catppuccin-catwalk = (prev.callPackage ./nix {}).catwalk;
+      catppuccin-whiskers = (prev.callPackage ./nix {}).whiskers;
+    };
     formatter = forEachSystem (pkgs: pkgs.alejandra);
   };
 
