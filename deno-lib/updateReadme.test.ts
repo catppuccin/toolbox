@@ -1,7 +1,7 @@
 import {
   assertEquals,
   assertThrows,
-} from "https://deno.land/std@0.216.0/assert/mod.ts";
+} from "https://deno.land/std@0.223.0/assert/mod.ts";
 import { updateReadme } from "./updateReadme.ts";
 
 const readme_default = `
