@@ -27,6 +27,12 @@ pub struct Args {
     #[arg(long, value_parser = json_map::<ValueMap>)]
     pub overrides: Option<ValueMap>,
 
+    /// Automatically create parent directories before writing output
+    ///
+    /// Only relevant in multi-output mode.
+    #[arg(long)]
+    pub create_parent_dirs: bool,
+
     /// Instead of creating an output, check it against an example
     ///
     /// In single-output mode, a path to the example file must be provided.
