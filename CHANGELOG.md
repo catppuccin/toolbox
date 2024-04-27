@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.1.0](https://github.com/catppuccin/toolbox/compare/whiskers-v2.0.2...whiskers-v2.1.0) (2024-04-27)
+
+
+### Features
+
+* binstall support ([#173](https://github.com/catppuccin/toolbox/issues/173)) ([2ae0c33](https://github.com/catppuccin/toolbox/commit/2ae0c33b9b6c577cacbeed02e6a68873194597ab))
+* **whiskers:** allow overrides of any matrix iterable ([#171](https://github.com/catppuccin/toolbox/issues/171)) ([052482d](https://github.com/catppuccin/toolbox/commit/052482d8c702b4747ef97a507ca8d749e4a75b76))
+* **whiskers:** create needed parent directories by default ([0cd4327](https://github.com/catppuccin/toolbox/commit/0cd432754dfc112dababd2db9b2061175cc0b123))
+* **whiskers:** support alternative template file encodings ([a966a83](https://github.com/catppuccin/toolbox/commit/a966a83fa00464d01e8ede3e9760abb5712817d7))
+
+
+### Bug Fixes
+
+* **deps:** update rust crate rmp-serde to 1.2 ([#180](https://github.com/catppuccin/toolbox/issues/180)) ([6148435](https://github.com/catppuccin/toolbox/commit/6148435e940b82f3edfa65c02cb9e20a48cb7de5))
+
 ## [2.0.2](https://github.com/catppuccin/toolbox/compare/whiskers-v2.0.1...whiskers-v2.0.2) (2024-04-02)
 
 
