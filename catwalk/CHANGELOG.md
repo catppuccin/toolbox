@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/catppuccin/toolbox/compare/catwalk-v1.2.0...catwalk-v1.3.0) (2024-04-27)
+
+
+### Features
+
+* binstall support ([#173](https://github.com/catppuccin/toolbox/issues/173)) ([2ae0c33](https://github.com/catppuccin/toolbox/commit/2ae0c33b9b6c577cacbeed02e6a68873194597ab))
+
 ## [1.2.0](https://github.com/catppuccin/toolbox/compare/catwalk-v1.1.1...catwalk-v1.2.0) (2023-11-04)
 
 
