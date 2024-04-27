@@ -338,9 +338,7 @@ fn render_multi_output(
         } else if args.check.is_some() {
             check_result_with_file(&filename, &result).context("Check mode failed")?;
         } else {
-            if args.create_parent_dirs {
-                maybe_create_parents(filename)?;
-            }
+            maybe_create_parents(filename)?;
             std::fs::write(filename, result)
                 .with_context(|| format!("Couldn't write to {}", filename.display()))?;
         }

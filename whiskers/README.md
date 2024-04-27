@@ -55,11 +55,6 @@ Options:
       --overrides <OVERRIDES>
           Set frontmatter overrides
 
-      --create-parent-dirs
-          Automatically create parent directories before writing output
-          
-          Only relevant in multi-output mode.
-
       --check [<EXAMPLE_PATH>]
           Instead of creating an output, check it against an example
           
