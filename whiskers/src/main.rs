@@ -79,9 +79,10 @@ fn main() -> anyhow::Result<()> {
 
     let template = args
         .template
+        .as_ref()
         .expect("args.template is guaranteed by clap to be set");
     let template_from_stdin = matches!(template.source, clap_stdin::Source::Stdin);
-    let template_name = template_name(&template);
+    let template_name = template_name(template);
 
     let mut decoder = DecodeReaderBytes::new(
         template
@@ -104,8 +105,8 @@ fn main() -> anyhow::Result<()> {
 
     // merge frontmatter with command-line overrides and add to Tera context
     let mut frontmatter = doc.frontmatter;
-    if let Some(overrides) = args.overrides {
-        for (key, value) in &overrides {
+    if let Some(ref overrides) = args.overrides {
+        for (key, value) in overrides {
             frontmatter
                 .entry(key.clone())
                 .and_modify(|v| {
@@ -163,8 +164,7 @@ fn main() -> anyhow::Result<()> {
             &palette,
             &tera,
             &template_name,
-            args.dry_run,
-            args.check.is_some(),
+            &args,
         )
         .context("Multi-output render failed")?;
     } else {
@@ -281,7 +281,7 @@ fn render_single_output(
     check: Option<PathBuf>,
 ) -> Result<(), anyhow::Error> {
     let result = tera
-        .render(template_name, &ctx)
+        .render(template_name, ctx)
         .context("Template render failed")?;
 
     if let Some(path) = check {
@@ -300,8 +300,7 @@ fn render_multi_output(
     palette: &models::Palette,
     tera: &tera::Tera,
     template_name: &str,
-    dry_run: bool,
-    check: bool,
+    args: &Args,
 ) -> Result<(), anyhow::Error> {
     let iterables = matrix
         .into_iter()
@@ -328,24 +327,39 @@ fn render_multi_output(
             .context("Main template render failed")?;
         let filename = tera::Tera::one_off(filename_template, &ctx, false)
             .context("Filename template render failed")?;
+        let filename = Path::new(&filename);
 
-        if dry_run || cfg!(test) {
+        if args.dry_run || cfg!(test) {
             println!(
-                "Would write {} bytes into {filename}",
-                result.as_bytes().len()
+                "Would write {} bytes into {}",
+                result.as_bytes().len(),
+                filename.display()
             );
-        } else if check {
+        } else if args.check.is_some() {
             check_result_with_file(&filename, &result).context("Check mode failed")?;
         } else {
-            std::fs::write(&filename, result)
-                .with_context(|| format!("Couldn't write to {filename}"))?;
+            maybe_create_parents(filename)?;
+            std::fs::write(filename, result)
+                .with_context(|| format!("Couldn't write to {}", filename.display()))?;
         }
     }
 
     Ok(())
 }
 
-fn check_result_with_file<P>(path: &P, result: &str) -> Result<(), anyhow::Error>
+fn maybe_create_parents(filename: &Path) -> anyhow::Result<()> {
+    if let Some(parent) = filename.parent() {
+        std::fs::create_dir_all(parent).with_context(|| {
+            format!(
+                "Couldn't create parent directories for {}",
+                filename.display()
+            )
+        })?;
+    };
+    Ok(())
+}
+
+fn check_result_with_file<P>(path: &P, result: &str) -> anyhow::Result<()>
 where
     P: AsRef<Path>,
 {
@@ -364,7 +378,7 @@ where
     Ok(())
 }
 
-fn invoke_difftool<P>(actual: &str, expected_path: P) -> Result<(), anyhow::Error>
+fn invoke_difftool<P>(actual: &str, expected_path: P) -> anyhow::Result<()>
 where
     P: AsRef<Path>,
 {
@@ -374,7 +388,7 @@ where
     let mut actual_file = tempfile::NamedTempFile::new()?;
     write!(&mut actual_file, "{actual}")?;
     if let Ok(mut child) = process::Command::new(tool)
-        .args([actual_file.path(), &expected_path])
+        .args([actual_file.path(), expected_path])
         .spawn()
     {
         child.wait()?;
