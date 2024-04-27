@@ -77,7 +77,6 @@ Options:
 
   -V, --version
           Print version
-
 ```
 
 ## Template
