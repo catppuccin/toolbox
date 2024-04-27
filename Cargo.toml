@@ -36,17 +36,18 @@ anyhow = "1.0"
 base64 = "0.22"
 catppuccin = { version = "2.2", features = ["serde", "css-colors"] }
 clap = { version = "4.5", features = ["derive"] }
-clap-stdin = "0.4.0"
+clap-stdin = "0.4"
 css-colors = "1.0"
+encoding_rs_io = "0.1"
 indexmap = { version = "2.2", features = ["serde"] }
 itertools = "0.12"
 lzma-rust = "0.1"
 rmp-serde = "1.2"
-semver = { version = "1.0.22", features = ["serde"] }
+semver = { version = "1.0", features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_yaml = "0.9"
-tempfile = "3.10.1"
+tempfile = "3.10"
 tera = { version = "1.19", features = ["preserve_order"] }
 thiserror = "1.0"
 
