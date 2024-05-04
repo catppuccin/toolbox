@@ -36,7 +36,7 @@ js-sys = "0.3"
 ril = { version = "0.10", default-features = false }
 wasm-bindgen = "0.2"
 web-sys = { version = "0.3", features = ["ImageData"] }
-getrandom = { version = "0.2", features = ["js"] }
+getrandom = { version = "0.2.14", features = ["js"] }
 
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = ['-O3']
