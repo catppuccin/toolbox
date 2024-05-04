@@ -23,7 +23,7 @@ thiserror = "1"
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 clap = { version = "4.5.4", features = ["derive"] }
-clap_complete = { version = "4" }
+clap_complete = { version = "4.5.2" }
 color-eyre = { version = "0.6.3", default-features = false }
 ril = { version = "0.10", default-features = false, features = [
   "png",
