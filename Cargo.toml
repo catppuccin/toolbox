@@ -47,7 +47,7 @@ semver = { version = "1.0.22", features = ["serde"] }
 serde = { version = "1.0.200", features = ["derive"] }
 serde_json = "1.0.116"
 serde_yaml = "0.9.34"
-tempfile = "3.10"
+tempfile = "3.10.1"
 tera = { version = "1.19.1", features = ["preserve_order"] }
 thiserror = "1.0"
 
