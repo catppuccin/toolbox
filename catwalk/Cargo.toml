@@ -19,7 +19,7 @@ pkg-fmt = "bin"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-thiserror = "1"
+thiserror = "1.0.59"
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 clap = { version = "4.5.4", features = ["derive"] }
