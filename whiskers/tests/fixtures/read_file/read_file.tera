@@ -4,3 +4,4 @@ whiskers:
 ---
 
 {{ read_file(path="abc.txt") }}
+{{ read_file(path="../../../LICENSE") }}

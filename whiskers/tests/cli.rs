@@ -46,7 +46,7 @@ mod happy_path {
             .assert();
         assert
             .success()
-            .stdout(include_str!("fixtures/read_file/abc.txt"));
+            .stdout(include_str!("fixtures/read_file/read_file.md"));
     }
 
     /// Test that the CLI can render a UTF-8 template file
