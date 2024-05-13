@@ -83,6 +83,10 @@ fn main() -> anyhow::Result<()> {
         .expect("args.template is guaranteed by clap to be set");
     let template_from_stdin = matches!(template.source, clap_stdin::Source::Stdin);
     let template_name = template_name(template);
+    match template_cwd(template) {
+        None => {}
+        Some(path) => std::env::set_var("WHISKERS_CWD", path),
+    };
 
     let mut decoder = DecodeReaderBytes::new(
         template
@@ -247,6 +251,16 @@ fn template_name(template: &clap_stdin::FileOrStdin) -> String {
             || "template".to_string(),
             |name| name.to_string_lossy().to_string(),
         ),
+    }
+}
+
+fn template_cwd(template: &clap_stdin::FileOrStdin) -> Option<PathBuf> {
+    match &template.source {
+        clap_stdin::Source::Stdin => None,
+        clap_stdin::Source::Arg(arg) => {
+            let parent_dir = Path::new(&arg).canonicalize().ok()?.parent()?.to_owned();
+            Some(parent_dir)
+        }
     }
 }
 

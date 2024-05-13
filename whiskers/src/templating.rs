@@ -56,6 +56,7 @@ pub fn make_engine() -> tera::Tera {
     tera.register_function("css_rgba", functions::css_rgba);
     tera.register_function("css_hsl", functions::css_hsl);
     tera.register_function("css_hsla", functions::css_hsla);
+    tera.register_function("read_file", functions::read_file);
     tera
 }
 
@@ -98,6 +99,11 @@ pub fn all_functions() -> Vec<Function> {
             name: "css_hsla".to_string(),
             description: "Convert a color to an HSLA CSS string".to_string(),
             examples: vec![function_example!(css_hsla(color=red) => "hsla(347, 87%, 44%, 1.00)")],
+        },
+        Function {
+            name: "read_file".to_string(),
+            description: "Read and include the contents of a file".to_string(),
+            examples: vec![function_example!(read_file(path="abc.txt") => "abc")],
         },
     ]
 }

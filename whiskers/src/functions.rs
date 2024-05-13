@@ -1,4 +1,8 @@
-use std::collections::{BTreeMap, HashMap};
+use std::{
+    collections::{BTreeMap, HashMap},
+    fs,
+    path::Path,
+};
 
 use crate::models::Color;
 
@@ -66,4 +70,17 @@ pub fn css_hsla(args: &HashMap<String, tera::Value>) -> Result<tera::Value, tera
     )?;
     let color: css_colors::HSLA = (&color).into();
     Ok(tera::to_value(color.to_string())?)
+}
+
+pub fn read_file(args: &HashMap<String, tera::Value>) -> Result<tera::Value, tera::Error> {
+    let absolute = std::env::var("WHISKERS_CWD").unwrap();
+    let path: String = tera::from_value(
+        args.get("path")
+            .ok_or_else(|| tera::Error::msg("path is required"))?
+            .clone(),
+    )?;
+    let contents = fs::read_to_string(Path::new(&absolute).join(path))
+        .or_else(|_| Err(tera::Error::msg("failed to open file")))
+        .unwrap();
+    Ok(tera::to_value(contents)?)
 }

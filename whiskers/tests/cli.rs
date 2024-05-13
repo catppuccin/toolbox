@@ -37,6 +37,18 @@ mod happy_path {
         ));
     }
 
+    /// Test that the CLI can render a template which uses read_file
+    #[test]
+    fn test_read_file() {
+        let mut cmd = Command::cargo_bin("whiskers").expect("binary exists");
+        let assert = cmd
+            .args(["tests/fixtures/read_file/read_file.tera", "-f", "latte"])
+            .assert();
+        assert
+            .success()
+            .stdout(include_str!("fixtures/read_file/abc.txt"));
+    }
+
     /// Test that the CLI can render a UTF-8 template file
     #[test]
     fn test_utf8() {
