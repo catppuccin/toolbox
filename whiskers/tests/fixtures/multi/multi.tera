@@ -19,4 +19,4 @@ hsl({{ v.h | round }}, {{ v.s * 100 | round }}%, {{ v.l * 100 | round }}%)
 {{ color.name }} | #{{ color.hex }} | {{ self::css_rgb(v=color.rgb) }} | {{ self::css_hsl(v=color.hsl) }} |
 
 {%- endfor %}
-{% endfor %}
+{% endfor -%}
