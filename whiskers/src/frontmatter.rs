@@ -1,3 +1,4 @@
+use detect_newline_style::LineEnding;
 use std::collections::HashMap;
 
 #[derive(Debug)]
@@ -40,12 +41,13 @@ fn split(template: &str) -> Option<(&str, &str)> {
     // * line 0 is "---"
     // * there is another "---" on another line
     let template = template.trim_start();
-    let sep = "---\n";
-    if !template.starts_with(sep) {
+    let eol = LineEnding::find(template, LineEnding::LF).to_string();
+    let sep = "---".to_string() + &eol;
+    if !template.starts_with(&sep) {
         return None;
     }
 
     template[sep.len()..]
-        .split_once(sep)
+        .split_once(&sep)
         .map(|(a, b)| (a.trim(), b))
 }

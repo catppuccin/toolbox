@@ -219,6 +219,7 @@ dependencies = [
  "clap",
  "clap-stdin",
  "css-colors",
+ "detect-newline-style",
  "encoding_rs_io",
  "indexmap",
  "itertools",
@@ -421,6 +422,15 @@ name = "css-colors"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "22c2bbfc5708f23437b074ba4e699b14fd6d7181a61695bccc8d944b78739236"
+
+[[package]]
+name = "detect-newline-style"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1124f25c3615ab547669f878088cef84850679327f79eccc70412c25a6643749"
+dependencies = [
+ "regex",
+]
 
 [[package]]
 name = "deunicode"
