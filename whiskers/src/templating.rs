@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use indexmap::IndexMap;
 
 use crate::{filters, functions};
@@ -42,7 +44,7 @@ macro_rules! filter_example {
     };
 }
 
-pub fn make_engine() -> tera::Tera {
+pub fn make_engine(cwd: Option<PathBuf>) -> tera::Tera {
     let mut tera = tera::Tera::default();
     tera.register_filter("add", filters::add);
     tera.register_filter("sub", filters::sub);
@@ -56,7 +58,7 @@ pub fn make_engine() -> tera::Tera {
     tera.register_function("css_rgba", functions::css_rgba);
     tera.register_function("css_hsl", functions::css_hsl);
     tera.register_function("css_hsla", functions::css_hsla);
-    tera.register_function("read_file", functions::read_file);
+    tera.register_function("read_file", functions::read_file_handler(cwd));
     tera
 }
 

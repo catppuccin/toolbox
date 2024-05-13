@@ -1,7 +1,7 @@
 use std::{
     collections::{BTreeMap, HashMap},
     fs,
-    path::Path,
+    path::{Path, PathBuf},
 };
 
 use crate::models::Color;
@@ -72,15 +72,19 @@ pub fn css_hsla(args: &HashMap<String, tera::Value>) -> Result<tera::Value, tera
     Ok(tera::to_value(color.to_string())?)
 }
 
-pub fn read_file(args: &HashMap<String, tera::Value>) -> Result<tera::Value, tera::Error> {
-    let absolute = std::env::var("WHISKERS_CWD").unwrap();
-    let path: String = tera::from_value(
-        args.get("path")
-            .ok_or_else(|| tera::Error::msg("path is required"))?
-            .clone(),
-    )?;
-    let file = Path::new(&absolute).join(path);
-    let contents =
-        fs::read_to_string(&file).or_else(|_| Err(format!("Failed to open file {:?}", file)))?;
-    Ok(tera::to_value(contents)?)
+pub fn read_file_handler(
+    cwd: Option<PathBuf>,
+) -> impl Fn(&HashMap<String, tera::Value>) -> Result<tera::Value, tera::Error> {
+    return move |args| -> Result<tera::Value, tera::Error> {
+        let path: String = tera::from_value(
+            args.get("path")
+                .ok_or_else(|| tera::Error::msg("path is required"))?
+                .clone(),
+        )?;
+        let file =
+            Path::new(&<std::option::Option<PathBuf> as Clone>::clone(&cwd).unwrap()).join(path);
+        let contents = fs::read_to_string(&file)
+            .or_else(|_| Err(format!("Failed to open file {:?}", file)))?;
+        Ok(tera::to_value(contents)?)
+    };
 }

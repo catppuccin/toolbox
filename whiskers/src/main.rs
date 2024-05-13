@@ -83,10 +83,7 @@ fn main() -> anyhow::Result<()> {
         .expect("args.template is guaranteed by clap to be set");
     let template_from_stdin = matches!(template.source, clap_stdin::Source::Stdin);
     let template_name = template_name(template);
-    match template_cwd(template) {
-        None => {}
-        Some(path) => std::env::set_var("WHISKERS_CWD", path),
-    };
+    let template_cwd = template_cwd(template);
 
     let mut decoder = DecodeReaderBytes::new(
         template
@@ -153,7 +150,7 @@ fn main() -> anyhow::Result<()> {
     }
 
     // build the Tera engine
-    let mut tera = templating::make_engine();
+    let mut tera = templating::make_engine(template_cwd);
     tera.add_raw_template(&template_name, &doc.body)
         .context("Template is invalid")?;
 
