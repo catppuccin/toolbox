@@ -79,8 +79,8 @@ pub fn read_file(args: &HashMap<String, tera::Value>) -> Result<tera::Value, ter
             .ok_or_else(|| tera::Error::msg("path is required"))?
             .clone(),
     )?;
-    let contents = fs::read_to_string(Path::new(&absolute).join(path))
-        .or_else(|_| Err(tera::Error::msg("failed to open file")))
-        .unwrap();
+    let file = Path::new(&absolute).join(path);
+    let contents =
+        fs::read_to_string(&file).or_else(|_| Err(format!("Failed to open file {:?}", file)))?;
     Ok(tera::to_value(contents)?)
 }
