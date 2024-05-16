@@ -164,7 +164,7 @@ fn main() -> anyhow::Result<()> {
             &palette,
             &tera,
             &template_name,
-            &args,
+            args.dry_run,
         )
         .context("Multi-output render failed")?;
     } else {
@@ -174,8 +174,16 @@ fn main() -> anyhow::Result<()> {
                 c.ok_or_else(|| anyhow!("--check requires a file argument in single-output mode"))
             })
             .transpose()?;
-        render_single_output(&ctx, &tera, &template_name, check)
-            .context("Single-output render failed")?;
+
+        render_single_output(
+            &ctx,
+            &tera,
+            &template_name,
+            check,
+            template_opts.filename,
+            args.dry_run,
+        )
+        .context("Single-output render failed")?;
     }
 
     Ok(())
@@ -274,11 +282,31 @@ fn template_is_compatible(template_opts: &TemplateOptions) -> bool {
     true
 }
 
+fn write_template(dry_run: bool, filename: String, result: String) -> Result<(), anyhow::Error> {
+    let filename = Path::new(&filename);
+
+    if dry_run || cfg!(test) {
+        println!(
+            "Would write {} bytes into {}",
+            result.as_bytes().len(),
+            filename.display()
+        );
+    } else {
+        maybe_create_parents(filename)?;
+        std::fs::write(filename, result)
+            .with_context(|| format!("Couldn't write to {}", filename.display()))?;
+    }
+
+    Ok(())
+}
+
 fn render_single_output(
     ctx: &tera::Context,
     tera: &tera::Tera,
     template_name: &str,
     check: Option<PathBuf>,
+    filename: Option<String>,
+    dry_run: bool,
 ) -> Result<(), anyhow::Error> {
     let result = tera
         .render(template_name, ctx)
@@ -286,6 +314,8 @@ fn render_single_output(
 
     if let Some(path) = check {
         check_result_with_file(&path, &result).context("Check mode failed")?;
+    } else if let Some(filename) = filename {
+        write_template(dry_run, filename, result)?;
     } else {
         print!("{result}");
     }
@@ -300,7 +330,7 @@ fn render_multi_output(
     palette: &models::Palette,
     tera: &tera::Tera,
     template_name: &str,
-    args: &Args,
+    dry_run: bool,
 ) -> Result<(), anyhow::Error> {
     let iterables = matrix
         .into_iter()
@@ -327,21 +357,8 @@ fn render_multi_output(
             .context("Main template render failed")?;
         let filename = tera::Tera::one_off(filename_template, &ctx, false)
             .context("Filename template render failed")?;
-        let filename = Path::new(&filename);
 
-        if args.dry_run || cfg!(test) {
-            println!(
-                "Would write {} bytes into {}",
-                result.as_bytes().len(),
-                filename.display()
-            );
-        } else if args.check.is_some() {
-            check_result_with_file(&filename, &result).context("Check mode failed")?;
-        } else {
-            maybe_create_parents(filename)?;
-            std::fs::write(filename, result)
-                .with_context(|| format!("Couldn't write to {}", filename.display()))?;
-        }
+        write_template(dry_run, filename, result)?;
     }
 
     Ok(())
