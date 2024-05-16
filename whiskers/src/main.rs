@@ -82,6 +82,11 @@ fn main() -> anyhow::Result<()> {
         return Ok(());
     }
 
+    if args.list_accents {
+        list_accents(args.output_format);
+        return Ok(());
+    }
+
     let template = args
         .template
         .as_ref()
@@ -247,10 +252,11 @@ fn list_functions(format: OutputFormat) {
 }
 
 fn list_flavors(format: OutputFormat) {
+    let output = catppuccin::PALETTE.all_flavors().map(|f| f.identifier());
+
     match format {
         OutputFormat::Json | OutputFormat::Yaml => {
-            let output =
-                serde_json::json!(catppuccin::PALETTE.all_flavors().map(|f| f.identifier()));
+            let output = serde_json::json!(output);
             println!(
                 "{}",
                 if matches!(format, OutputFormat::Json) {
@@ -261,13 +267,35 @@ fn list_flavors(format: OutputFormat) {
             );
         }
         OutputFormat::Plain => {
+            println!("{}", output.join("\n"))
+        }
+        _ => todo!(),
+    }
+}
+
+fn list_accents(format: OutputFormat) {
+    let output = catppuccin::PALETTE
+        .latte
+        .colors
+        .all_colors()
+        .into_iter()
+        .filter_map(|c| if c.accent { Some(c.identifier()) } else { None })
+        .collect::<Vec<_>>();
+
+    match format {
+        OutputFormat::Json | OutputFormat::Yaml => {
+            let output = serde_json::json!(output);
             println!(
                 "{}",
-                catppuccin::PALETTE
-                    .all_flavors()
-                    .map(|f| f.identifier())
-                    .join("\n")
-            )
+                if matches!(format, OutputFormat::Json) {
+                    serde_json::to_string_pretty(&output).expect("output is guaranteed to be valid")
+                } else {
+                    serde_yaml::to_string(&output).expect("output is guaranteed to be valid")
+                }
+            );
+        }
+        OutputFormat::Plain => {
+            println!("{}", output.join("\n"))
         }
         _ => todo!(),
     }

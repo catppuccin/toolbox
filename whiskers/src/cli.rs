@@ -12,7 +12,7 @@ type ValueMap = HashMap<String, serde_json::Value>;
 #[command(version, about)]
 pub struct Args {
     /// Path to the template file, or - for stdin
-    #[arg(required_unless_present_any = ["list_functions", "list_flavors"])]
+    #[arg(required_unless_present_any = ["list_functions", "list_flavors", "list_accents"])]
     pub template: Option<FileOrStdin>,
 
     /// Render a single flavor instead of all four
@@ -46,6 +46,10 @@ pub struct Args {
     /// List the Catppuccin flavors
     #[arg(long)]
     pub list_flavors: bool,
+
+    /// List the Catppuccin accent colors
+    #[arg(long)]
+    pub list_accents: bool,
 
     /// Output format of --list-functions
     #[arg(short, long, default_value = "json")]
