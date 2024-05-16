@@ -12,7 +12,7 @@ type ValueMap = HashMap<String, serde_json::Value>;
 #[command(version, about)]
 pub struct Args {
     /// Path to the template file, or - for stdin
-    #[arg(required_unless_present = "list_functions")]
+    #[arg(required_unless_present_any = ["list_functions", "list_flavors"])]
     pub template: Option<FileOrStdin>,
 
     /// Render a single flavor instead of all four
@@ -40,8 +40,12 @@ pub struct Args {
     pub dry_run: bool,
 
     /// List all Tera filters and functions
-    #[arg(short, long)]
+    #[arg(long)]
     pub list_functions: bool,
+
+    /// List the Catppuccin flavors
+    #[arg(long)]
+    pub list_flavors: bool,
 
     /// Output format of --list-functions
     #[arg(short, long, default_value = "json")]
@@ -103,6 +107,7 @@ pub enum OutputFormat {
     Yaml,
     Markdown,
     MarkdownTable,
+    Plain,
 }
 
 fn json_map<T>(s: &str) -> Result<T, Error>

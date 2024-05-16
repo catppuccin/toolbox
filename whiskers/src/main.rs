@@ -77,6 +77,11 @@ fn main() -> anyhow::Result<()> {
         return Ok(());
     }
 
+    if args.list_flavors {
+        list_flavors(args.output_format);
+        return Ok(());
+    }
+
     let template = args
         .template
         .as_ref()
@@ -237,6 +242,34 @@ fn list_functions(format: OutputFormat) {
                 markdown::format_filters_and_functions(markdown::Format::Table)
             );
         }
+        OutputFormat::Plain => todo!(),
+    }
+}
+
+fn list_flavors(format: OutputFormat) {
+    match format {
+        OutputFormat::Json | OutputFormat::Yaml => {
+            let output =
+                serde_json::json!(catppuccin::PALETTE.all_flavors().map(|f| f.identifier()));
+            println!(
+                "{}",
+                if matches!(format, OutputFormat::Json) {
+                    serde_json::to_string_pretty(&output).expect("output is guaranteed to be valid")
+                } else {
+                    serde_yaml::to_string(&output).expect("output is guaranteed to be valid")
+                }
+            );
+        }
+        OutputFormat::Plain => {
+            println!(
+                "{}",
+                catppuccin::PALETTE
+                    .all_flavors()
+                    .map(|f| f.identifier())
+                    .join("\n")
+            )
+        }
+        _ => todo!(),
     }
 }
 
