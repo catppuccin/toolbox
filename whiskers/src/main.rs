@@ -164,7 +164,7 @@ fn main() -> anyhow::Result<()> {
             &palette,
             &tera,
             &template_name,
-            args.dry_run,
+            &args,
         )
         .context("Multi-output render failed")?;
     } else {
@@ -330,7 +330,7 @@ fn render_multi_output(
     palette: &models::Palette,
     tera: &tera::Tera,
     template_name: &str,
-    dry_run: bool,
+    args: &Args,
 ) -> Result<(), anyhow::Error> {
     let iterables = matrix
         .into_iter()
@@ -358,7 +358,11 @@ fn render_multi_output(
         let filename = tera::Tera::one_off(filename_template, &ctx, false)
             .context("Filename template render failed")?;
 
-        write_template(dry_run, filename, result)?;
+        if args.check.is_some() {
+            check_result_with_file(&filename, &result).context("Check mode failed")?;
+        } else {
+            write_template(args.dry_run, filename, result)?;
+        }
     }
 
     Ok(())
