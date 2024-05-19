@@ -38,6 +38,7 @@ catppuccin = { version = "2.2", features = ["serde", "css-colors"] }
 clap = { version = "4.5.4", features = ["derive"] }
 clap-stdin = "0.4"
 css-colors = "1.0.1"
+detect-newline-style = "0.1.2"
 encoding_rs_io = "0.1.7"
 indexmap = { version = "2.2.6", features = ["serde"] }
 itertools = "0.12.1"
