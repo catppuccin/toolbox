@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.1.1](https://github.com/catppuccin/toolbox/compare/whiskers-v2.1.0...whiskers-v2.1.1) (2024-05-20)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate anyhow to 1.0.82 ([#187](https://github.com/catppuccin/toolbox/issues/187)) ([42779a4](https://github.com/catppuccin/toolbox/commit/42779a4e78b43028b4823116f9e6812046cc1a78))
+* **deps:** update rust crate base64 to 0.22.1 ([#188](https://github.com/catppuccin/toolbox/issues/188)) ([74c103f](https://github.com/catppuccin/toolbox/commit/74c103f192b3916fc3863e664de1c9f26f64e08c))
+* **deps:** update rust crate clap to 4.5.4 ([#189](https://github.com/catppuccin/toolbox/issues/189)) ([52d5aa4](https://github.com/catppuccin/toolbox/commit/52d5aa42b0e9a6085b22da37580912a55c442477))
+* **deps:** update rust crate css-colors to 1.0.1 ([#192](https://github.com/catppuccin/toolbox/issues/192)) ([b5d84fd](https://github.com/catppuccin/toolbox/commit/b5d84fde430563a293f864b1f10580eca6881770))
+* **deps:** update rust crate encoding_rs_io to 0.1.7 ([#195](https://github.com/catppuccin/toolbox/issues/195)) ([770d8c4](https://github.com/catppuccin/toolbox/commit/770d8c4cecaf1d379010b3e3098740a5c45fc318))
+* **deps:** update rust crate indexmap to 2.2.6 ([#197](https://github.com/catppuccin/toolbox/issues/197)) ([58be625](https://github.com/catppuccin/toolbox/commit/58be625815b71b43dfecd37b9b88ef50f4a62de3))
+* **deps:** update rust crate itertools to 0.12.1 ([#198](https://github.com/catppuccin/toolbox/issues/198)) ([9b662d8](https://github.com/catppuccin/toolbox/commit/9b662d866263364033e55c3f4e9ddaa5d4a12bb4))
+* **deps:** update rust crate lzma-rust to 0.1.6 ([#199](https://github.com/catppuccin/toolbox/issues/199)) ([ae06a6f](https://github.com/catppuccin/toolbox/commit/ae06a6fc5dbcb280362dbec62ff3c7924618c639))
+* **deps:** update rust crate rmp-serde to 1.3.0 ([#185](https://github.com/catppuccin/toolbox/issues/185)) ([6722334](https://github.com/catppuccin/toolbox/commit/6722334591411c6af3cfcba42fc159309798a110))
+* **deps:** update rust crate semver to 1.0.22 ([#201](https://github.com/catppuccin/toolbox/issues/201)) ([ea25560](https://github.com/catppuccin/toolbox/commit/ea255603d532bd2dcd725541f61277672bd5c08a))
+* **deps:** update rust crate serde to 1.0.200 ([#202](https://github.com/catppuccin/toolbox/issues/202)) ([f6b6f36](https://github.com/catppuccin/toolbox/commit/f6b6f361b92c5ba42a7285a75563aceb50990cee))
+* **deps:** update rust crate serde_json to 1.0.116 ([#203](https://github.com/catppuccin/toolbox/issues/203)) ([2540310](https://github.com/catppuccin/toolbox/commit/2540310ad00e0c2d78c3402e9e5f0e38336292d2))
+* **deps:** update rust crate serde_yaml to 0.9.34 ([#204](https://github.com/catppuccin/toolbox/issues/204)) ([75235ba](https://github.com/catppuccin/toolbox/commit/75235ba5053792ffaa492c62f0c1ff108e09a02e))
+* **deps:** update rust crate tempfile to 3.10.1 ([#205](https://github.com/catppuccin/toolbox/issues/205)) ([1589be5](https://github.com/catppuccin/toolbox/commit/1589be5969f8d4b456d8ee6a329938885dc6c6af))
+* **deps:** update rust crate tera to 1.19.1 ([#206](https://github.com/catppuccin/toolbox/issues/206)) ([fc912f8](https://github.com/catppuccin/toolbox/commit/fc912f827db0729a64cc33c3dc769423479ab916))
+* **whiskers:** avoid excessive whitespace trimming ([#216](https://github.com/catppuccin/toolbox/issues/216)) ([59bc0f6](https://github.com/catppuccin/toolbox/commit/59bc0f6db2c1399ad9c0d893f47253d95243901c))
+
 ## [2.1.0](https://github.com/catppuccin/toolbox/compare/whiskers-v2.0.2...whiskers-v2.1.0) (2024-04-27)
 
 
