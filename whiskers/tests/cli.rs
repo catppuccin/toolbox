@@ -54,7 +54,9 @@ mod happy_path {
     fn test_utf8() {
         let mut cmd = Command::cargo_bin("whiskers").expect("binary exists");
         let assert = cmd.args(["tests/fixtures/encodings/utf8.tera"]).assert();
-        assert.success().stdout("it worked!");
+        assert
+            .success()
+            .stdout(predicate::str::contains("it worked!"));
     }
 
     /// Test that the CLI can render a UTF-8 with BOM template file
@@ -62,7 +64,9 @@ mod happy_path {
     fn test_utf8_bom() {
         let mut cmd = Command::cargo_bin("whiskers").expect("binary exists");
         let assert = cmd.args(["tests/fixtures/encodings/utf8bom.tera"]).assert();
-        assert.success().stdout("it worked!");
+        assert
+            .success()
+            .stdout(predicate::str::contains("it worked!"));
     }
 
     /// Test that the CLI can render a UTF-16 BE template file
@@ -70,7 +74,9 @@ mod happy_path {
     fn test_utf16be() {
         let mut cmd = Command::cargo_bin("whiskers").expect("binary exists");
         let assert = cmd.args(["tests/fixtures/encodings/utf16be.tera"]).assert();
-        assert.success().stdout("it worked!");
+        assert
+            .success()
+            .stdout(predicate::str::contains("it worked!"));
     }
 
     /// Test that the CLI can render a UTF-16 LE template file
@@ -78,7 +84,9 @@ mod happy_path {
     fn test_utf16le() {
         let mut cmd = Command::cargo_bin("whiskers").expect("binary exists");
         let assert = cmd.args(["tests/fixtures/encodings/utf16le.tera"]).assert();
-        assert.success().stdout("it worked!");
+        assert
+            .success()
+            .stdout(predicate::str::contains("it worked!"));
     }
 }
 
