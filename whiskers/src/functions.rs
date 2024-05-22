@@ -73,7 +73,7 @@ pub fn css_hsla(args: &HashMap<String, tera::Value>) -> Result<tera::Value, tera
 }
 
 pub fn read_file_handler(
-    cwd: Option<PathBuf>,
+    template_directory: Option<PathBuf>,
 ) -> impl Fn(&HashMap<String, tera::Value>) -> Result<tera::Value, tera::Error> {
     return move |args| -> Result<tera::Value, tera::Error> {
         let path: String = tera::from_value(
@@ -81,8 +81,10 @@ pub fn read_file_handler(
                 .ok_or_else(|| tera::Error::msg("path is required"))?
                 .clone(),
         )?;
-        let file =
-            Path::new(&<std::option::Option<PathBuf> as Clone>::clone(&cwd).unwrap()).join(path);
+        let file = Path::new(
+            &<std::option::Option<PathBuf> as Clone>::clone(&template_directory).unwrap(),
+        )
+        .join(path);
         let contents = fs::read_to_string(&file)
             .or_else(|_| Err(format!("Failed to open file {:?}", file)))?;
         Ok(tera::to_value(contents)?)

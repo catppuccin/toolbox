@@ -83,7 +83,7 @@ fn main() -> anyhow::Result<()> {
         .expect("args.template is guaranteed by clap to be set");
     let template_from_stdin = matches!(template.source, clap_stdin::Source::Stdin);
     let template_name = template_name(template);
-    let template_cwd = template_cwd(template);
+    let template_directory = template_directory(template);
 
     let mut decoder = DecodeReaderBytes::new(
         template
@@ -150,7 +150,7 @@ fn main() -> anyhow::Result<()> {
     }
 
     // build the Tera engine
-    let mut tera = templating::make_engine(template_cwd);
+    let mut tera = templating::make_engine(template_directory);
     tera.add_raw_template(&template_name, &doc.body)
         .context("Template is invalid")?;
 
@@ -251,7 +251,7 @@ fn template_name(template: &clap_stdin::FileOrStdin) -> String {
     }
 }
 
-fn template_cwd(template: &clap_stdin::FileOrStdin) -> Option<PathBuf> {
+fn template_directory(template: &clap_stdin::FileOrStdin) -> Option<PathBuf> {
     match &template.source {
         clap_stdin::Source::Stdin => None,
         clap_stdin::Source::Arg(arg) => {
