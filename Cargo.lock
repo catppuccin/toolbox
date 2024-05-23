@@ -183,9 +183,9 @@ checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
 
 [[package]]
 name = "catppuccin"
-version = "2.2.0"
+version = "2.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3c5471d0652fadf9e2947e0e045769eed34acc57c36e8bd3679239bcd6d786e5"
+checksum = "30e374e7e7ba043c7ba40a331d85f0f718b12e906d1fb8a7c7cf70c92a377121"
 dependencies = [
  "css-colors",
  "itertools",
