@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.3.1](https://github.com/catppuccin/toolbox/compare/catwalk-v1.3.0...catwalk-v1.3.1) (2024-05-20)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate clap to 4.5.4 ([#189](https://github.com/catppuccin/toolbox/issues/189)) ([52d5aa4](https://github.com/catppuccin/toolbox/commit/52d5aa42b0e9a6085b22da37580912a55c442477))
+* **deps:** update rust crate clap_complete to 4.5.2 ([#190](https://github.com/catppuccin/toolbox/issues/190)) ([cda4f29](https://github.com/catppuccin/toolbox/commit/cda4f2999ed187cacf14e3304ff73637119d1f27))
+* **deps:** update rust crate color-eyre to 0.6.3 ([#191](https://github.com/catppuccin/toolbox/issues/191)) ([8a7c14a](https://github.com/catppuccin/toolbox/commit/8a7c14a3ee9f48ceccda36c42815279c08862916))
+* **deps:** update rust crate getrandom to 0.2.14 ([#196](https://github.com/catppuccin/toolbox/issues/196)) ([fb426be](https://github.com/catppuccin/toolbox/commit/fb426be432fd48785426b9da7431978c7aa342fd))
+
 ## [1.3.0](https://github.com/catppuccin/toolbox/compare/catwalk-v1.2.0...catwalk-v1.3.0) (2024-04-27)
 
 
