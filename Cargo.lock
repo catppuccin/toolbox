@@ -188,7 +188,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "aa1798ea21d5f88f057b9a4d075bbf3e9cc4bba98da0d6197a2019f61f633bf4"
 dependencies = [
  "css-colors",
- "itertools 0.13.0",
+ "itertools",
  "serde",
  "serde_json",
 ]
@@ -222,7 +222,7 @@ dependencies = [
  "detect-newline-style",
  "encoding_rs_io",
  "indexmap",
- "itertools 0.12.1",
+ "itertools",
  "lzma-rust",
  "predicates",
  "rmp-serde",
@@ -682,15 +682,6 @@ dependencies = [
  "equivalent",
  "hashbrown",
  "serde",
-]
-
-[[package]]
-name = "itertools"
-version = "0.12.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ba291022dbbd398a455acf126c1e341954079855bc60dfdda641363bd6922569"
-dependencies = [
- "either",
 ]
 
 [[package]]
