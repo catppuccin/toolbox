@@ -25,18 +25,18 @@ thiserror = "1"
 clap = { version = "4.5.4", features = ["derive"] }
 clap_complete = { version = "4.5.2" }
 color-eyre = { version = "0.6.3", default-features = false }
-ril = { version = "0.10", default-features = false, features = [
+ril = { version = "0.10.1", default-features = false, features = [
   "png",
   "resize",
   "webp",
 ] }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
-js-sys = "0.3"
-ril = { version = "0.10", default-features = false }
-wasm-bindgen = "0.2"
-web-sys = { version = "0.3", features = ["ImageData"] }
-getrandom = { version = "0.2.14", features = ["js"] }
+js-sys = "0.3.69"
+ril = { version = "0.10.1", default-features = false }
+wasm-bindgen = "0.2.92"
+web-sys = { version = "0.3.69", features = ["ImageData"] }
+getrandom = { version = "0.2.15", features = ["js"] }
 
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = ['-O3']
