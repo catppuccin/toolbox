@@ -14,6 +14,8 @@ pub struct Palette {
 pub struct Flavor {
     pub name: String,
     pub identifier: String,
+    pub emoji: char,
+    pub order: u32,
     pub dark: bool,
     pub light: bool,
     pub colors: IndexMap<String, Color>,
@@ -23,6 +25,7 @@ pub struct Flavor {
 pub struct Color {
     pub name: String,
     pub identifier: String,
+    pub order: u32,
     pub accent: bool,
     pub hex: String,
     pub rgb: RGB,
@@ -82,6 +85,7 @@ fn color_from_hex(
     Ok(Color {
         name: blueprint.name.to_string(),
         identifier: blueprint.name.identifier().to_string(),
+        order: blueprint.order,
         accent: blueprint.accent,
         hex,
         rgb,
@@ -103,6 +107,7 @@ fn color_from_catppuccin(
     Color {
         name: color.name.to_string(),
         identifier: color.name.identifier().to_string(),
+        order: color.order,
         accent: color.accent,
         hex,
         rgb: RGB {
@@ -167,6 +172,8 @@ pub fn build_palette(
             Flavor {
                 name: flavor.name.to_string(),
                 identifier: flavor.name.identifier().to_string(),
+                emoji: flavor.emoji,
+                order: flavor.order,
                 dark: flavor.dark,
                 light: !flavor.dark,
                 colors,
@@ -233,6 +240,7 @@ impl Color {
         Self {
             name: blueprint.name.clone(),
             identifier: blueprint.identifier.clone(),
+            order: blueprint.order,
             accent: blueprint.accent,
             hex: rgb_to_hex(&rgb, opacity),
             rgb,
@@ -257,6 +265,7 @@ impl Color {
         Self {
             name: blueprint.name.clone(),
             identifier: blueprint.identifier.clone(),
+            order: blueprint.order,
             accent: blueprint.accent,
             hex: rgb_to_hex(&rgb, opacity),
             rgb,

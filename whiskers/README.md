@@ -124,6 +124,8 @@ These types are designed to closely match the [palette.json](https://github.com/
 | - | - | - | - |
 | `name` | `String` | The name of the flavor. | `"Latte"`, `"Frappé"`, `"Macchiato"`, `"Mocha"` |
 | `identifier` | `String` | The identifier of the flavor. | `"latte"`, `"frappe"`, `"macchiato"`, `"mocha"` |
+| `emoji` | `char` | Emoji associated with the flavor. | `'🌻'`, `'🪴'`, `'🌺'`, `'🌿'` |
+| `order` | `u32` | Order of the flavor in the palette spec. | `0` to `3` |
 | `dark` | `bool` | Whether the flavor is dark. | `false` for Latte, `true` for others |
 | `light` | `bool` | Whether the flavor is light. | `true` for Latte, `false` for others |
 | `colors` | `Map<String, Color>` | A map of color identifiers to their respective values. | |
@@ -134,6 +136,7 @@ These types are designed to closely match the [palette.json](https://github.com/
 | - | - | - | - |
 | `name` | `String` | The name of the color. | `"Rosewater"`, `"Surface 0"`, `"Base"` |
 | `identifier` | `String` | The identifier of the color. | `"rosewater"`, `"surface0"`, `"base"` |
+| `order` | `u32` | Order of the color in the palette spec. | `0` to `25` |
 | `accent` | `bool` | Whether the color is an accent color. | |
 | `hex` | `String` | The color in hexadecimal format. | `"1e1e2e"` |
 | `rgb` | `RGB` | The color in RGB format. | |
