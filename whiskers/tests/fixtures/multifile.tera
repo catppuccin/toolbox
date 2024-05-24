@@ -10,3 +10,4 @@ whiskers:
 # Catppuccin {{flavor.name}}{% if variant == "no-italics" %} (no italics){% endif %}
 [theme]
 {{accent}}: #{{flavor.colors[accent].hex}}
+rosewater: {{rosewater.hex}}
