@@ -348,6 +348,11 @@ fn render_multi_output(
                 let flavor: catppuccin::FlavorName = value.parse()?;
                 let flavor = &palette.flavors[flavor.identifier()];
                 ctx.insert("flavor", flavor);
+
+                // also throw in the flavor's colors for convenience
+                for (_, color) in flavor {
+                    ctx.insert(&color.identifier, &color);
+                }
             } else {
                 ctx.insert(key, &value);
             }
