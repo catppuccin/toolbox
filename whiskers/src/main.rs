@@ -247,7 +247,21 @@ fn list_functions(format: OutputFormat) {
                 markdown::format_filters_and_functions(markdown::Format::Table)
             );
         }
-        OutputFormat::Plain => todo!(),
+        OutputFormat::Plain => {
+            let mut list = templating::all_filters()
+                .iter()
+                .map(|f| f.name.clone())
+                .collect::<Vec<String>>();
+
+            list.extend(
+                templating::all_functions()
+                    .iter()
+                    .map(|f| f.name.clone())
+                    .collect::<Vec<String>>(),
+            );
+
+            println!("{}", list.join("\n"));
+        }
     }
 }
 
