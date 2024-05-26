@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.2.0](https://github.com/catppuccin/toolbox/compare/whiskers-v2.1.1...whiskers-v2.2.0) (2024-05-26)
+
+
+### Features
+
+* **whiskers:** add colors to context in single-flavor matrix ([#223](https://github.com/catppuccin/toolbox/issues/223)) ([37217cc](https://github.com/catppuccin/toolbox/commit/37217cc221c9800614402ddc2c7a09b4f57f3b4b))
+* **whiskers:** support `emoji` and `order` properties ([#227](https://github.com/catppuccin/toolbox/issues/227)) ([365b2f6](https://github.com/catppuccin/toolbox/commit/365b2f6f9a9e3c1ff691643ebd7b5e5cf25cbd9b))
+* **whiskers:** write results to `filename` in single file mode ([#218](https://github.com/catppuccin/toolbox/issues/218)) ([4715155](https://github.com/catppuccin/toolbox/commit/47151550bdad323c8c8793601dd3f3848a2a87c6))
+
+
+### Bug Fixes
+
+* **deps:** update rust crate itertools to 0.13.0 ([#220](https://github.com/catppuccin/toolbox/issues/220)) ([6840a88](https://github.com/catppuccin/toolbox/commit/6840a887ae42b366ca2c5ec2cf7fb7194d405eae))
+
 ## [2.1.1](https://github.com/catppuccin/toolbox/compare/whiskers-v2.1.0...whiskers-v2.1.1) (2024-05-20)
 
 
