@@ -104,7 +104,7 @@ fn table_format() -> String {
         ));
     }
 
-    result.push_str("### Filters\n\n");
+    result.push_str("\n### Filters\n\n");
     result.push_str("| Name | Description | Examples |\n");
     result.push_str("|------|-------------|----------|\n");
     for filter in templating::all_filters() {
@@ -116,17 +116,26 @@ fn table_format() -> String {
                 "None".to_string()
             } else {
                 filter.examples.first().map_or_else(String::new, |example| {
-                    format!(
-                        "`{value} \\| {name}({input})` => `{output}`",
-                        value = example.value,
-                        name = filter.name,
-                        input = example
-                            .inputs
-                            .iter()
-                            .map(|(k, v)| format!("{k}={v}"))
-                            .join(", "),
-                        output = example.output
-                    )
+                    if example.inputs.is_empty() {
+                        format!(
+                            "`{value} \\| {name}` => `{output}`",
+                            value = example.value,
+                            name = filter.name,
+                            output = example.output
+                        )
+                    } else {
+                        format!(
+                            "`{value} \\| {name}({input})` => `{output}`",
+                            value = example.value,
+                            name = filter.name,
+                            input = example
+                                .inputs
+                                .iter()
+                                .map(|(k, v)| format!("{k}={v}"))
+                                .join(", "),
+                            output = example.output
+                        )
+                    }
                 })
             }
         ));
