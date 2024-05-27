@@ -261,6 +261,14 @@ fn list_functions(format: OutputFormat) {
 }
 
 fn list_flavors(format: OutputFormat) {
+    let format = match format {
+        OutputFormat::Markdown | OutputFormat::MarkdownTable => {
+            eprintln!("warning: Markdown output is not yet supported for listing flavors, reverting to `plain`");
+            OutputFormat::Plain
+        }
+        other => other,
+    };
+
     let output = catppuccin::PALETTE.all_flavors().map(|f| f.identifier());
 
     println!(
@@ -284,6 +292,14 @@ fn list_flavors(format: OutputFormat) {
 }
 
 fn list_accents(format: OutputFormat) {
+    let format = match format {
+        OutputFormat::Markdown | OutputFormat::MarkdownTable => {
+            eprintln!("warning: Markdown output is not yet supported for listing accents, reverting to `plain`");
+            OutputFormat::Plain
+        }
+        other => other,
+    };
+
     let output = catppuccin::PALETTE
         .latte
         .colors
