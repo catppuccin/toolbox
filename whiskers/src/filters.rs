@@ -132,3 +132,39 @@ pub fn trunc(
     )?;
     Ok(tera::to_value(format!("{value:.places$}"))?)
 }
+
+pub fn css_rgb(
+    value: &tera::Value,
+    _args: &HashMap<String, tera::Value>,
+) -> Result<tera::Value, tera::Error> {
+    let color: Color = tera::from_value(value.clone())?;
+    let color: css_colors::RGB = (&color).into();
+    Ok(tera::to_value(color.to_string())?)
+}
+
+pub fn css_rgba(
+    value: &tera::Value,
+    _args: &HashMap<String, tera::Value>,
+) -> Result<tera::Value, tera::Error> {
+    let color: Color = tera::from_value(value.clone())?;
+    let color: css_colors::RGBA = (&color).into();
+    Ok(tera::to_value(color.to_string())?)
+}
+
+pub fn css_hsl(
+    value: &tera::Value,
+    _args: &HashMap<String, tera::Value>,
+) -> Result<tera::Value, tera::Error> {
+    let color: Color = tera::from_value(value.clone())?;
+    let color: css_colors::HSL = (&color).into();
+    Ok(tera::to_value(color.to_string())?)
+}
+
+pub fn css_hsla(
+    value: &tera::Value,
+    _args: &HashMap<String, tera::Value>,
+) -> Result<tera::Value, tera::Error> {
+    let color: Color = tera::from_value(value.clone())?;
+    let color: css_colors::HSLA = (&color).into();
+    Ok(tera::to_value(color.to_string())?)
+}
