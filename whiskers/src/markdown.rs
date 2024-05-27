@@ -2,6 +2,7 @@ use itertools::Itertools as _;
 
 use crate::templating;
 
+#[must_use]
 pub fn display_functions_as_list() -> String {
     let mut result = String::new();
     result.push_str("## Functions\n\n");

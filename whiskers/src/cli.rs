@@ -10,6 +10,7 @@ type ValueMap = HashMap<String, serde_json::Value>;
 
 #[derive(Parser, Debug)]
 #[command(version, about)]
+#[allow(clippy::struct_excessive_bools)] // not a problem for cli flags
 pub struct Args {
     /// Path to the template file, or - for stdin
     #[arg(required_unless_present_any = ["list_functions", "list_flavors", "list_accents"])]

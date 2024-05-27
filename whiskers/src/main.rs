@@ -247,12 +247,7 @@ fn list_functions(format: OutputFormat) {
                     .map(|f| f.name.clone())
                     .collect::<Vec<String>>();
 
-                list.extend(
-                    templating::all_functions()
-                        .iter()
-                        .map(|f| f.name.clone())
-                        .collect::<Vec<String>>(),
-                );
+                list.extend(templating::all_functions().iter().map(|f| f.name.clone()));
 
                 list.join("\n")
             }
@@ -269,7 +264,9 @@ fn list_flavors(format: OutputFormat) {
         other => other,
     };
 
-    let output = catppuccin::PALETTE.all_flavors().map(|f| f.identifier());
+    let output = catppuccin::PALETTE
+        .all_flavors()
+        .map(catppuccin::Flavor::identifier);
 
     println!(
         "{}",
