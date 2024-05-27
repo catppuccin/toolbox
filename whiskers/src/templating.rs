@@ -50,6 +50,10 @@ pub fn make_engine() -> tera::Tera {
     tera.register_filter("urlencode_lzma", filters::urlencode_lzma);
     tera.register_filter("trunc", filters::trunc);
     tera.register_filter("mix", filters::mix);
+    tera.register_filter("css_rgb", filters::css_rgb);
+    tera.register_filter("css_rgba", filters::css_rgba);
+    tera.register_filter("css_hsl", filters::css_hsl);
+    tera.register_filter("css_hsla", filters::css_hsla);
     tera.register_function("if", functions::if_fn);
     tera.register_function("object", functions::object);
     tera.register_function("css_rgb", functions::css_rgb);
@@ -147,6 +151,26 @@ pub fn all_filters() -> Vec<Filter> {
             name: "trunc".to_string(),
             description: "Truncate a number to a certain number of places".to_string(),
             examples: vec![filter_example!(1.123456 | trunc(places=3) => "1.123")],
+        },
+        Filter {
+            name: "css_rgb".to_string(),
+            description: "Convert a color to an RGB CSS string".to_string(),
+            examples: vec![filter_example!(red | css_rgb => "rgb(210, 15, 57)")],
+        },
+        Filter {
+            name: "css_rgba".to_string(),
+            description: "Convert a color to an RGBA CSS string".to_string(),
+            examples: vec![filter_example!(red | css_rgba => "rgba(210, 15, 57, 1.00)")],
+        },
+        Filter {
+            name: "css_hsl".to_string(),
+            description: "Convert a color to an HSL CSS string".to_string(),
+            examples: vec![filter_example!(red | css_hsl => "hsl(347, 87%, 44%)")],
+        },
+        Filter {
+            name: "css_hsla".to_string(),
+            description: "Convert a color to an HSLA CSS string".to_string(),
+            examples: vec![filter_example!(red | css_hsla => "hsla(347, 87%, 44%, 1.00)")],
         },
     ]
 }
