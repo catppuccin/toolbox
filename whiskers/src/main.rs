@@ -83,6 +83,8 @@ fn main() -> anyhow::Result<()> {
         .expect("args.template is guaranteed by clap to be set");
     let template_from_stdin = matches!(template.source, clap_stdin::Source::Stdin);
     let template_name = template_name(template);
+    let template_directory =
+        template_directory(template).context("Template file does not exist")?;
 
     let mut decoder = DecodeReaderBytes::new(
         template
@@ -149,7 +151,7 @@ fn main() -> anyhow::Result<()> {
     }
 
     // build the Tera engine
-    let mut tera = templating::make_engine();
+    let mut tera = templating::make_engine(&template_directory);
     tera.add_raw_template(&template_name, &doc.body)
         .context("Template is invalid")?;
 
@@ -255,6 +257,17 @@ fn template_name(template: &clap_stdin::FileOrStdin) -> String {
             || "template".to_string(),
             |name| name.to_string_lossy().to_string(),
         ),
+    }
+}
+
+fn template_directory(template: &clap_stdin::FileOrStdin) -> anyhow::Result<PathBuf> {
+    match &template.source {
+        clap_stdin::Source::Stdin => Ok(std::env::current_dir()?),
+        clap_stdin::Source::Arg(arg) => Ok(Path::new(&arg)
+            .canonicalize()?
+            .parent()
+            .expect("file path must have a parent")
+            .to_owned()),
     }
 }
 

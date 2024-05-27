@@ -37,6 +37,18 @@ mod happy_path {
         ));
     }
 
+    /// Test that the CLI can render a template which uses read_file
+    #[test]
+    fn test_read_file() {
+        let mut cmd = Command::cargo_bin("whiskers").expect("binary exists");
+        let assert = cmd
+            .args(["tests/fixtures/read_file/read_file.tera", "-f", "latte"])
+            .assert();
+        assert
+            .success()
+            .stdout(include_str!("fixtures/read_file/read_file.md"));
+    }
+
     /// Test that the CLI can render a UTF-8 template file
     #[test]
     fn test_utf8() {
@@ -89,7 +101,7 @@ mod sad_path {
         cmd.arg("test/file/doesnt/exist");
         cmd.assert()
             .failure()
-            .stderr(predicate::str::contains("Failed to open template file"));
+            .stderr(predicate::str::contains("Template file does not exist"));
     }
 
     #[test]

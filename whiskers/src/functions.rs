@@ -1,4 +1,8 @@
-use std::collections::{BTreeMap, HashMap};
+use std::{
+    collections::{BTreeMap, HashMap},
+    fs,
+    path::PathBuf,
+};
 
 use crate::models::Color;
 
@@ -66,4 +70,20 @@ pub fn css_hsla(args: &HashMap<String, tera::Value>) -> Result<tera::Value, tera
     )?;
     let color: css_colors::HSLA = (&color).into();
     Ok(tera::to_value(color.to_string())?)
+}
+
+pub fn read_file_handler(
+    template_directory: PathBuf,
+) -> impl Fn(&HashMap<String, tera::Value>) -> Result<tera::Value, tera::Error> {
+    move |args| -> Result<tera::Value, tera::Error> {
+        let path: String = tera::from_value(
+            args.get("path")
+                .ok_or_else(|| tera::Error::msg("path is required"))?
+                .clone(),
+        )?;
+        let path = template_directory.join(path);
+        let contents = fs::read_to_string(&path)
+            .map_err(|_| format!("Failed to open file {}", path.display()))?;
+        Ok(tera::to_value(contents)?)
+    }
 }
