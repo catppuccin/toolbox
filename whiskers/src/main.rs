@@ -83,7 +83,8 @@ fn main() -> anyhow::Result<()> {
         .expect("args.template is guaranteed by clap to be set");
     let template_from_stdin = matches!(template.source, clap_stdin::Source::Stdin);
     let template_name = template_name(template);
-    let template_directory = template_directory(template)?;
+    let template_directory =
+        template_directory(template).context("Template file does not exist")?;
 
     let mut decoder = DecodeReaderBytes::new(
         template

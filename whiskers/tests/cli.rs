@@ -101,7 +101,7 @@ mod sad_path {
         cmd.arg("test/file/doesnt/exist");
         cmd.assert()
             .failure()
-            .stderr(predicate::str::contains("Failed to open template file"));
+            .stderr(predicate::str::contains("Template file does not exist"));
     }
 
     #[test]
