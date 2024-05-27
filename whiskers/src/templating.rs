@@ -107,7 +107,9 @@ pub fn all_functions() -> Vec<Function> {
         },
         Function {
             name: "read_file".to_string(),
-            description: "Read and include the contents of a file".to_string(),
+            description:
+                "Read and include the contents of a file, path is relative to the template file"
+                    .to_string(),
             examples: vec![function_example!(read_file(path="abc.txt") => "abc")],
         },
     ]
