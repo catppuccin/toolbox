@@ -2,21 +2,8 @@ use itertools::Itertools as _;
 
 use crate::templating;
 
-#[derive(Clone, Copy)]
-pub enum Format {
-    List,
-    Table,
-}
-
 #[must_use]
-pub fn format_filters_and_functions(format: Format) -> String {
-    match format {
-        Format::List => list_format(),
-        Format::Table => table_format(),
-    }
-}
-
-fn list_format() -> String {
+pub fn display_functions_as_list() -> String {
     let mut result = String::new();
     result.push_str("## Functions\n\n");
     for function in templating::all_functions() {
@@ -72,7 +59,7 @@ fn list_format() -> String {
     result
 }
 
-fn table_format() -> String {
+pub fn display_functions_as_table() -> String {
     let mut result = String::new();
     result.push_str("### Functions\n\n");
     result.push_str("| Name | Description | Examples |\n");

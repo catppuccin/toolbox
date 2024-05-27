@@ -63,14 +63,20 @@ Options:
       --dry-run
           Dry run, don't write anything to disk
 
-  -l, --list-functions
+      --list-functions
           List all Tera filters and functions
+
+      --list-flavors
+          List the Catppuccin flavors
+
+      --list-accents
+          List the Catppuccin accent colors
 
   -o, --output-format <OUTPUT_FORMAT>
           Output format of --list-functions
           
           [default: json]
-          [possible values: json, yaml, markdown, markdown-table]
+          [possible values: json, yaml, markdown, markdown-table, plain]
 
   -h, --help
           Print help (see a summary with '-h')

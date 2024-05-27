@@ -77,6 +77,16 @@ fn main() -> anyhow::Result<()> {
         return Ok(());
     }
 
+    if args.list_flavors {
+        list_flavors(args.output_format);
+        return Ok(());
+    }
+
+    if args.list_accents {
+        list_accents(args.output_format);
+        return Ok(());
+    }
+
     let template = args
         .template
         .as_ref()
@@ -220,34 +230,109 @@ fn override_matrix(
 
 #[allow(clippy::too_many_lines)]
 fn list_functions(format: OutputFormat) {
-    match format {
-        OutputFormat::Json | OutputFormat::Yaml => {
-            let output = serde_json::json!({
-                "functions": templating::all_functions(),
-                "filters": templating::all_filters()
-            });
-            println!(
-                "{}",
+    println!(
+        "{}",
+        match format {
+            OutputFormat::Json | OutputFormat::Yaml => {
+                let output = serde_json::json!({
+                    "functions": templating::all_functions(),
+                    "filters": templating::all_filters()
+                });
+
                 if matches!(format, OutputFormat::Json) {
                     serde_json::to_string_pretty(&output).expect("output is guaranteed to be valid")
                 } else {
                     serde_yaml::to_string(&output).expect("output is guaranteed to be valid")
                 }
-            );
+            }
+            OutputFormat::Markdown => {
+                markdown::display_functions_as_list()
+            }
+            OutputFormat::MarkdownTable => {
+                markdown::display_functions_as_table()
+            }
+            OutputFormat::Plain => {
+                let mut list = templating::all_filters()
+                    .iter()
+                    .map(|f| f.name.clone())
+                    .collect::<Vec<String>>();
+
+                list.extend(templating::all_functions().iter().map(|f| f.name.clone()));
+
+                list.join("\n")
+            }
         }
-        OutputFormat::Markdown => {
-            println!(
-                "{}",
-                markdown::format_filters_and_functions(markdown::Format::List)
-            );
+    );
+}
+
+fn list_flavors(format: OutputFormat) {
+    let format = match format {
+        OutputFormat::Markdown | OutputFormat::MarkdownTable => {
+            eprintln!("warning: Markdown output is not yet supported for listing flavors, reverting to `plain`");
+            OutputFormat::Plain
         }
-        OutputFormat::MarkdownTable => {
-            println!(
-                "{}",
-                markdown::format_filters_and_functions(markdown::Format::Table)
-            );
+        other => other,
+    };
+
+    let output = catppuccin::PALETTE
+        .all_flavors()
+        .map(catppuccin::Flavor::identifier);
+
+    println!(
+        "{}",
+        match format {
+            OutputFormat::Json | OutputFormat::Yaml => {
+                let output = serde_json::json!(output);
+
+                if matches!(format, OutputFormat::Json) {
+                    serde_json::to_string_pretty(&output).expect("output is guaranteed to be valid")
+                } else {
+                    serde_yaml::to_string(&output).expect("output is guaranteed to be valid")
+                }
+            }
+            OutputFormat::Plain => {
+                output.join("\n")
+            }
+            _ => todo!(),
         }
-    }
+    );
+}
+
+fn list_accents(format: OutputFormat) {
+    let format = match format {
+        OutputFormat::Markdown | OutputFormat::MarkdownTable => {
+            eprintln!("warning: Markdown output is not yet supported for listing accents, reverting to `plain`");
+            OutputFormat::Plain
+        }
+        other => other,
+    };
+
+    let output = catppuccin::PALETTE
+        .latte
+        .colors
+        .all_colors()
+        .into_iter()
+        .filter_map(|c| if c.accent { Some(c.identifier()) } else { None })
+        .collect::<Vec<_>>();
+
+    println!(
+        "{}",
+        match format {
+            OutputFormat::Json | OutputFormat::Yaml => {
+                let output = serde_json::json!(output);
+
+                if matches!(format, OutputFormat::Json) {
+                    serde_json::to_string_pretty(&output).expect("output is guaranteed to be valid")
+                } else {
+                    serde_yaml::to_string(&output).expect("output is guaranteed to be valid")
+                }
+            }
+            OutputFormat::Plain => {
+                output.join("\n")
+            }
+            _ => todo!(),
+        }
+    );
 }
 
 fn template_name(template: &clap_stdin::FileOrStdin) -> String {
