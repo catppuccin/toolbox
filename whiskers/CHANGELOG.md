@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.3.0](https://github.com/catppuccin/toolbox/compare/whiskers-v2.2.0...whiskers-v2.3.0) (2024-05-27)
+
+
+### Features
+
+* **whiskers:** add --list-flavors and --list-accents ([#219](https://github.com/catppuccin/toolbox/issues/219)) ([2a53432](https://github.com/catppuccin/toolbox/commit/2a534326a8b44027628044d6f6a8e84e1824144a))
+* **whiskers:** add css_* functions as filters ([#230](https://github.com/catppuccin/toolbox/issues/230)) ([e2e7f22](https://github.com/catppuccin/toolbox/commit/e2e7f22b88bafd89f2da63f869e3c895abdb5545))
+* **whiskers:** add read_file function ([#217](https://github.com/catppuccin/toolbox/issues/217)) ([c00881a](https://github.com/catppuccin/toolbox/commit/c00881a0c67806b0f8572693728c1ac1bc5586c5))
+
 ## [2.2.0](https://github.com/catppuccin/toolbox/compare/whiskers-v2.1.1...whiskers-v2.2.0) (2024-05-26)
 
 
