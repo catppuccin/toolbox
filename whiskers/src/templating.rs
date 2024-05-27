@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::path::Path;
 
 use indexmap::IndexMap;
 
@@ -44,7 +44,7 @@ macro_rules! filter_example {
     };
 }
 
-pub fn make_engine(template_directory: Option<PathBuf>) -> tera::Tera {
+pub fn make_engine(template_directory: &Path) -> tera::Tera {
     let mut tera = tera::Tera::default();
     tera.register_filter("add", filters::add);
     tera.register_filter("sub", filters::sub);
@@ -60,7 +60,7 @@ pub fn make_engine(template_directory: Option<PathBuf>) -> tera::Tera {
     tera.register_function("css_hsla", functions::css_hsla);
     tera.register_function(
         "read_file",
-        functions::read_file_handler(template_directory),
+        functions::read_file_handler(template_directory.to_owned()),
     );
     tera
 }
