@@ -3,7 +3,7 @@ use std::{
     env,
     io::{Read, Write as _},
     path::{Path, PathBuf},
-    process,
+    process::{self, exit},
 };
 
 use anyhow::{anyhow, Context as _};
@@ -71,21 +71,7 @@ impl TemplateOptions {
 fn main() -> anyhow::Result<()> {
     // parse command-line arguments & template frontmatter
     let args = Args::parse();
-
-    if args.list_functions {
-        list_functions(args.output_format);
-        return Ok(());
-    }
-
-    if args.list_flavors {
-        list_flavors(args.output_format);
-        return Ok(());
-    }
-
-    if args.list_accents {
-        list_accents(args.output_format);
-        return Ok(());
-    }
+    handle_list_flags(&args);
 
     let template = args
         .template
@@ -199,6 +185,23 @@ fn main() -> anyhow::Result<()> {
     }
 
     Ok(())
+}
+
+fn handle_list_flags(args: &Args) {
+    if args.list_functions {
+        list_functions(args.output_format);
+        exit(0);
+    }
+
+    if args.list_flavors {
+        list_flavors(args.output_format);
+        exit(0);
+    }
+
+    if args.list_accents {
+        list_accents(args.output_format);
+        exit(0);
+    }
 }
 
 fn override_matrix(
