@@ -231,15 +231,16 @@ fn override_matrix(
     Ok(())
 }
 
-#[allow(clippy::too_many_lines)]
 fn list_functions(format: OutputFormat) {
+    let functions = templating::all_functions();
+    let filters = templating::all_filters();
     println!(
         "{}",
         match format {
             OutputFormat::Json | OutputFormat::Yaml => {
                 let output = serde_json::json!({
-                    "functions": templating::all_functions(),
-                    "filters": templating::all_filters()
+                    "functions": functions,
+                    "filters": filters,
                 });
 
                 if matches!(format, OutputFormat::Json) {
@@ -249,15 +250,19 @@ fn list_functions(format: OutputFormat) {
                 }
             }
             OutputFormat::Markdown | OutputFormat::MarkdownTable => {
-                markdown::display_functions_as_table()
+                format!(
+                    "{}\n\n{}",
+                    markdown::display_as_table(&functions, "Functions"),
+                    markdown::display_as_table(&filters, "Filters")
+                )
             }
             OutputFormat::Plain => {
-                let mut list = templating::all_filters()
+                let mut list = filters
                     .iter()
                     .map(|f| f.name.clone())
                     .collect::<Vec<String>>();
 
-                list.extend(templating::all_functions().iter().map(|f| f.name.clone()));
+                list.extend(functions.iter().map(|f| f.name.clone()));
 
                 list.join("\n")
             }
@@ -266,71 +271,120 @@ fn list_functions(format: OutputFormat) {
 }
 
 fn list_flavors(format: OutputFormat) {
-    let format = match format {
-        OutputFormat::Markdown | OutputFormat::MarkdownTable => {
-            eprintln!("warning: Markdown output is not yet supported for listing flavors, reverting to `plain`");
-            OutputFormat::Plain
-        }
-        other => other,
-    };
+    // we want all the flavor info minus the colors
+    #[derive(serde::Serialize)]
+    struct FlavorInfo {
+        identifier: String,
+        name: String,
+        emoji: char,
+        order: u32,
+        dark: bool,
+    }
 
-    let output = catppuccin::PALETTE
+    impl markdown::TableDisplay for FlavorInfo {
+        fn table_headings() -> Box<[String]> {
+            vec![
+                "Identifier".to_string(),
+                "Name".to_string(),
+                "Dark".to_string(),
+                "Emoji".to_string(),
+            ]
+            .into_boxed_slice()
+        }
+
+        fn table_row(&self) -> Box<[String]> {
+            vec![
+                self.identifier.clone(),
+                self.name.clone(),
+                self.dark.to_string(),
+                self.emoji.to_string(),
+            ]
+            .into_boxed_slice()
+        }
+    }
+
+    let flavors = catppuccin::PALETTE
         .all_flavors()
-        .map(catppuccin::Flavor::identifier);
-
-    println!(
-        "{}",
-        match format {
-            OutputFormat::Json | OutputFormat::Yaml => {
-                let output = serde_json::json!(output);
-
-                if matches!(format, OutputFormat::Json) {
-                    serde_json::to_string_pretty(&output).expect("output is guaranteed to be valid")
-                } else {
-                    serde_yaml::to_string(&output).expect("output is guaranteed to be valid")
-                }
-            }
-            OutputFormat::Plain => {
-                output.join("\n")
-            }
-            _ => todo!(),
-        }
-    );
-}
-
-fn list_accents(format: OutputFormat) {
-    let format = match format {
-        OutputFormat::Markdown | OutputFormat::MarkdownTable => {
-            eprintln!("warning: Markdown output is not yet supported for listing accents, reverting to `plain`");
-            OutputFormat::Plain
-        }
-        other => other,
-    };
-
-    let output = catppuccin::PALETTE
-        .latte
-        .colors
-        .all_colors()
         .into_iter()
-        .filter_map(|c| if c.accent { Some(c.identifier()) } else { None })
+        .map(|f| FlavorInfo {
+            identifier: f.identifier().to_string(),
+            name: f.name.to_string(),
+            emoji: f.emoji,
+            order: f.order,
+            dark: f.dark,
+        })
         .collect::<Vec<_>>();
 
     println!(
         "{}",
         match format {
+            // for structured data, we output the full flavor info objects
             OutputFormat::Json | OutputFormat::Yaml => {
-                let output = serde_json::json!(output);
-
                 if matches!(format, OutputFormat::Json) {
-                    serde_json::to_string_pretty(&output).expect("output is guaranteed to be valid")
+                    serde_json::to_string_pretty(&flavors)
+                        .expect("flavors are guaranteed to be valid json")
                 } else {
-                    serde_yaml::to_string(&output).expect("output is guaranteed to be valid")
+                    serde_yaml::to_string(&flavors)
+                        .expect("flavors are guaranteed to be valid yaml")
                 }
             }
+            // for plain output, we just list the flavor identifiers
             OutputFormat::Plain => {
-                output.join("\n")
+                flavors.iter().map(|f| &f.identifier).join("\n")
             }
-            _ => todo!(),
+            // and finally for human-readable markdown, we list the flavor names
+            OutputFormat::Markdown | OutputFormat::MarkdownTable => {
+                markdown::display_as_table(&flavors, "Flavors")
+            }
+        }
+    );
+}
+
+fn list_accents(format: OutputFormat) {
+    let accents = catppuccin::PALETTE
+        .latte
+        .colors
+        .all_colors()
+        .into_iter()
+        .filter(|c| c.accent)
+        .collect::<Vec<_>>();
+
+    println!(
+        "{}",
+        match format {
+            // for structured data, we can include both name and identifier of each color
+            OutputFormat::Json | OutputFormat::Yaml => {
+                let accents = accents
+                    .into_iter()
+                    .map(|c| {
+                        serde_json::json!({
+                            "name": c.name,
+                            "identifier": c.identifier(),
+                        })
+                    })
+                    .collect::<Vec<_>>();
+                if matches!(format, OutputFormat::Json) {
+                    serde_json::to_string_pretty(&accents)
+                        .expect("accents are guaranteed to be valid json")
+                } else {
+                    serde_yaml::to_string(&accents)
+                        .expect("accents are guaranteed to be valid yaml")
+                }
+            }
+            // for plain output, we just list the identifiers
+            OutputFormat::Plain => {
+                accents
+                    .into_iter()
+                    .map(catppuccin::Color::identifier)
+                    .join("\n")
+            }
+            // and finally for human-readable markdown, we list the names
+            OutputFormat::Markdown | OutputFormat::MarkdownTable => {
+                markdown::display_as_list(
+                    &accents.into_iter().map(|c| c.name).collect::<Vec<_>>(),
+                    "Accents",
+                )
+            }
         }
     );
 }

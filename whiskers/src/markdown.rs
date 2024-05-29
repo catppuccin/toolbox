@@ -1,23 +1,18 @@
-use itertools::Itertools as _;
+use std::fmt::Display;
 
-use crate::templating::{self, Filter, Function};
+use itertools::Itertools as _;
 
 pub trait TableDisplay {
     fn table_headings() -> Box<[String]>;
     fn table_row(&self) -> Box<[String]>;
 }
 
-#[must_use]
-pub fn display_functions_as_table() -> String {
-    let mut result = String::new();
-    result.push_str("### Functions\n\n");
-    result.push_str(display_as_table(&templating::all_functions()).as_str());
-    result.push_str("\n### Filters\n\n");
-    result.push_str(display_as_table(&templating::all_filters()).as_str());
-    result
+pub fn display_as_list<T: Display>(items: &[T], heading: &str) -> String {
+    let items = items.iter().map(|item| format!("* {item}")).join("\n");
+    format!("### {heading}\n\n{items}")
 }
 
-pub fn display_as_table<T: TableDisplay>(items: &[T]) -> String {
+pub fn display_as_table<T: TableDisplay>(items: &[T], heading: &str) -> String {
     let mut result = String::new();
     let rows = items.iter().map(T::table_row).collect::<Vec<_>>();
 
@@ -30,13 +25,17 @@ pub fn display_as_table<T: TableDisplay>(items: &[T]) -> String {
             let max_width = rows
                 .iter()
                 .map(|row| row[i].len())
+                .chain(std::iter::once(heading.len()))
                 .max()
                 .unwrap_or(heading.len());
             (heading, max_width)
         })
         .collect::<Vec<_>>();
 
-    // print the headings
+    // add the section heading
+    result.push_str(&format!("### {heading}\n\n"));
+
+    // add the table headings
     result.push_str(&format!(
         "| {} |\n",
         headings
@@ -45,7 +44,7 @@ pub fn display_as_table<T: TableDisplay>(items: &[T]) -> String {
             .join(" | ")
     ));
 
-    // print the separator
+    // add the separator
     result.push_str(&format!(
         "| {} |\n",
         headings
@@ -54,7 +53,7 @@ pub fn display_as_table<T: TableDisplay>(items: &[T]) -> String {
             .join(" | ")
     ));
 
-    // print the rows
+    // add the rows
     for row in rows {
         result.push_str(&format!(
             "| {} |\n",
@@ -68,81 +67,5 @@ pub fn display_as_table<T: TableDisplay>(items: &[T]) -> String {
         ));
     }
 
-    result
-}
-
-impl TableDisplay for Function {
-    fn table_headings() -> Box<[String]> {
-        Box::new([
-            "Name".to_string(),
-            "Description".to_string(),
-            "Examples".to_string(),
-        ])
-    }
-
-    fn table_row(&self) -> Box<[String]> {
-        Box::new([
-            format!("`{}`", self.name),
-            self.description.clone(),
-            if self.examples.is_empty() {
-                "None".to_string()
-            } else {
-                self.examples.first().map_or_else(String::new, |example| {
-                    format!(
-                        "`{name}({input})` ⇒ `{output}`",
-                        name = self.name,
-                        input = example
-                            .inputs
-                            .iter()
-                            .map(|(k, v)| format!("{k}={v}"))
-                            .join(", "),
-                        output = example.output
-                    )
-                })
-            },
-        ])
-    }
-}
-
-impl TableDisplay for Filter {
-    fn table_headings() -> Box<[String]> {
-        Box::new([
-            "Name".to_string(),
-            "Description".to_string(),
-            "Examples".to_string(),
-        ])
-    }
-
-    fn table_row(&self) -> Box<[String]> {
-        Box::new([
-            format!("`{}`", self.name),
-            self.description.clone(),
-            if self.examples.is_empty() {
-                "None".to_string()
-            } else {
-                self.examples.first().map_or_else(String::new, |example| {
-                    if example.inputs.is_empty() {
-                        format!(
-                            "`{value} \\| {name}` ⇒ `{output}`",
-                            value = example.value,
-                            name = self.name,
-                            output = example.output
-                        )
-                    } else {
-                        format!(
-                            "`{value} \\| {name}({input})` ⇒ `{output}`",
-                            value = example.value,
-                            name = self.name,
-                            input = example
-                                .inputs
-                                .iter()
-                                .map(|(k, v)| format!("{k}={v}"))
-                                .join(", "),
-                            output = example.output
-                        )
-                    }
-                })
-            },
-        ])
-    }
+    result.trim().to_string()
 }
