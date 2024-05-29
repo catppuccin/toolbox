@@ -248,10 +248,7 @@ fn list_functions(format: OutputFormat) {
                     serde_yaml::to_string(&output).expect("output is guaranteed to be valid")
                 }
             }
-            OutputFormat::Markdown => {
-                markdown::display_functions_as_list()
-            }
-            OutputFormat::MarkdownTable => {
+            OutputFormat::Markdown | OutputFormat::MarkdownTable => {
                 markdown::display_functions_as_table()
             }
             OutputFormat::Plain => {
