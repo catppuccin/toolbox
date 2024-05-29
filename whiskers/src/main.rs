@@ -383,7 +383,7 @@ fn template_is_compatible(template_opts: &TemplateOptions) -> bool {
     true
 }
 
-fn write_template(dry_run: bool, filename: String, result: String) -> Result<(), anyhow::Error> {
+fn write_template(dry_run: bool, filename: &str, result: String) -> Result<(), anyhow::Error> {
     let filename = Path::new(&filename);
 
     if dry_run || cfg!(test) {
@@ -416,7 +416,7 @@ fn render_single_output(
     if let Some(path) = check {
         check_result_with_file(&path, &result).context("Check mode failed")?;
     } else if let Some(filename) = filename {
-        write_template(dry_run, filename, result)?;
+        write_template(dry_run, &filename, result)?;
     } else {
         print!("{result}");
     }
@@ -467,7 +467,7 @@ fn render_multi_output(
         if args.check.is_some() {
             check_result_with_file(&filename, &result).context("Check mode failed")?;
         } else {
-            write_template(args.dry_run, filename, result)?;
+            write_template(args.dry_run, &filename, result)?;
         }
     }
 
