@@ -5,9 +5,6 @@
     "catwalk": {
       "package-name": "catwalk"
     },
-    "whiskers": {
-      "package-name": "whiskers"
-    },
     "deno-lib": {
       "package-name": "deno-lib",
       "release-type": "simple"
