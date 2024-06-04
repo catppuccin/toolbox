@@ -1,8 +1,10 @@
 <h2 align="center">🚧 This package has moved 🚧</h2>
 
-This package has moved to
-[catppuccin/whiskers](https://github.com/catppuccin/whiskers) for all releases
-starting with and after [v2.3.0](https://github.com/catppuccin/whiskers/releases/tag/v2.3.0).
+This package has moved to a separate repository to reduce the increasing
+complexity of managing a monorepo. To find code, documentation, and releases
+starting with and after
+[v2.3.0](https://github.com/catppuccin/whiskers/releases/tag/v2.3.0), visit
+[catppuccin/whiskers](https://github.com/catppuccin/whiskers).
 
 <p align="center">
 	<img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/footers/gray0_ctp_on_line.svg?sanitize=true" />
