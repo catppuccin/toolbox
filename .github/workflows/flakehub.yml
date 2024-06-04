@@ -36,7 +36,7 @@ jobs:
         run: nix flake check -Lv
 
       - name: Build packages
-        run: nix build -L .#catwalk .#whiskers
+        run: nix build -L .#catwalk
 
       - uses: DeterminateSystems/flakehub-push@main
         # only push to FlakeHub once when running on main
