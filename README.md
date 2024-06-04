@@ -18,7 +18,7 @@
 A set of software tools by Catppuccin developers, for Catppuccin developers.
 
 - [Catwalk](https://github.com/catppuccin/toolbox/tree/main/catwalk#readme)
-- [Whiskers](https://github.com/catppuccin/toolbox/tree/main/whiskers#readme)
+- [Whiskers (separate repository)](https://github.com/catppuccin/whiskers)
 
 &nbsp;
 
