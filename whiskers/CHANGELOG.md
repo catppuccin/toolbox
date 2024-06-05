@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.0](https://github.com/catppuccin/toolbox/compare/whiskers-v2.3.0...whiskers-v2.4.0) (2024-06-05)
+
+
+### Features
+
+* **whiskers:** tidy up output formats, general clean up ([#235](https://github.com/catppuccin/toolbox/issues/235)) ([b093418](https://github.com/catppuccin/toolbox/commit/b09341880fb880120132fe8a09aae148c17d26ba))
+
 ## [2.3.0](https://github.com/catppuccin/toolbox/compare/whiskers-v2.2.0...whiskers-v2.3.0) (2024-05-27)
 
 
