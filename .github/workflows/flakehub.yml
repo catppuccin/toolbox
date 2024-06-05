@@ -32,9 +32,6 @@ jobs:
           name: catppuccin
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
-      - name: Flake check
-        run: nix flake check -Lv
-
       - name: Build packages
         run: nix build -L .#catwalk
 
