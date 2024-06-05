@@ -33,14 +33,14 @@ Add the following to your `flake.nix`:
 ```nix
 {
     inputs = {
-        catppuccin-toolbox.url = "github:catppuccin/toolbox";
+        catppuccin-toolbox.url = "github:catppuccin/whiskers";
     };
-    outputs = {nixpkgs, catppuccin-toolbox, ...}: {
+    outputs = {nixpkgs, catppuccin-whiskers, ...}: {
         nixosConfigurations.HOSTNAME = nixpkgs.lib.nixosSystem {
           modules = [
           {
               environment.systemPackages = [
-                catppuccin-toolbox.packages.${pkgs.system}.whiskers
+                catppuccin-whiskers.packages.${pkgs.system}.default
               ];
             }
           ];
@@ -62,17 +62,17 @@ Add the following to your `flake.nix`:
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    catppuccin-toolbox.url = "github:catppuccin/toolbox";
+    catppuccin-whiskers.url = "github:catppuccin/whiskers";
   };
 
-  outputs = {nixpkgs, home-manager, catppuccin-toolbox, ...}: {
+  outputs = {nixpkgs, home-manager, catppuccin-whiskers, ...}: {
     homeConfigurations."user@hostname" = home-manager.lib.homeManagerConfiguration {
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
 
       modules = [
         {
             home.packages = [
-                catppuccin-toolbox.packages.${pkgs.system}.whiskers
+                catppuccin-whiskers.packages.${pkgs.system}.default
             ];
         }
       ];
@@ -88,18 +88,18 @@ Add the following to your configuration:
 ```nix
 {config, pkgs, ...}: let
   flake-compat = builtins.fetchTarball "https://github.com/edolstra/flake-compat/archive/master.tar.gz";
-  catppuccin-toolbox = (import flake-compat {
-    src = builtins.fetchTarball "https://github.com/catppuccin/toolbox/archive/main.tar.gz";
+  catppuccin-whiskers = (import flake-compat {
+    src = builtins.fetchTarball "https://github.com/catppuccin/whiskers/archive/main.tar.gz";
   }).defaultNix;
 in {
     # Home Manager
     home.packages = [
-        catppuccin-toolbox.packages.${pkgs.system}.whiskers
+        catppuccin-whiskers.packages.${pkgs.system}.default
     ];
 
     # Nix
     environment.systemPackages = [
-        catppuccin-toolbox.packages.${pkgs.system}.whiskers
+        catppuccin-whiskers.packages.${pkgs.system}.default
     ];
 }
 ```
