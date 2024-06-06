@@ -11,7 +11,7 @@
   <a href="https://github.com/catppuccin/toolbox/contributors"><img src="https://img.shields.io/github/contributors/catppuccin/toolbox?colorA=363a4f&colorB=a6da95&style=for-the-badge"></a>
 </p>
 
-&nbsp;
+<img src="./preview.jpg">
 
 ## Catppuccin's development tools
 
