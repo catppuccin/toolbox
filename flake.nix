@@ -13,10 +13,10 @@
     inherit (nixpkgs) lib;
   in {
     checks = forEachSystem (pkgs: self.packages.${pkgs.system});
-    packages = forEachSystem (pkgs: lib.filterAttrs (_: v: lib.isDerivation v) (pkgs.callPackage ./nix {}));
+    packages = forEachSystem (pkgs: lib.filterAttrs (_: v: lib.isDerivation v) (pkgs.callPackage ./nix { }) // { whiskers = throw "This package has been moved to x `github:catppuccin/whiskers`"; } );
     overlays.default = final: prev: {
       catppuccin-catwalk = (prev.callPackage ./nix {}).catwalk;
-      catppuccin-whiskers = (prev.callPackage ./nix {}).whiskers;
+      catppuccin-whiskers = throw "This package has been moved to x `github:catppuccin/whiskers`";
     };
     formatter = forEachSystem (pkgs: pkgs.alejandra);
   };

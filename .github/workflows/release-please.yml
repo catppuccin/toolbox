@@ -19,8 +19,6 @@ jobs:
     outputs:
       catwalk_release: ${{ steps.release.outputs['catwalk--release_created'] || env.ACT }}
       catwalk_tag: ${{ steps.release.outputs['catwalk--tag_name'] }}
-      whiskers_release: ${{ steps.release.outputs['whiskers--release_created'] || env.ACT }}
-      whiskers_tag: ${{ steps.release.outputs['whiskers--tag_name'] }}
 
   upload-catwalk:
     needs: release-please
@@ -30,14 +28,4 @@ jobs:
       tag: ${{ needs.release-please.outputs.catwalk_tag }}
       executable: catwalk
       member: catppuccin-catwalk
-    secrets: inherit
-
-  upload-whiskers:
-    needs: release-please
-    if: ${{ needs.release-please.outputs.whiskers_release }}
-    uses: ./.github/workflows/upload-rust.yml
-    with:
-      tag: ${{ needs.release-please.outputs.whiskers_tag }}
-      executable: whiskers
-      member: catppuccin-whiskers
     secrets: inherit
