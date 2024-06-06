@@ -1,6 +1,6 @@
-<h2 align="center">🚧 This package has moved 🚧</h2>
+<h2 align="center">🚧 This tool has moved 🚧</h2>
 
-This package has moved to a separate repository to reduce the increasing
+This tool has moved to a separate repository to reduce the increasing
 complexity of managing a monorepo. To find code, documentation, and releases
 starting with and after
 [v2.3.0](https://github.com/catppuccin/whiskers/releases/tag/v2.3.0), visit
