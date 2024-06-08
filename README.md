@@ -17,7 +17,7 @@
 
 A set of software tools by Catppuccin developers, for Catppuccin developers.
 
-- [Catwalk](https://github.com/catppuccin/toolbox/tree/main/catwalk#readme)
+- [Catwalk (separate repository)](https://github.com/catppuccin/catwalk)
 - [Whiskers (separate repository)](https://github.com/catppuccin/whiskers)
 
 &nbsp;
@@ -33,13 +33,15 @@ Add the following to your `flake.nix`:
 ```nix
 {
     inputs = {
-        catppuccin-toolbox.url = "github:catppuccin/whiskers";
+        catppuccin-catwalk.url = "github:catppuccin/catwalk";
+        catppuccin-whiskers.url = "github:catppuccin/whiskers";
     };
-    outputs = {nixpkgs, catppuccin-whiskers, ...}: {
+    outputs = {nixpkgs, catppuccin-whiskers, catppuccin-catwalk, ...}: {
         nixosConfigurations.HOSTNAME = nixpkgs.lib.nixosSystem {
           modules = [
           {
               environment.systemPackages = [
+                catppuccin-catwalk.packages.${pkgs.system}.default
                 catppuccin-whiskers.packages.${pkgs.system}.default
               ];
             }
@@ -62,16 +64,18 @@ Add the following to your `flake.nix`:
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    catppuccin-catwalk.url = "github:catppuccin/catwalk";
     catppuccin-whiskers.url = "github:catppuccin/whiskers";
   };
 
-  outputs = {nixpkgs, home-manager, catppuccin-whiskers, ...}: {
+  outputs = {nixpkgs, home-manager, catppuccin-whiskers, catppuccin-catwalk ...}: {
     homeConfigurations."user@hostname" = home-manager.lib.homeManagerConfiguration {
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
 
       modules = [
         {
             home.packages = [
+                catppuccin-catwalk.packages.${pkgs.system}.default
                 catppuccin-whiskers.packages.${pkgs.system}.default
             ];
         }
@@ -88,17 +92,22 @@ Add the following to your configuration:
 ```nix
 {config, pkgs, ...}: let
   flake-compat = builtins.fetchTarball "https://github.com/edolstra/flake-compat/archive/master.tar.gz";
+  catppuccin-catwalk = (import flake-compat {
+    src = builtins.fetchTarball "https://github.com/catppuccin/catwalk/archive/main.tar.gz";
+  }).defaultNix;
   catppuccin-whiskers = (import flake-compat {
     src = builtins.fetchTarball "https://github.com/catppuccin/whiskers/archive/main.tar.gz";
   }).defaultNix;
 in {
     # Home Manager
     home.packages = [
+        catppuccin-catwalk.packages.${pkgs.system}.default
         catppuccin-whiskers.packages.${pkgs.system}.default
     ];
 
     # Nix
     environment.systemPackages = [
+        catppuccin-catwalk.packages.${pkgs.system}.default
         catppuccin-whiskers.packages.${pkgs.system}.default
     ];
 }

@@ -1,4 +1,0 @@
-# ignore the NPM package
-pkg/*
-# keep deno for esm
-!pkg/deno
