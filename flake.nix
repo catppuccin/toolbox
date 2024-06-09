@@ -17,5 +17,10 @@
         whiskers = throw "This package has been moved to `github:catppuccin/whiskers`";
         catwalk = throw "This package has been moved to `github:catppuccin/catwalk`";
       });
+      
+      overlays.default = _: _: {
+        catppuccin-catwalk = throw "This package has been moved to `github:catppuccin/catwalk`";
+         catppuccin-whiskers = throw "This package has been moved to `github:catppuccin/whiskers`";
+};
     };
 }
