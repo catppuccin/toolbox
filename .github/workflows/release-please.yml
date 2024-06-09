@@ -16,16 +16,3 @@ jobs:
       - uses: googleapis/release-please-action@v4
         id: release
         if: ${{ !env.ACT }}
-    outputs:
-      catwalk_release: ${{ steps.release.outputs['catwalk--release_created'] || env.ACT }}
-      catwalk_tag: ${{ steps.release.outputs['catwalk--tag_name'] }}
-
-  upload-catwalk:
-    needs: release-please
-    if: ${{ needs.release-please.outputs.catwalk_release }}
-    uses: ./.github/workflows/upload-rust.yml
-    with:
-      tag: ${{ needs.release-please.outputs.catwalk_tag }}
-      executable: catwalk
-      member: catppuccin-catwalk
-    secrets: inherit
