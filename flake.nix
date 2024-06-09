@@ -4,34 +4,18 @@
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
   outputs =
-    { self, nixpkgs, ... }:
+    { nixpkgs, ... }:
     let
-      systems = [
-        "aarch64-darwin"
-        "aarch64-linux"
-        "x86_64-darwin"
-        "x86_64-linux"
-      ];
-      forEachSystem = fn: lib.genAttrs systems (system: fn (import nixpkgs { inherit system; }));
-      inherit (nixpkgs) lib;
+      forAllSystems =
+        function:
+        nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed (
+          system: function nixpkgs.legacyPackages.${system}
+        );
     in
     {
-      checks = forEachSystem (pkgs: self.packages.${pkgs.system});
-      packages = forEachSystem (pkgs: {
-        whiskers = throw "This package has been moved to x `github:catppuccin/whiskers`";
-        catwalk = throw "This package has been moved to x `github:catppuccin/catwalk`";
+      packages = forAllSystems (_: {
+        whiskers = throw "This package has been moved to `github:catppuccin/whiskers`";
+        catwalk = throw "This package has been moved to `github:catppuccin/catwalk`";
       });
-      overlays.default = final: prev: {
-        catppuccin-catwalk = throw "This package has been moved to x `github:catppuccin/catwalk`";
-        catppuccin-whiskers = throw "This package has been moved to x `github:catppuccin/whiskers`";
-      };
-      formatter = forEachSystem (pkgs: pkgs.alejandra);
     };
-
-  nixConfig = {
-    extra-substituters = [ "https://catppuccin.cachix.org" ];
-    extra-trusted-public-keys = [
-      "catppuccin.cachix.org-1:noG/4HkbhJb+lUAdKrph6LaozJvAeEEZj4N732IysmU="
-    ];
-  };
 }
