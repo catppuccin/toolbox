@@ -1,7 +1,4 @@
-import {
-  assertEquals,
-  assertThrows,
-} from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assertEquals, assertThrows } from "jsr:@std/assert@1.0.11";
 import { updateReadme } from "./updateReadme.ts";
 
 const readme_default = `
@@ -14,10 +11,7 @@ Text after the section.
 `;
 
 Deno.test("updateReadme pass (defaults)", () => {
-  const newReadme = updateReadme(
-    readme_default,
-    "<new content>",
-  );
+  const newReadme = updateReadme(readme_default, "<new content>");
 
   assertEquals(
     newReadme,
@@ -36,13 +30,9 @@ Text after the section.
 
 Deno.test("updateReadme fail (defaults)", () => {
   assertThrows(() => {
-    updateReadme(
-      readme_default,
-      "bar-section-title",
-      {
-        section: "foo-section-title",
-      },
-    );
+    updateReadme(readme_default, "bar-section-title", {
+      section: "foo-section-title",
+    });
   });
 });
 
@@ -56,18 +46,14 @@ Text after the section.
 `;
 
 Deno.test("updateReadme pass (customized)", () => {
-  const newReadme = updateReadme(
-    readme_custom,
-    "<new content>",
-    {
-      section: "custom",
-      preamble: "Some custom preamble.",
-      markers: {
-        start: "# Custom start",
-        end: "Arbitrary end marker",
-      },
+  const newReadme = updateReadme(readme_custom, "<new content>", {
+    section: "custom",
+    preamble: "Some custom preamble.",
+    markers: {
+      start: "# Custom start",
+      end: "Arbitrary end marker",
     },
-  );
+  });
 
   assertEquals(
     newReadme,
