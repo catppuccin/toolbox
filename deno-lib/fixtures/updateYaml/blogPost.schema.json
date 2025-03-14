@@ -1,8 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
   "description": "A representation of a blog post",
+  "$id": "blogPost.schema.json",
   "type": "object",
-  "required": ["title", "content", "author"],
+  "required": [
+    "title",
+    "content",
+    "author"
+  ],
   "properties": {
     "title": {
       "type": "string"
@@ -15,7 +20,9 @@
     },
     "author": {
       "type": "object",
-      "required": ["username"],
+      "required": [
+        "username"
+      ],
       "properties": {
         "username": {
           "type": "string"

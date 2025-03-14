@@ -1,7 +1,10 @@
-import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assertEquals } from "jsr:@std/assert@1.0.11";
 import { validateYaml } from "./validateYaml.ts";
 
-import blogPostSchema from "./fixtures/updateYaml/blogpost.schema.json" with {
+import blogPostSchema from "./fixtures/updateYaml/blogPost.schema.json" with {
+  type: "json",
+};
+import blogPostsSchema from "./fixtures/updateYaml/blogPosts.schema.json" with {
   type: "json",
 };
 
@@ -14,6 +17,52 @@ author:
 tags:
  - "Technology"
  - "Programming"`;
+
+const multipleBlogPosts = `- title: "New Blog Post"
+  content: "This is the content of the blog post..."
+  publishedDate: "2023-08-25T15:00:00Z"
+  author:
+    username: "hammy"
+    email: "hammy@catppuccin.com"
+  tags: ["Technology", "Programming"]
+- title: "Another Blog Post"
+  content: "This is the content of the blog post..."
+  publishedDate: "2023-08-25T15:00:00Z"
+  author:
+    username: "pigeon"
+    email: "pigeon@catppuccin.com"
+  tags: ["Technology", "Programming"]`;
+
+Deno.test("YAML parse multiple schemas pass", async () => {
+  const data = await validateYaml(multipleBlogPosts, blogPostsSchema, [
+    blogPostSchema,
+  ]);
+
+  assertEquals(data,
+    [
+      {
+        title: "New Blog Post",
+        content: "This is the content of the blog post...",
+        publishedDate: "2023-08-25T15:00:00Z",
+        author: {
+          username: "hammy",
+          email: "hammy@catppuccin.com",
+        },
+        tags: ["Technology", "Programming"],
+      },
+      {
+        title: "Another Blog Post",
+        content: "This is the content of the blog post...",
+        publishedDate: "2023-08-25T15:00:00Z",
+        author: {
+          username: "pigeon",
+          email: "pigeon@catppuccin.com",
+        },
+        tags: ["Technology", "Programming"],
+      },
+    ],
+  );
+});
 
 Deno.test("YAML parse pass", async () => {
   const data = await validateYaml(blogPost, blogPostSchema);

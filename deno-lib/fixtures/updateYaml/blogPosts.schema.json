@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "description": "A collection of blog posts",
+  "type": "array",
+  "items": {
+    "$ref": "blogPost.schema.json"
+  }
+}
