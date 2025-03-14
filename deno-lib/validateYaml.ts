@@ -11,7 +11,7 @@ import { parse } from "jsr:@std/yaml@1.0.5";
 export const validateYaml = <T>(
   content: string,
   schema: Schema,
-  options?: Ajv.Options
+  options?: Ajv.Options,
 ): Promise<T> => {
   return new Promise((resolve, reject) => {
     const ajv = new Ajv.default(options);
