@@ -5,16 +5,16 @@ import { parse } from "jsr:@std/yaml@1.0.5";
  * Validates a string of YAML content against a JSON schema with Ajv.
  * @param content A string containing YAML content
  * @param schema  A JSON schema
- * @param extraSchemas Optional extra JSON schemas required by the main schema
+ * @param options Optional Ajv options
  * @returns A promise that resolves to the parsed YAML content, verified against the schema. Rejects if the content is invalid.
  */
 export const validateYaml = <T>(
   content: string,
   schema: Schema,
-  extraSchemas?: Schema[],
+  options?: Ajv.Options
 ): Promise<T> => {
   return new Promise((resolve, reject) => {
-    const ajv = new Ajv.default({ schemas: extraSchemas });
+    const ajv = new Ajv.default(options);
 
     const validate = ajv.compile<T>(schema);
     const data = parse(content);

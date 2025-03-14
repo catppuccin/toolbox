@@ -34,9 +34,7 @@ const multipleBlogPosts = `- title: "New Blog Post"
   tags: ["Technology", "Programming"]`;
 
 Deno.test("YAML parse multiple schemas pass", async () => {
-  const data = await validateYaml(multipleBlogPosts, blogPostsSchema, [
-    blogPostSchema,
-  ]);
+  const data = await validateYaml(multipleBlogPosts, blogPostsSchema, {schemas: [blogPostSchema]});
 
   assertEquals(data,
     [
