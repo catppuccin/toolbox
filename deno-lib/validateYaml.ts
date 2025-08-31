@@ -1,5 +1,5 @@
 import Ajv, { type Schema } from "npm:ajv@8.17.1";
-import { parse } from "jsr:@std/yaml@1.0.5";
+import { parse } from "jsr:@std/yaml@1.0.9";
 
 /**
  * Validates a string of YAML content against a JSON schema with Ajv.
