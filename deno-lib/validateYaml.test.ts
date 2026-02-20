@@ -1,4 +1,4 @@
-import { assertEquals } from "jsr:@std/assert@1.0.11";
+import { assertEquals } from "jsr:@std/assert@1.0.19";
 import { validateYaml } from "./validateYaml.ts";
 
 import blogPostSchema from "./fixtures/updateYaml/blogPost.schema.json" with {

@@ -1,4 +1,4 @@
-import { assertEquals, assertThrows } from "jsr:@std/assert@1.0.11";
+import { assertEquals, assertThrows } from "jsr:@std/assert@1.0.19";
 import { updateReadme } from "./updateReadme.ts";
 
 const readme_default = `
