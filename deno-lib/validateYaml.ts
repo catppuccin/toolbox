@@ -1,4 +1,4 @@
-import Ajv, { type Schema } from "npm:ajv@8.17.1";
+import Ajv, { type Schema } from "npm:ajv@8.20.0";
 import { parse } from "jsr:@std/yaml@1.0.5";
 
 /**
